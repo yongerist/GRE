@@ -1,11 +1,12 @@
 # GRE
+
 ## 1. 缩写
 
 Garbage Educational Administration
 
 ## 2.功能介绍
 
-基于VUE,flask开发的web
+基于 VUE,flask 开发的 web
 
 ## 3.开发成员
 
@@ -14,13 +15,3 @@ Garbage Educational Administration
 | 柳正洋 | 2021211327 | 前端,用户界面 |
 | 甘钊铨 | 2021211328 | 导航          |
 | 薛凯阳 | 2021211317 | 课程表        |
-|        |            |               |
-
-
-
-
-
-
-
-
-
