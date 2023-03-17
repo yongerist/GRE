@@ -1,14 +1,12 @@
 # GRE
 
-***Garbage Educational Administration***
+## 1. 缩写
 
-## 1. 项目
-
-23年数据结构课程设计
+Garbage Educational Administration
 
 ## 2.功能介绍
 
-基于 `VUE` ,`flask` 框架开发
+基于 VUE,flask 开发的 web
 
 ## 3.开发成员
 
