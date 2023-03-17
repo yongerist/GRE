@@ -1,2 +1,2 @@
-message="test1"
+message = "test1"
 print(message)
