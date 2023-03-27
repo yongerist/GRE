@@ -47,6 +47,8 @@ class BPlusNode:
 
 
 class BPlusTree:
+    max_keys=4
+    min_keys=2
     def __init__(self):
         self.root = BPlusNode(is_leaf=True)
 
@@ -55,6 +57,16 @@ class BPlusTree:
         return self.root.find_value(key)
 
     # 必须是一个原树中没有的值
-    def insert(self):
+    def insert(self,course):
+        node=self.root
+        while not node.is_leaf:
+            node=node.find_index(course.id)
+        i = node.find_index(course.id)
+        node.keys.insert(i, course.id)
+        node.values.insert(i, course)
+        if len(node.keys)<=self.max_keys:
+            return None
 
+
+        else
     def remove(self):
