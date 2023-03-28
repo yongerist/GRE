@@ -1,22 +1,24 @@
+import string
+
+
 class Course:
-    id = None
 
     # id:,name:
     def __int__(self, id, name, begin_time, duration, week, offline):
-        self.id = id
-        self.name = name
-        self.begin_time = begin_time
-        self.duration = duration
-        self.week = week
-        self.offline = offline
+        self.id: string = id
+        self.name: string = name
+        self.begin_time: int = begin_time
+        self.duration: int = duration
+        self.week: list < bool >= week
+        self.offline: bool = offline
 
 
 class BPlusNode:
     def __init__(self, is_leaf=False):
-        self.is_leaf = is_leaf
+        self.is_leaf: bool = is_leaf
         self.keys = []
         self.values = []
-        self.next = []
+        self.next = []  # 如果不是叶子节点next保存下一层节点，否则保存后续节点
 
     # 寻找key的索引，如果不是叶子节点，则返回下一层的节点，如果是叶子节点，则返回key的下标
     def find_index(self, key):
@@ -43,30 +45,56 @@ class BPlusNode:
         elif self.is_leaf:
             return None
         else:
-            return self.next.find_value(key)
+            return self.next[index].find_value(key)
+
+    # 递归插入
+    def insert(self, course):
+        if not self.is_leaf:
+            next_node = self.next[self.find_index(course.id)].insert(course)
+            if next_node is not None:
+                index = self.find_index(next_node.keys[0])
+                self.keys.insert(index, next_node.keys[0])
+                self.values.insert(index, next_node.values[0])
+                self.next.insert(index, next_node)
+        else:
+            index = self.find_index(course.id)
+            self.keys.insert(index, course.id)
+            self.values.insert(index, course.id)
+        if len(self.keys) > BPlusTree.max_keys:
+            new_node = BPlusNode(self.is_leaf)
+            mid_index = len(self.keys) // 2
+            new_node.keys = self.keys[mid_index:]
+            del self.keys[mid_index:]
+            new_node.values = self.values[mid_index:]
+            del self.values[mid_index:]
+            if self.is_leaf:
+                new_node.next = self.next
+                self.next = new_node
+            else:
+                new_node.next = self.next[mid_index:]
+                del self.next[mid_index:]
+            return new_node
+        return None
 
 
 class BPlusTree:
-    max_keys=4
-    min_keys=2
+    max_keys = 4
+    min_keys = 2
+
     def __init__(self):
         self.root = BPlusNode(is_leaf=True)
 
-    #查询，从根节点开始查询
+    # 查询，从根节点开始查询
     def find(self, key):
         return self.root.find_value(key)
 
-    # 必须是一个原树中没有的值
-    def insert(self,course):
-        node=self.root
-        while not node.is_leaf:
-            node=node.find_index(course.id)
-        i = node.find_index(course.id)
-        node.keys.insert(i, course.id)
-        node.values.insert(i, course)
-        if len(node.keys)<=self.max_keys:
-            return None
+    # 插入
+    def insert(self, course):
+        new_node = self.root.insert(course)
+        if new_node is not None:
+            new_root=BPlusNode()
+            new_root.keys.insert(self.root.keys[-1])
+            new_root.next=[new_root,new_node]
+            self.root=new_root
 
-
-        else
-    def remove(self):
+    # def remove(self):
