@@ -1,7 +1,5 @@
 import string
-import sys  # 导入sys模块
 
-sys.setrecursionlimit(30)  # 将默认的递归深度修改为3000
 
 carry: int
 
