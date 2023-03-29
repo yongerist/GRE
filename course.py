@@ -3,7 +3,7 @@ import sys  # 导入sys模块
 
 sys.setrecursionlimit(30)  # 将默认的递归深度修改为3000
 
-carry :int
+carry: int
 
 
 class Course:
@@ -90,7 +90,7 @@ class BPlusNode:
                 print(f"new_node.keys[0]={carry}")
                 print(f"len:{len(self.next)},next_index:{next_index}")
                 # 如果下一层添加了新的节点，则把子节点添加到上一层的next中
-                self.next.insert(next_index+1, new_node)
+                self.next.insert(next_index, new_node)
             else:
                 index = None
         else:
@@ -109,7 +109,7 @@ class BPlusNode:
                 carry = self.keys[mid_index]
                 # 如果是叶子节点则next保存兄弟节点
                 if self.is_leaf:
-                    #carry = self.keys[mid_index]
+                    # carry = self.keys[mid_index]
                     sibling.next = self.next
                     self.next = [sibling]
                     sibling.keys = self.keys[mid_index:]
@@ -119,8 +119,8 @@ class BPlusNode:
                     print(f"len:{len(self.next)}")
                 # 如果不是叶子节点则保存下一层的节点
                 else:
-                    mid_next_index=len(self.next) // 2
-                    #carry = self.keys[mid_index]
+                    mid_next_index = len(self.next) // 2
+                    # carry = self.keys[mid_index]
                     sibling.keys = self.keys[mid_index + 1:]
                     self.keys = self.keys[:mid_index]
                     sibling.next = self.next[mid_next_index:]
@@ -162,12 +162,17 @@ class BPlusTree:
 
 
 c = []
-for i in range(0, 200):
+for i in range(0, 2000):
     c.insert(i, Course(i))
 tree = BPlusTree()
 a = Course(1)
-print(tree.find(key=200))
-for i in range(0, 200):
+#print(tree.find(key=200))
+
+for i in range(500, 0, -1):
     tree.insert(c[i])
     # print(i)
-print(tree.find(key=119).id)
+for i in range(500,1000):
+    tree.insert(c[i])
+for i in range(1500, 1000, -1):
+    tree.insert(c[i])
+print(tree.find(key=1300).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
