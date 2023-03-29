@@ -79,7 +79,8 @@
       <workItem from="1679912306269" duration="6811000" />
       <workItem from="1679922735081" duration="3552000" />
       <workItem from="1679959670735" duration="6553000" />
-      <workItem from="1680046054722" duration="5769000" />
+      <workItem from="1680046054722" duration="6056000" />
+      <workItem from="1680063485003" duration="17571000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1679021338716</created>
@@ -144,7 +145,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679965644052</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="insert">
+      <created>1680052165152</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1680052165152</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,7 +190,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GRE1$test1.coverage" NAME="test1 覆盖结果" MODIFIED="1679021597990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1680051853705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1680091792712" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GRE1$test.coverage" NAME="test 覆盖结果" MODIFIED="1679022473060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.idea" />
   </component>
 </project>
