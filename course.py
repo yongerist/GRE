@@ -12,6 +12,14 @@ class Course:
         self.week: list < bool >= week
         self.offline: bool = offline
 
+    def __init__(self, id):
+        self.id: string = id
+        self.name: string = []
+        self.begin_time: int = []
+        self.duration: int = []
+        self.week: list < bool >= []
+        self.offline: bool = None
+
 
 class BPlusNode:
     def __init__(self, is_leaf=False):
@@ -48,33 +56,46 @@ class BPlusNode:
             return self.next[index].find_value(key)
 
     # 递归插入
-    def insert(self, course):
-        if not self.is_leaf:
-            next_node = self.next[self.find_index(course.id)].insert(course)
-            if next_node is not None:
-                index = self.find_index(next_node.keys[0])
-                self.keys.insert(index, next_node.keys[0])
-                self.values.insert(index, next_node.values[0])
-                self.next.insert(index, next_node)
-        else:
-            index = self.find_index(course.id)
-            self.keys.insert(index, course.id)
-            self.values.insert(index, course.id)
-        if len(self.keys) > BPlusTree.max_keys:
-            new_node = BPlusNode(self.is_leaf)
-            mid_index = len(self.keys) // 2
-            new_node.keys = self.keys[mid_index:]
-            del self.keys[mid_index:]
-            new_node.values = self.values[mid_index:]
-            del self.values[mid_index:]
-            if self.is_leaf:
-                new_node.next = self.next
-                self.next = new_node
+    def insert(self, key, value):
+        # 先找到要插入的位置
+        if self.is_leaf is False:
+            print(f"key:{key}    index:{self.find_index(key)}")
+            # 递归
+            new_node = self.next[self.find_index(key)].insert(key, value)
+            if new_node is not None:
+                index = new_node.keys[0]
+                # 如果下一层添加了新的节点，则把子节点添加到上一层的next中
+                self.next.insert(index, new_node)
             else:
-                new_node.next = self.next[mid_index:]
-                del self.next[mid_index:]
-            return new_node
-        return None
+                index = None
+        else:
+            print(f"key:{key}    index:{self.find_index(key)}")
+            index = self.find_index(key)
+        # 插入
+        if index is not None:
+            self.keys.insert(index, key)
+            self.values.insert(index, value)
+
+            # 如果超过最大长度，则添加兄弟节点
+            if len(self.keys) > BPlusTree.max_keys:
+                sibling = BPlusNode(is_leaf=self.is_leaf)
+                mid_index = len(self.keys) // 2
+                sibling.keys = self.keys[mid_index:]
+                sibling.values = self.values[mid_index:]
+                self.keys = self.keys[:mid_index]
+                self.values = self.values[:mid_index]
+                # 如果是叶子节点则next保存兄弟节点
+                if self.is_leaf:
+                    sibling.next = self.next
+                    self.next = [sibling]
+                # 如果不是叶子节点则保存下一层的节点
+                else:
+                    sibling.next = self.next[mid_index:]
+                    self.next = self.next[:mid_index]
+                # 返回新节点的第一个key
+                return sibling
+            else:
+                return None
 
 
 class BPlusTree:
@@ -89,12 +110,27 @@ class BPlusTree:
         return self.root.find_value(key)
 
     # 插入
-    def insert(self, course):
-        new_node = self.root.insert(course)
+    def insert(self, course: Course):
+        new_node = self.root.insert(course.id, course)
+        print(f"{course.id}")
+        # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
-            new_root=BPlusNode()
-            new_root.keys.insert(self.root.keys[-1])
-            new_root.next=[new_root,new_node]
-            self.root=new_root
-
+            new_root = BPlusNode()
+            new_root.keys.insert(0, self.root.keys[-1])
+            new_root.next = [new_root, new_node]
+            self.root = new_root
+            print(type(self.root.next))
+        print(f"{course.id}")
     # def remove(self):
+
+
+c = []
+for i in range(0, 200):
+    c.insert(i, Course(i))
+tree = BPlusTree()
+a = Course(1)
+print(tree.find(key=2))
+for i in range(0, 200):
+    tree.insert(c[i])
+    # print(i)
+#print(tree.find(key=2))
