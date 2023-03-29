@@ -47,10 +47,11 @@ class BPlusNode:
                 left = mid + 1
         return left
 
+    # 每个索引节点数据量较小使用顺序查找
     def find_next_index(self, key):
         for index in range(0, len(self.keys)):
             if key < self.keys[index]:
-                print(f"{key}<{self.keys[index]}")
+                # print(f"{key}<{self.keys[index]}")
                 return index
         return len(self.keys)
 
@@ -61,15 +62,15 @@ class BPlusNode:
            因为find_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
         if self.is_leaf and index < len(self.keys) and self.keys[index] == key:
-            print(f"key:{key},index:{index},keys:{self.keys}")
-            print(f"values[{index}].id:{self.values[index].id}")
+            # print(f"key:{key},index:{index},keys:{self.keys}")
+            # print(f"values[{index}].id:{self.values[index].id}")
             return self.values[index]
         elif self.is_leaf:
             return None
         else:
             next_index = self.find_next_index(key)
-            print(f"key:{key},next_index:{next_index},keys:{self.keys}")
-            print(f"next[{next_index}].keys:{self.next[next_index].keys}")
+            # print(f"key:{key},next_index:{next_index},keys:{self.keys}")
+            # print(f"next[{next_index}].keys:{self.next[next_index].keys}")
             return self.next[next_index].find_value(key)
 
     # 递归插入
@@ -77,24 +78,24 @@ class BPlusNode:
         global carry
         # 先找到要插入的位置
         if self.is_leaf is False:
-            print(f"key:{key}    next_index:{self.find_next_index(key)}")
+            # print(f"key:{key}    next_index:{self.find_next_index(key)}")
             # 递归
             new_node = self.next[self.find_next_index(key)].insert(key, value)
             if new_node is not None:
                 key = carry
                 index = self.find_index(key)
                 self.keys.insert(index, key)
-                print(key)
+                # print(key)
                 next_index = self.find_next_index(key)
 
-                print(f"new_node.keys[0]={carry}")
-                print(f"len:{len(self.next)},next_index:{next_index}")
+                # print(f"new_node.keys[0]={carry}")
+                # print(f"len:{len(self.next)},next_index:{next_index}")
                 # 如果下一层添加了新的节点，则把子节点添加到上一层的next中
                 self.next.insert(next_index, new_node)
             else:
                 index = None
         else:
-            print(f"key:{key}    index:{self.find_index(key)}")
+            # print(f"key:{key}    index:{self.find_index(key)}")
             index = self.find_index(key)
             self.keys.insert(index, key)
             self.values.insert(index, value)
@@ -104,7 +105,7 @@ class BPlusNode:
 
             if len(self.keys) > BPlusTree.max_keys:
                 sibling = BPlusNode(is_leaf=self.is_leaf)
-                print(f"len:{len(self.next)}")
+                # print(f"len:{len(self.next)}")
                 mid_index = len(self.keys) // 2
                 carry = self.keys[mid_index]
                 # 如果是叶子节点则next保存兄弟节点
@@ -116,7 +117,7 @@ class BPlusNode:
                     self.keys = self.keys[:mid_index]
                     sibling.values = self.values[mid_index:]
                     self.values = self.values[:mid_index]
-                    print(f"len:{len(self.next)}")
+                    # print(f"len:{len(self.next)}")
                 # 如果不是叶子节点则保存下一层的节点
                 else:
                     mid_next_index = len(self.next) // 2
@@ -125,7 +126,7 @@ class BPlusNode:
                     self.keys = self.keys[:mid_index]
                     sibling.next = self.next[mid_next_index:]
                     self.next = self.next[:mid_next_index]
-                    print(f"mid={mid_index}len:{len(self.next)}")
+                    # print(f"mid={mid_index}len:{len(self.next)}")
                 # 返回新节点的第一个key
                 return sibling
             else:
@@ -148,16 +149,16 @@ class BPlusTree:
         global carry
         new_node = self.root.insert(course.id, course)
 
-        print(f"{course.id}")
+        # print(f"{course.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
-            print(f"new_node.keys:{new_node.keys}")
+            # print(f"new_node.keys:{new_node.keys}")
             new_root = BPlusNode()
             new_root.keys.insert(0, carry)
             new_root.next = [self.root, new_node]
             self.root = new_root
-            print(type(self.root.next))
-        print(f"{course.id}")
+            # print(type(self.root.next))
+        # print(f"{course.id}")
     # def remove(self):
 
 
@@ -166,12 +167,12 @@ for i in range(0, 2000):
     c.insert(i, Course(i))
 tree = BPlusTree()
 a = Course(1)
-#print(tree.find(key=200))
+# print(tree.find(key=200))
 
 for i in range(500, 0, -1):
     tree.insert(c[i])
     # print(i)
-for i in range(500,1000):
+for i in range(500, 1000):
     tree.insert(c[i])
 for i in range(1500, 1000, -1):
     tree.insert(c[i])
