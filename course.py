@@ -1,6 +1,5 @@
 import string
 
-
 carry: int
 
 
@@ -57,9 +56,9 @@ class BPlusNode:
     def find_value(self, key):
         index = self.find_index(key)
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
-           因为find_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
+           因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
-        if self.is_leaf and index < len(self.keys) and self.keys[index] == key:
+        if self.is_leaf and self.keys[index] == key:
             # print(f"key:{key},index:{index},keys:{self.keys}")
             # print(f"values[{index}].id:{self.values[index].id}")
             return self.values[index]
@@ -72,20 +71,23 @@ class BPlusNode:
             return self.next[next_index].find_value(key)
 
     # 递归插入
+    """如果不是叶子节点则继续深入，否则添加元素。如果添加了元素，则要检查是否超过了树的阶，如果超过了则要分裂产生兄弟节点并将兄弟节点返回
+        这里设置了一个全局变量carry来保存要添加到父节点的索引。"""
     def insert(self, key, value):
         global carry
         # 先找到要插入的位置
         if self.is_leaf is False:
             # print(f"key:{key}    next_index:{self.find_next_index(key)}")
-            # 递归
+            # 如果不是叶子节点则递归深入
             new_node = self.next[self.find_next_index(key)].insert(key, value)
+            #如果有来自子节点的索引要添加到这一层
             if new_node is not None:
                 key = carry
+                #要添加的位置
                 index = self.find_index(key)
                 self.keys.insert(index, key)
                 # print(key)
                 next_index = self.find_next_index(key)
-
                 # print(f"new_node.keys[0]={carry}")
                 # print(f"len:{len(self.next)},next_index:{next_index}")
                 # 如果下一层添加了新的节点，则把子节点添加到上一层的next中
@@ -100,15 +102,14 @@ class BPlusNode:
         # 插入
         if index is not None:
             # 如果超过最大长度，则添加兄弟节点
-
             if len(self.keys) > BPlusTree.max_keys:
                 sibling = BPlusNode(is_leaf=self.is_leaf)
                 # print(f"len:{len(self.next)}")
                 mid_index = len(self.keys) // 2
+                # 保存要添加到父亲节点上的索引
                 carry = self.keys[mid_index]
                 # 如果是叶子节点则next保存兄弟节点
                 if self.is_leaf:
-                    # carry = self.keys[mid_index]
                     sibling.next = self.next
                     self.next = [sibling]
                     sibling.keys = self.keys[mid_index:]
@@ -119,13 +120,12 @@ class BPlusNode:
                 # 如果不是叶子节点则保存下一层的节点
                 else:
                     mid_next_index = len(self.next) // 2
-                    # carry = self.keys[mid_index]
                     sibling.keys = self.keys[mid_index + 1:]
                     self.keys = self.keys[:mid_index]
                     sibling.next = self.next[mid_next_index:]
                     self.next = self.next[:mid_next_index]
                     # print(f"mid={mid_index}len:{len(self.next)}")
-                # 返回新节点的第一个key
+                # 返回新节点
                 return sibling
             else:
                 return None
@@ -143,10 +143,10 @@ class BPlusTree:
         return self.root.find_value(key)
 
     # 插入
+    """如果根节点需要发生裂变，则产生一个新的头节点，它的两个next分别指向原根节点和新节点"""
     def insert(self, course: Course):
         global carry
         new_node = self.root.insert(course.id, course)
-
         # print(f"{course.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
@@ -174,4 +174,4 @@ for i in range(500, 1000):
     tree.insert(c[i])
 for i in range(1500, 1000, -1):
     tree.insert(c[i])
-print(tree.find(key=1300).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+print(tree.find(key=10).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
