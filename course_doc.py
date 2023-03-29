@@ -20,7 +20,7 @@ def save_data():
         course = Course(id=id, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
         # 存入文件
         with open('course_data.pkl', 'wb') as f:
-            pickle.dump(course, f)
+            pickle.dumps(course, f)
         # 返回成功响应
         return jsonify({"message": "Course data saved successfully."})
     except:
