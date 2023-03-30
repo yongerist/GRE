@@ -53,7 +53,7 @@ class BPlusNode:
         return len(self.keys)
 
     # 寻找key的值
-    def find_value(self, key):
+    def find_value(self, key) -> int:
         index = self.find_index(key)
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
            因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
@@ -73,6 +73,7 @@ class BPlusNode:
     # 递归插入
     """如果不是叶子节点则继续深入，否则添加元素。如果添加了元素，则要检查是否超过了树的阶，如果超过了则要分裂产生兄弟节点并将兄弟节点返回
         这里设置了一个全局变量carry来保存要添加到父节点的索引。"""
+
     def insert(self, key, value):
         global carry
         # 先找到要插入的位置
@@ -80,10 +81,10 @@ class BPlusNode:
             # print(f"key:{key}    next_index:{self.find_next_index(key)}")
             # 如果不是叶子节点则递归深入
             new_node = self.next[self.find_next_index(key)].insert(key, value)
-            #如果有来自子节点的索引要添加到这一层
+            # 如果有来自子节点的索引要添加到这一层
             if new_node is not None:
                 key = carry
-                #要添加的位置
+                # 要添加的位置
                 index = self.find_index(key)
                 self.keys.insert(index, key)
                 # print(key)
@@ -130,6 +131,155 @@ class BPlusNode:
             else:
                 return None
 
+    """判断要向哪个节点合并或借元素"""
+
+    def find_merage_index(self, parent):
+        self_index = parent.next.index(self)
+        # print(f"self_index:{self_index} len(parent.next):{len(parent.next)} parent.keys:{parent.keys}")
+        # 如果本节点的索引是0，则合并右侧节点
+        if self_index == 0:
+            marge_index = self_index + 1
+        # 如果本节点左侧节点没有元素可借，右侧有节点且有元素可借，则借右侧节点的元素
+        elif len(parent.next) > self_index + 1 and len(parent.next[self_index - 1].keys) <= BPlusTree.min_keys < len(
+                parent.next[self_index + 1].keys):
+            marge_index = self_index + 1
+        # 其他情况合并左侧节点或向左侧节点借元素
+        else:
+            # print("left node")
+            marge_index = self_index - 1
+        return marge_index
+
+    """如果借了一个元素返回None，如果合并了一个节点返回父节点要删除的元素"""
+
+    def merge_leaves(self, parent):
+        if parent is None:
+            return None
+        # 本节点在父节点的索引
+        self_index = parent.next.index(self)
+        marge_index = self.find_merage_index(parent)
+        marge_node = parent.next[marge_index]
+        # print(f"marge_node.keys:{marge_node.keys}")
+        # 如果有元素可借
+        if len(marge_node.keys) > BPlusTree.min_keys:
+            # print("borrow")
+            # 如果要向右侧的节点借元素，因为借的是第一个元素，所以要将其在父节点上的索引改为其原来的第二个元素（新的第一个元素）
+            if self_index < marge_index:
+                self.keys.append(marge_node.keys[0])
+                parent_change = parent.keys.index(marge_node.keys[0])
+                marge_node.keys.pop(0)
+                parent.keys[parent_change] = marge_node.keys[0]
+                self.values.append(marge_node.values[0])
+                marge_node.values.pop(0)
+            # 如果要向左侧的节点借元素，因为改变了本节点的第一个元素，所以要将在父节点上的索引改为原来的左侧节点的末尾元素（新的第一个元素）
+            else:
+                parent_change = parent.keys.index(self.keys[0])
+                self.keys.insert(0, marge_node.keys[-1])
+                parent.keys[parent_change] = self.keys[0]
+                marge_node.keys.pop()
+                self.values.insert(0, marge_node.values[-1])
+                marge_node.values.pop()
+            # 因为已经修改了父节点上的索引，所以不需要再返回要向上修改的值
+            return None
+        # 如果没有元素可借，合并节点，并返回父节点中要删除的索引
+        else:
+            # 合并节点
+            if self_index < marge_index:
+                # print(f"{self_index} < {marge_index}")
+                delete_key = marge_node.keys[0]
+                self.keys.extend(marge_node.keys)
+                self.values.extend(marge_node.values)
+                self.next = marge_node.next
+                parent.next.pop(marge_index)
+                return delete_key
+            else:
+                delete_key = parent.keys[marge_index]
+                # print(f"delete_key:{delete_key}")
+                self.keys = marge_node.keys + self.keys
+                self.values = marge_node.values + self.values
+                parent.next.pop(marge_index)
+                # print(self.keys)
+                return delete_key
+
+    def merge(self, parent):
+        if parent is None:
+            return None
+        # 本节点在父节点的索引
+        # print(f"parent.keys:{parent.keys},len(parent.next):{len(parent.next)}")
+        self_index = parent.next.index(self)
+        marge_index = self.find_merage_index(parent)
+        marge_node = parent.next[marge_index]
+        # 如果有元素可借
+        # print(marge_node.keys)
+        # print(f"len(marge_node.keys):{len(marge_node.keys)}")
+        if len(marge_node.keys) > BPlusTree.min_keys:
+            if self_index < marge_index:
+                # print(self.keys)
+                self.keys.append(parent.keys[self_index])
+                parent.keys[self_index] = marge_node.keys[0]
+                marge_node.keys.pop(0)
+                self.next.append(marge_node.next[0])
+                marge_node.next.pop(0)
+            else:
+                self.keys.insert(0, parent.keys[self_index - 1])
+                parent.keys[self_index - 1] = marge_node.keys[-1]
+                marge_node.keys.pop()
+                self.next.insert(0, marge_node.next[-1])
+                marge_node.next.pop()
+            return None
+        # 如果没有元素可借，从父节点取一个索引，再合并节点，返回父节点中要删除的索引
+        else:
+            # 如果要合并的节点在右侧，则新的索引要添加从父节点取的索引再加上要合并节点的索引
+            if self_index < marge_index:
+                self.keys = self.keys + [parent.keys[self_index]] + marge_node.keys
+                # self.keys.extend(parent.keys[self_index])
+                # self.keys.extend(marge_node.keys)
+                self.next.extend(marge_node.next)
+                parent.next.pop(marge_index)
+                # print(self.keys)
+                # print(parent.keys[self_index])
+                return parent.keys[self_index]
+            # 如果要合并的节点在左侧，则新的索引要在前面加上要合并节点的索引和从父节点取的索引
+            else:
+                # print("borrow")
+                self.keys.insert(0, parent.keys[marge_index])
+                self.keys = marge_node.keys + self.keys
+                self.next = marge_node.next + self.next
+                parent.next.pop(marge_index)
+                return parent.keys[marge_index]
+
+    def remove(self, key, parent):
+        if self.is_leaf is False:
+            # print(f"key:{key}    next_index:{self.find_next_index(key)}")
+            # 如果不是叶子节点则递归深入
+            # print(f"go:{self.keys}")
+            delete_key = self.next[self.find_next_index(key)].remove(key, self)
+        else:
+            # 如果是叶子节点，则判断要删除的值是否存在
+            # print(f"go:{self.keys}")
+            index = self.find_index(key)
+            # print(f"index:{index}")
+            # 如果不存在返回None
+            if index is None:
+                return None
+            else:
+                # 如果存在删除keys和value
+                del self.keys[index]
+                del self.values[index]
+                # print(self.keys)
+                if len(self.keys) < BPlusTree.min_keys:
+                    return self.merge_leaves(parent)
+                else:
+                    return None
+        # 如果不是叶子节点，且子节点返回了一个要删除的索引，则删除索引
+        # print(f"delete_key:{delete_key}")
+        if delete_key is not None:
+            index = self.find_index(delete_key)
+            self.keys.pop(index)
+        if len(self.keys) < BPlusTree.min_keys:
+            return self.merge(parent)
+        else:
+            return None
+
 
 class BPlusTree:
     max_keys = 4
@@ -144,6 +294,7 @@ class BPlusTree:
 
     # 插入
     """如果根节点需要发生裂变，则产生一个新的头节点，它的两个next分别指向原根节点和新节点"""
+
     def insert(self, course: Course):
         global carry
         new_node = self.root.insert(course.id, course)
@@ -157,7 +308,13 @@ class BPlusTree:
             self.root = new_root
             # print(type(self.root.next))
         # print(f"{course.id}")
-    # def remove(self):
+
+    def remove(self, id):
+        # print(f"root:{self.root.keys}")
+        self.root.remove(id, None)
+        # 当头节点的索引被全部删除时，它唯一的孩子就是新的头节点
+        if len(self.root.keys) == 0:
+            self.root = self.root.next[0]
 
 
 c = []
@@ -167,11 +324,18 @@ tree = BPlusTree()
 a = Course(1)
 # print(tree.find(key=200))
 
-for i in range(500, 0, -1):
+for i in range(0, 500):
     tree.insert(c[i])
     # print(i)
-for i in range(500, 1000):
+for i in range(500, 1001):
     tree.insert(c[i])
 for i in range(1500, 1000, -1):
     tree.insert(c[i])
-print(tree.find(key=10).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+for i in range(0, 100):
+    # print(f"remove{i}")
+    tree.remove(i)
+for i in range(1000, 1200):
+    # print(f"remove{i}")
+    tree.remove(i)
+tree.insert(c[1100])
+print(tree.find(key=1100).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
