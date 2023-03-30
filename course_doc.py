@@ -45,6 +45,7 @@ def add():
 
 #执行课程删减
 @app.route('/course/del', method =['POST'])
+def del():
 
 if __name__ == '__main__':
     app.run()
