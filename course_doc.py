@@ -6,9 +6,9 @@ import os
 app = Flask(__name__)
 
 
-# 接收post请求
-@app.route('/course', methods=['POST'])
-def save_data():
+# 接收post请求，执行课程增添
+@app.route('/course/add', methods=['POST'])
+def add():
     try:
         # 获取post请求中的数据
         id = request.form.get("id")
@@ -43,6 +43,8 @@ def save_data():
     except:
         return jsonify({"error": "An error occurred while saving course data."}), 500  # 500为http状态码，表示无法完成请求
 
+#执行课程删减
+@app.route('/course/del', method =['POST'])
 
 if __name__ == '__main__':
     app.run()
