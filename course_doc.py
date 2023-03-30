@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import pickle
-from course import Course
+from course import Course, BPlusNode, BPlusTree
 
 app = Flask(__name__)
 
@@ -18,6 +18,12 @@ def save_data():
         offline = request.form.get("offline")
         # 建立course对象
         course = Course(id=id, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
+        #读取文件
+        try:
+            with open('course_data.pkl', 'rb') as f:
+                data = pickle.load(f)
+        except FileNotFoundError:
+
         # 存入文件
         with open('course_data.pkl', 'wb') as f:
             pickle.dumps(course, f)
