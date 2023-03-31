@@ -1,13 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 import pickle
 from course import Course, BPlusNode, BPlusTree
 import os
 
 app = Flask(__name__)
 
+#接收post请求，展示课程列表
+@app.route('/course_list', methods=['POST'])
+def course_list():
+    with open('course_data.pkl', 'rb') as f:
+        #将文件中的二进制数据转换成python对象
+        tree = pickle.load(f)
+        #返回一个存储B+树信息的列表
+    return tree.get_all_data
+
 
 # 接收post请求，执行课程增添
-@app.route('/course/add', methods=['POST'])
+@app.route('/course_list/add', methods=['POST'])
 def add():
     try:
         # 获取post请求中的数据
@@ -27,24 +36,29 @@ def add():
         if os.path.getsize('course_data.pkl') > 0:
             with open('course_data.pkl', 'rb') as f:
                 data = pickle.load(f)
+
+            #将post请求中的course对象插入到B+树中
             data.insert(course)
+
+        #文件为空时，建一个空树并将课程插入到该树上
         else:
             tree = BPlusTree()
             data = tree.insert(course)
 
-        # 存入文件
+        # 将改动后的B+树存入文件
         with open('course_data.pkl', 'wb') as f:
+            #将data转化为二进制数据传入文件
             pickle.dumps(data, f)
 
-        # 返回成功响应
-        return jsonify({"message": "Course data saved successfully."})
+        # 重定向到课程列表
+        return redirect(url_for(course_list))
 
         # 返回失败响应
     except:
         return jsonify({"error": "An error occurred while saving course data."}), 500  # 500为http状态码，表示无法完成请求
 
 #执行课程删减
-@app.route('/course/del', method =['POST'])
+@app.route('/course_list/del', method =['POST'])
 def delete():
 
 if __name__ == '__main__':
