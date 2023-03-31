@@ -316,6 +316,24 @@ class BPlusTree:
         if len(self.root.keys) == 0:
             self.root = self.root.next[0]
 
+    """获取全部数据"""
+
+    def get_all_data(self):
+        # print("get")
+        node = self.root
+        # 从根节点下探到最左侧的叶子节点
+        while node.is_leaf is False:
+            node = node.next[0]
+        # print(node.keys)
+        all_data = node.values
+        # 依次获取全部节点的数据
+        while len(node.next) != 0:
+            # print(node.next[0].keys)
+            all_data.extend(node.next[0].values)
+            node = node.next[0]
+        all_data.extend(node.values)
+        return all_data
+
 
 c = []
 for i in range(0, 2000):
@@ -339,3 +357,4 @@ for i in range(1000, 1200):
     tree.remove(i)
 tree.insert(c[1100])
 print(tree.find(key=1100).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+tree.get_all_data()
