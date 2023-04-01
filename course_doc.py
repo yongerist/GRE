@@ -80,7 +80,7 @@ def course_del(id_):
         data.remove(id_)
 
         # 将改动后的树重新存入文件
-        with open('course_data.pkl', 'wb')as f:
+        with open('course_data.pkl', 'wb') as f:
             pickle.dump(data, f)
 
         # 重定向到课程列表
@@ -88,11 +88,42 @@ def course_del(id_):
     else:
         return jsonify({"error": "An error occurred."}), 500
 
-#执行课程修改
+
+# 执行课程修改
 @app.route('/course_list/<string: course_id>/revise', method=['GET', 'POST'])
 def course_revise():
     if method == 'POST':
+        try:
+            id_ = request.form.get("id")
+            name = request.form.get("name")
+            begin_time = request.form.get("begin_time")
+            duration = request.form.get("duration")
+            week = request.form.get("week")
+            offline = request.form.get("offline")
 
+            # 创建新结点
+            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week,offline=offline)
+
+            # 打开文件加载数据
+            with open('course_data.pkl', 'rb') as f:
+                data = pickle.load(f)
+
+            # 查找需要修改的结点
+            course_pre = data.find(key=course_id)
+
+            # 执行修改操作
+            data.revise(course_pre, course_post)
+
+            # 将改动后的数据存入文件
+            with open('course_data.pkl', 'wb') as f:
+                pickle.dump(data, f)
+
+            # 返回课程列表
+            return redirect(url_for(course_list))
+        except:
+            return jsonify({"error": "An error occurred."}), 500
+    else:
+        return render_template('revise.html')
 
 
 if __name__ == '__main__':
