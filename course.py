@@ -316,6 +316,16 @@ class BPlusTree:
         if len(self.root.keys) == 0:
             self.root = self.root.next[0]
 
+    """修改成功返回Ture，失败返回False"""
+    def revise(self,old_value,new_value):
+        if self.find(old_value.id) is not None:
+            # 先插入新值，再删除旧值
+            self.insert(new_value)
+            self.remove(old_value.id)
+            return True
+        else:
+            return False
+
     """获取全部数据"""
 
     def get_all_data(self):
@@ -356,5 +366,6 @@ for i in range(1000, 1200):
     # print(f"remove{i}")
     tree.remove(i)
 tree.insert(c[1100])
-print(tree.find(key=1100).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+tree.revise(c[1100],c[1101])
+print(tree.find(key=1101).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 tree.get_all_data()
