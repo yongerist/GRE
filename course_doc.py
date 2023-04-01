@@ -59,7 +59,7 @@ def course_add():
                 pickle.dump(data, f)
 
             # 重定向到课程列表
-            return redirect(url_for(course_list))
+            return redirect(url_for('course_list'))
 
             # 返回失败响应
         except:
@@ -69,7 +69,7 @@ def course_add():
 
 
 # 执行课程删减
-@app.route('/course_list/<string: id_>/del')
+@app.route('/course_list/<string:id_>/del')
 def course_del(id_):
     # 首先判断文件是否为空
     if os.path.getsize('course_data.pkl') > 0:
@@ -84,13 +84,13 @@ def course_del(id_):
             pickle.dump(data, f)
 
         # 重定向到课程列表
-        return redirect(url_for(course_list))
+        return redirect(url_for('course_list'))
     else:
         return jsonify({"error": "An error occurred."}), 500
 
 
 # 执行课程修改
-@app.route('/course_list/<string: course_id>/revise', method=['GET', 'POST'])
+@app.route('/course_list/<string:course_id>/revise', methods=['GET', 'POST'])
 def course_revise():
     if request.method == 'POST':
         try:
@@ -119,7 +119,7 @@ def course_revise():
                 pickle.dump(data, f)
 
             # 返回课程列表
-            return redirect(url_for(course_list))
+            return redirect(url_for('course_list'))
         except:
             return jsonify({"error": "An error occurred."}), 500
     else:
