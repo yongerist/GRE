@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for, render_template
 import pickle
 from course import Course, BPlusNode, BPlusTree
 import os
@@ -23,50 +23,53 @@ def course_list():
 
 
 # 接收post请求，执行课程增添
-@app.route('/course_list/add', methods=['POST'])
+@app.route('/course_list/add', methods=['GET', 'POST'])
 def course_add():
-    try:
-        # 获取post请求中的数据
-        id_ = request.form.get("id")
-        name = request.form.get("name")
-        begin_time = request.form.get("begin_time")
-        duration = request.form.get("duration")
-        week = request.form.get("week")
-        offline = request.form.get("offline")
+    if request.method == 'POST':
+        try:
+            # 获取post请求中的数据
+            id_ = request.form.get("id")
+            name = request.form.get("name")
+            begin_time = request.form.get("begin_time")
+            duration = request.form.get("duration")
+            week = request.form.get("week")
+            offline = request.form.get("offline")
 
-        # 建立course对象
-        course = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
+            # 建立course对象
+            course = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
 
-        # 读取文件
+            # 读取文件
 
-        # 首先判断文件是否为空
-        if os.path.getsize('course_data.pkl') > 0:
-            with open('course_data.pkl', 'rb') as f:
-                data = pickle.load(f)
+            # 首先判断文件是否为空
+            if os.path.getsize('course_data.pkl') > 0:
+                with open('course_data.pkl', 'rb') as f:
+                    data = pickle.load(f)
 
-            # 将post请求中的course对象插入到B+树中
-            data.insert(course)
+                # 将post请求中的course对象插入到B+树中
+                data.insert(course)
 
-        # 文件为空时，建一个空树并将课程插入到该树上
-        else:
-            tree = BPlusTree()
-            data = tree.insert(course)
+            # 文件为空时，建一个空树并将课程插入到该树上
+            else:
+                tree = BPlusTree()
+                data = tree.insert(course)
 
-        # 将改动后的B+树存入文件
-        with open('course_data.pkl', 'wb') as f:
-            # 将data转化为二进制数据传入文件
-            pickle.dumps(data, f)
+            # 将改动后的B+树存入文件
+            with open('course_data.pkl', 'wb') as f:
+                # 将data转化为二进制数据传入文件
+                pickle.dumps(data, f)
 
-        # 重定向到课程列表
-        return redirect(url_for(course_list))
+            # 重定向到课程列表
+            return redirect(url_for(course_list))
 
-        # 返回失败响应
-    except:
-        return jsonify({"error": "An error occurred while saving course data."}), 500  # 500为http状态码，表示无法完成请求
+            # 返回失败响应
+        except:
+            return jsonify({"error": "An error occurred while saving course data."}), 500  # 500为http状态码，表示无法完成请求
+    else:
+        return render_template('add.html')
 
 
 # 执行课程删减
-@app.route('/course_list/<string: id_>/del', method=['POST'])
+@app.route('/course_list/<string: id_>/del')
 def course_del(id_):
     # 首先判断文件是否为空
     if os.path.getsize('course_data.pkl') > 0:
@@ -84,6 +87,17 @@ def course_del(id_):
         return redirect(url_for(course_list))
     else:
         return jsonify({"error": "An error occurred."}), 500
+
+#执行课程修改
+@app.route('/course_list/<string: id_>/revise', method=['POST'])
+def revise():
+    try:
+        id_ = request.form.get("id")
+        name = request.form.get("name")
+        begin_time = request.form.get("begin_time")
+        duration = request.form.get("duration")
+        week = request.form.get("week")
+        offline = request.form.get("offline")
 
 if __name__ == '__main__':
     app.run()
