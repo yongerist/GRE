@@ -56,7 +56,7 @@ def course_add():
             # 将改动后的B+树存入文件
             with open('course_data.pkl', 'wb') as f:
                 # 将data转化为二进制数据传入文件
-                pickle.dumps(data, f)
+                pickle.dump(data, f)
 
             # 重定向到课程列表
             return redirect(url_for(course_list))
@@ -81,7 +81,7 @@ def course_del(id_):
 
         # 将改动后的树重新存入文件
         with open('course_data.pkl', 'wb')as f:
-            pickle.dumps(data, f)
+            pickle.dump(data, f)
 
         # 重定向到课程列表
         return redirect(url_for(course_list))
@@ -89,15 +89,11 @@ def course_del(id_):
         return jsonify({"error": "An error occurred."}), 500
 
 #执行课程修改
-@app.route('/course_list/<string: id_>/revise', method=['POST'])
+@app.route('/course_list/<string: course_id>/revise', method=['GET', 'POST'])
 def revise():
-    try:
-        id_ = request.form.get("id")
-        name = request.form.get("name")
-        begin_time = request.form.get("begin_time")
-        duration = request.form.get("duration")
-        week = request.form.get("week")
-        offline = request.form.get("offline")
+    if method == 'POST':
+
+
 
 if __name__ == '__main__':
     app.run()
