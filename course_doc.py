@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 # 接收post请求，展示课程列表
-@app.route('/course_list', methods=['POST'])
+@app.route('/course_list', methods=['GET'])
 def course_list():
     # 首先判断文件是否为空
     if os.path.getsize('course_data.pkl') > 0:
@@ -92,7 +92,7 @@ def course_del(id_):
 # 执行课程修改
 @app.route('/course_list/<string: course_id>/revise', method=['GET', 'POST'])
 def course_revise():
-    if method == 'POST':
+    if request.method == 'POST':
         try:
             id_ = request.form.get("id")
             name = request.form.get("name")
