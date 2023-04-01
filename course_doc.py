@@ -90,7 +90,7 @@ def course_del(id_):
 
 #执行课程修改
 @app.route('/course_list/<string: course_id>/revise', method=['GET', 'POST'])
-def revise():
+def course_revise():
     if method == 'POST':
 
 
