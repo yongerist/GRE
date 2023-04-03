@@ -1,6 +1,6 @@
 import string
 
-carry: int
+carry: string
 
 
 class Course:
@@ -151,28 +151,33 @@ class BPlusNode:
 
     """如果借了一个元素返回None，如果合并了一个节点返回父节点要删除的元素"""
 
-    def merge_leaves(self, parent):
+    def merge_leaves(self, parent,index):
         if parent is None:
             return None
         # 本节点在父节点的索引
         self_index = parent.next.index(self)
         marge_index = self.find_merage_index(parent)
         marge_node = parent.next[marge_index]
-        # print(f"marge_node.keys:{marge_node.keys}")
+        #print(f"marge_node.keys:{marge_node.keys}")
         # 如果有元素可借
         if len(marge_node.keys) > BPlusTree.min_keys:
             # print("borrow")
             # 如果要向右侧的节点借元素，因为借的是第一个元素，所以要将其在父节点上的索引改为其原来的第二个元素（新的第一个元素）
             if self_index < marge_index:
                 self.keys.append(marge_node.keys[0])
-                parent_change = parent.keys.index(marge_node.keys[0])
+                parent_change = parent.keys.index(self.keys[0])
+                del self.keys[index]
+                del self.values[index]
                 marge_node.keys.pop(0)
                 parent.keys[parent_change] = marge_node.keys[0]
                 self.values.append(marge_node.values[0])
                 marge_node.values.pop(0)
             # 如果要向左侧的节点借元素，因为改变了本节点的第一个元素，所以要将在父节点上的索引改为原来的左侧节点的末尾元素（新的第一个元素）
             else:
+                #print(parent.keys)
                 parent_change = parent.keys.index(self.keys[0])
+                del self.keys[index]
+                del self.values[index]
                 self.keys.insert(0, marge_node.keys[-1])
                 parent.keys[parent_change] = self.keys[0]
                 marge_node.keys.pop()
@@ -251,11 +256,11 @@ class BPlusNode:
         if self.is_leaf is False:
             # print(f"key:{key}    next_index:{self.find_next_index(key)}")
             # 如果不是叶子节点则递归深入
-            # print(f"go:{self.keys}")
+            #print(f"go:{self.keys}")
             delete_key = self.next[self.find_next_index(key)].remove(key, self)
         else:
             # 如果是叶子节点，则判断要删除的值是否存在
-            # print(f"go:{self.keys}")
+            #print(f"go:{self.keys}")
             index = self.find_index(key)
             # print(f"index:{index}")
             # 如果不存在返回None
@@ -263,11 +268,10 @@ class BPlusNode:
                 return None
             else:
                 # 如果存在删除keys和value
-                del self.keys[index]
-                del self.values[index]
+
                 # print(self.keys)
-                if len(self.keys) < BPlusTree.min_keys:
-                    return self.merge_leaves(parent)
+                if len(self.keys) < BPlusTree.min_keys+1:
+                    return self.merge_leaves(parent,index)
                 else:
                     return None
         # 如果不是叶子节点，且子节点返回了一个要删除的索引，则删除索引
@@ -347,7 +351,7 @@ class BPlusTree:
 
 c = []
 for i in range(0, 2000):
-    c.insert(i, Course(i))
+    c.insert(i, Course(f"{i}"))
 tree = BPlusTree()
 a = Course(1)
 # print(tree.find(key=200))
@@ -361,11 +365,11 @@ for i in range(1500, 1000, -1):
     tree.insert(c[i])
 for i in range(0, 100):
     # print(f"remove{i}")
-    tree.remove(i)
-for i in range(1000, 1200):
+    tree.remove(f"{i}")
+for i in range(1000, 1400):
     # print(f"remove{i}")
-    tree.remove(i)
+    tree.remove(f"{i}")
 tree.insert(c[1100])
 tree.revise(c[1100],c[1101])
-print(tree.find(key=1101).id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+print(tree.find(key="9").id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 tree.get_all_data()
