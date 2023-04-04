@@ -6,17 +6,17 @@ carry: string
 class Course:
 
     # id:,name:
-    def __int__(self, id, name, begin_time, duration, week, offline):
-        self.id: string = id
+    def __int__(self, name, id, begin_time, duration, week, offline):
         self.name: string = name
+        self.id: string = id
         self.begin_time: int = begin_time
         self.duration: int = duration
         self.week: list < bool >= week
         self.offline: bool = offline
 
-    def __init__(self, id):
-        self.id: string = id
-        self.name: string = []
+    def __init__(self, name):
+        self.name: string = name
+        self.id: string = []
         self.begin_time: int
         self.duration: int
         self.week: list < bool >= []
@@ -301,7 +301,7 @@ class BPlusTree:
 
     def insert(self, course: Course):
         global carry
-        new_node = self.root.insert(course.id, course)
+        new_node = self.root.insert(course.name, course)
         # print(f"{course.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
@@ -313,19 +313,19 @@ class BPlusTree:
             # print(type(self.root.next))
         # print(f"{course.id}")
 
-    def remove(self, id):
+    def remove(self, name):
         # print(f"root:{self.root.keys}")
-        self.root.remove(id, None)
+        self.root.remove(name, None)
         # 当头节点的索引被全部删除时，它唯一的孩子就是新的头节点
         if len(self.root.keys) == 0:
             self.root = self.root.next[0]
 
     """修改成功返回Ture，失败返回False"""
     def revise(self,old_value,new_value):
-        if self.find(old_value.id) is not None:
+        if self.find(old_value.name) is not None:
             # 先插入新值，再删除旧值
             self.insert(new_value)
-            self.remove(old_value.id)
+            self.remove(old_value.name)
             return True
         else:
             return False
@@ -351,7 +351,7 @@ class BPlusTree:
 
 c = []
 for i in range(0, 2000):
-    c.insert(i, Course(f"{i}"))
+    c.insert(i, Course("str:"+str(i)))
 tree = BPlusTree()
 a = Course(1)
 # print(tree.find(key=200))
@@ -365,11 +365,13 @@ for i in range(1500, 1000, -1):
     tree.insert(c[i])
 for i in range(0, 100):
     # print(f"remove{i}")
-    tree.remove(f"{i}")
+    tree.remove("str:"+str(i))
 for i in range(1000, 1400):
     # print(f"remove{i}")
-    tree.remove(f"{i}")
+    tree.remove("str:"+str(i))
 tree.insert(c[1100])
 tree.revise(c[1100],c[1101])
-print(tree.find(key="9").id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+for i in range(100,500):
+    print(tree.find(key="str:"+str(i)).name)
+print(tree.find(key="str:"+str(9)).name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 tree.get_all_data()
