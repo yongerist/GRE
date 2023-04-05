@@ -4,26 +4,70 @@ carry: string
 
 
 class Course:
+    name: string
+    id: string
+    begin_time: int
+    duration: int
+    week: list
+    offline: bool
 
     # id:,name:
-    def __int__(self, id, name, begin_time, duration, week, offline):
-        self.id: string = id
+    def __int__(self, name, begin_time, duration, week, offline):
         self.name: string = name
+        self.id: string
         self.begin_time: int = begin_time
         self.duration: int = duration
         self.week: list < bool >= week
         self.offline: bool = offline
 
-    def __init__(self, id):
-        self.id: string = id
-        self.name: string = []
+    def __init__(self, name):
+        self.name: string = name
+        self.id: string
         self.begin_time: int
         self.duration: int
-        self.week: list < bool >= []
+        self.week: list = []
         self.offline: bool
+
+    def get_id(self):
+        # print(type(self.name))
+        unicode_points = [ord(ch) for ch in self.name]
+        print(unicode_points)
+        self.id = ''.join(str(point) for point in unicode_points)
+
+
+class MyHash:
+    my_hash_table: list
+    empty: list
+
+    def __init__(self):
+        my_hash_table: list
+        empty: list
+
+    def insert(self, value):
+        # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
+        if not self.empty:
+            id = self.empty[-1]
+        else:
+            id = len(self.my_hash_table)
+        self.my_hash_table.insert(id, value)
+        return id
+
+    def find(self, id):
+        return self.my_hash_table[id]
+
+    def remove(self, id):
+        if id < len(self.my_hash_table):
+            self.my_hash_table[id] = None
+        else:
+            print("hash 删除错误")
 
 
 class BPlusNode:
+    is_leaf: bool  #
+    keys: list  # 保存键
+    values: list  # 保存值
+    next: list  # 如果不是叶子节点next保存下一层节点，否则保存后续节点
+
     def __init__(self, is_leaf=False):
         self.is_leaf: bool = is_leaf
         self.keys = []
@@ -53,7 +97,7 @@ class BPlusNode:
         return len(self.keys)
 
     # 寻找key的值
-    def find_value(self, key) -> int:
+    def find_value(self, key):
         index = self.find_index(key)
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
            因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
@@ -69,6 +113,41 @@ class BPlusNode:
             # print(f"key:{key},next_index:{next_index},keys:{self.keys}")
             # print(f"next[{next_index}].keys:{self.next[next_index].keys}")
             return self.next[next_index].find_value(key)
+
+    def find_prefix_value(self, key):
+        index = self.find_index(key)
+        #print(f"self.keys:{self.keys}")
+        """如果self.keys的长度不为0则说明，那么self是叶子节点，
+           因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
+           所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
+        if self.is_leaf and self.keys[index] == key:
+            value: list = []
+            print("leaf")
+            print(f"self.keys:{self.keys}")
+            while index < len(self.keys):
+                if key in self.keys[index]:
+                    value.append(self.values[index])
+                    index = index + 1
+                else:
+                    return value
+            node = self
+            while True:
+                index = 0
+                node = node.next[0]
+                while index < len(node.keys):
+                    if key in node.keys[index]:
+                        value.append(node.values[index])
+                        index = index + 1
+                    else:
+                        return value
+        elif self.is_leaf:
+            print("leaf")
+            print(f"self.keys:{self.keys}")
+            return None
+        else:
+
+            next_index = self.find_next_index(key)
+            return self.next[next_index].find_prefix_value(key)
 
     # 递归插入
     """如果不是叶子节点则继续深入，否则添加元素。如果添加了元素，则要检查是否超过了树的阶，如果超过了则要分裂产生兄弟节点并将兄弟节点返回
@@ -151,14 +230,14 @@ class BPlusNode:
 
     """如果借了一个元素返回None，如果合并了一个节点返回父节点要删除的元素"""
 
-    def merge_leaves(self, parent,index):
+    def merge_leaves(self, parent, index):
         if parent is None:
             return None
         # 本节点在父节点的索引
         self_index = parent.next.index(self)
         marge_index = self.find_merage_index(parent)
         marge_node = parent.next[marge_index]
-        #print(f"marge_node.keys:{marge_node.keys}")
+        # print(f"marge_node.keys:{marge_node.keys}")
         # 如果有元素可借
         if len(marge_node.keys) > BPlusTree.min_keys:
             # print("borrow")
@@ -174,7 +253,7 @@ class BPlusNode:
                 marge_node.values.pop(0)
             # 如果要向左侧的节点借元素，因为改变了本节点的第一个元素，所以要将在父节点上的索引改为原来的左侧节点的末尾元素（新的第一个元素）
             else:
-                #print(parent.keys)
+                # print(parent.keys)
                 parent_change = parent.keys.index(self.keys[0])
                 del self.keys[index]
                 del self.values[index]
@@ -256,11 +335,11 @@ class BPlusNode:
         if self.is_leaf is False:
             # print(f"key:{key}    next_index:{self.find_next_index(key)}")
             # 如果不是叶子节点则递归深入
-            #print(f"go:{self.keys}")
+            # print(f"go:{self.keys}")
             delete_key = self.next[self.find_next_index(key)].remove(key, self)
         else:
             # 如果是叶子节点，则判断要删除的值是否存在
-            #print(f"go:{self.keys}")
+            # print(f"go:{self.keys}")
             index = self.find_index(key)
             # print(f"index:{index}")
             # 如果不存在返回None
@@ -270,8 +349,8 @@ class BPlusNode:
                 # 如果存在删除keys和value
 
                 # print(self.keys)
-                if len(self.keys) < BPlusTree.min_keys+1:
-                    return self.merge_leaves(parent,index)
+                if len(self.keys) < BPlusTree.min_keys + 1:
+                    return self.merge_leaves(parent, index)
                 else:
                     return None
         # 如果不是叶子节点，且子节点返回了一个要删除的索引，则删除索引
@@ -293,15 +372,15 @@ class BPlusTree:
         self.root = BPlusNode(is_leaf=True)
 
     # 查询，从根节点开始查询
-    def find(self, key):
-        return self.root.find_value(key)
+    def find(self, name):
+        return self.root.find_value(name)
 
     # 插入
     """如果根节点需要发生裂变，则产生一个新的头节点，它的两个next分别指向原根节点和新节点"""
 
     def insert(self, course: Course):
         global carry
-        new_node = self.root.insert(course.id, course)
+        new_node = self.root.insert(course.name, course)
         # print(f"{course.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
@@ -313,19 +392,20 @@ class BPlusTree:
             # print(type(self.root.next))
         # print(f"{course.id}")
 
-    def remove(self, id):
+    def remove(self, name):
         # print(f"root:{self.root.keys}")
-        self.root.remove(id, None)
+        self.root.remove(name, None)
         # 当头节点的索引被全部删除时，它唯一的孩子就是新的头节点
         if len(self.root.keys) == 0:
             self.root = self.root.next[0]
 
     """修改成功返回Ture，失败返回False"""
-    def revise(self,old_value,new_value):
-        if self.find(old_value.id) is not None:
+
+    def revise(self, old_value, new_value):
+        if self.find(old_value.name) is not None:
             # 先插入新值，再删除旧值
             self.insert(new_value)
-            self.remove(old_value.id)
+            self.remove(old_value.name)
             return True
         else:
             return False
@@ -348,28 +428,39 @@ class BPlusTree:
         all_data.extend(node.values)
         return all_data
 
+    def prefix_search(self, name):
+        return self.root.find_prefix_value(name)
+
 
 c = []
 for i in range(0, 2000):
-    c.insert(i, Course(f"{i}"))
+    c.insert(i, Course("str:" + str(i)))
 tree = BPlusTree()
-a = Course(1)
+my_hash = MyHash()
+# a = Course(1)
 # print(tree.find(key=200))
 
 for i in range(0, 500):
     tree.insert(c[i])
+    # my_hash.insert(c[i])
     # print(i)
 for i in range(500, 1001):
     tree.insert(c[i])
+    # my_hash.insert(c[i])
 for i in range(1500, 1000, -1):
     tree.insert(c[i])
-for i in range(0, 100):
+    # my_hash.insert(c[i])
+"""for i in range(0, 100):
     # print(f"remove{i}")
-    tree.remove(f"{i}")
+    tree.remove("str:" + str(i))
 for i in range(1000, 1400):
     # print(f"remove{i}")
-    tree.remove(f"{i}")
+    tree.remove("str:" + str(i))"""
 tree.insert(c[1100])
-tree.revise(c[1100],c[1101])
-print(tree.find(key="9").id)  # 打印查找结果，如果查找成功则打印id,未作非法检验
+tree.revise(c[1100], c[1101])
+"""for i in range(100, 500):
+    print(tree.find(name="str:" + str(i)).name)"""
+print(tree.find(name="str:" + str(1)).name)
+for i in tree.prefix_search(name="str:" + str(10)):
+    print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 tree.get_all_data()

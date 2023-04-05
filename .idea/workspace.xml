@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="get_all_data" />
+    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="revise">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/course.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -82,7 +85,13 @@
       <workItem from="1680168795852" duration="19093000" />
       <workItem from="1680245441656" duration="1428000" />
       <workItem from="1680344059856" duration="439000" />
-      <workItem from="1680519259569" duration="5569000" />
+      <workItem from="1680519259569" duration="5814000" />
+      <workItem from="1680534551640" duration="19000" />
+      <workItem from="1680534940271" duration="11000" />
+      <workItem from="1680567177972" duration="2826000" />
+      <workItem from="1680607941368" duration="6624000" />
+      <workItem from="1680685871420" duration="2000" />
+      <workItem from="1680685937722" duration="4257000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1679021338716</created>
@@ -210,7 +219,28 @@
       <option name="project" value="LOCAL" />
       <updated>1680344471557</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="revise">
+      <created>1680526756369</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1680526756369</updated>
+    </task>
+    <task id="LOCAL-00020" summary="revise">
+      <created>1680613910040</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1680613910040</updated>
+    </task>
+    <task id="LOCAL-00021" summary="str">
+      <created>1680613927045</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1680613927045</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,7 +266,8 @@
     <MESSAGE value="remove" />
     <MESSAGE value="get_all_data" />
     <MESSAGE value="revise" />
-    <option name="LAST_COMMIT_MESSAGE" value="revise" />
+    <MESSAGE value="str" />
+    <option name="LAST_COMMIT_MESSAGE" value="str" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -250,11 +281,8 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/data_structure$course.coverage" NAME="course 覆盖结果" MODIFIED="1680237462515" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/data_structure$course_doc__1_.coverage" NAME="course_doc (1) 覆盖结果" MODIFIED="1680523769661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GRE1$test.coverage" NAME="test 覆盖结果" MODIFIED="1679022473060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.idea" />
-    <SUITE FILE_PATH="coverage/data_structure$Flask__course_doc_py_.coverage" NAME="Flask (course_doc.py) 覆盖结果" MODIFIED="1680106989908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1680093719240" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GRE1$test1.coverage" NAME="test1 覆盖结果" MODIFIED="1679021597990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1680690240386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GRE1$test.coverage" NAME="test 覆盖结果" MODIFIED="1679022473060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.idea" />
   </component>
 </project>
