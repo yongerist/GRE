@@ -2,24 +2,36 @@ from flask import Flask, request, jsonify, redirect, url_for, render_template
 import pickle
 from course import Course, BPlusNode, BPlusTree
 import os
+import string
 
 app = Flask(__name__)
 
 
 # 接收post请求，展示课程列表
-@app.route('/course_list', methods=['GET'])
+@app.route('/course_list', methods=['GET', 'POST'])
 def course_list():
-    # 首先判断文件是否为空
-    if os.path.getsize('course_data.pkl') > 0:
-        with open('course_data.pkl', 'rb') as f:
-            # 将文件中的二进制数据转换成python对象
-            tree = pickle.load(f)
-        # 返回B+树叶子节点的信息
-        return tree.get_all_data
-
-    # 文件为空时，返回失败响应
+    # 打开网页时展示课程列表
+    if request.method == 'GET':
+        # 首先判断文件是否为空
+        if os.path.getsize('course_data.pkl') > 0:
+            with open('course_data.pkl', 'rb') as f:
+                # 将文件中的二进制数据转换成python对象
+                tree = pickle.load(f)
+            # 返回B+树叶子节点的信息
+            return render_template('course_list.html', target_course=tree.get_all_data)
+        # 文件为空时，返回失败响应
+        else:
+            return jsonify({"error": "An error occurred."}), 500  # 500为http状态码，表示无法完成请求
+    # 输入待查询课程名时
     else:
-        return jsonify({"error": "An error occurred."}), 500  # 500为http状态码，表示无法完成请求
+        name = request.form.get('name')
+        if os.path.getsize('course_data.pkl') > 0:
+            with open('course_data.pkl', 'rb') as f:
+                tree = pickle.load(f)
+            # 返回模糊查找结果列表
+            return render_template('course_search.html', target_course=tree.prefix_search(name))
+        else:
+            return jsonify({"error": "An error occurred."}), 500  # 500为http状态码，表示无法完成请求
 
 
 # 接收post请求，执行课程增添
@@ -102,7 +114,8 @@ def course_revise(course_id):
             offline = request.form.get("offline")
 
             # 创建新结点
-            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week,offline=offline)
+            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week,
+                                 offline=offline)
 
             # 打开文件加载数据
             with open('course_data.pkl', 'rb') as f:
