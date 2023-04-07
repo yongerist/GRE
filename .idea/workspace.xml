@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="prefix_search">
+    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment=".gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/course.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +93,10 @@
       <workItem from="1680685871420" duration="2000" />
       <workItem from="1680685937722" duration="4455000" />
       <workItem from="1680694508964" duration="2000" />
+      <workItem from="1680703887964" duration="147000" />
+      <workItem from="1680704114233" duration="619000" />
+      <workItem from="1680745859756" duration="2007000" />
+      <workItem from="1680752676239" duration="339000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1679021338716</created>
@@ -247,7 +252,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680690459755</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary=".gitignore">
+      <created>1680704018687</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1680704018688</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -275,7 +287,8 @@
     <MESSAGE value="revise" />
     <MESSAGE value="str" />
     <MESSAGE value="prefix_search" />
-    <option name="LAST_COMMIT_MESSAGE" value="prefix_search" />
+    <MESSAGE value=".gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value=".gitignore" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

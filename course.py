@@ -53,13 +53,21 @@ class MyHash:
         return id
 
     def find(self, id):
-        return self.my_hash_table[id]
+        if id < len(self.my_hash_table):
+            return self.my_hash_table[id]
+        else:
+            return None
 
     def remove(self, id):
         if id < len(self.my_hash_table):
             self.my_hash_table[id] = None
         else:
             print("hash 删除错误")
+
+    def revise(self, old_course, new_course):
+        if self.find(old_course) is not None:
+            self.remove(old_course.id)
+            self.insert(new_course)
 
 
 class BPlusNode:
@@ -116,7 +124,7 @@ class BPlusNode:
 
     def find_prefix_value(self, key):
         index = self.find_index(key)
-        #print(f"self.keys:{self.keys}")
+        # print(f"self.keys:{self.keys}")
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
            因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
@@ -430,6 +438,42 @@ class BPlusTree:
 
     def prefix_search(self, name):
         return self.root.find_prefix_value(name)
+
+
+class User:
+    
+    tree: BPlusTree
+    table: MyHash
+
+    def __init__(self, tree, table):
+        self.tree = tree
+        self.table = table
+
+    def find_by_name(self, name):
+        return self.tree.find(name)
+
+    def prefix_search(self, name):
+        return self.tree.prefix_search(name)
+
+    def find_by_id(self, id):
+        return self.table.find(id)
+
+
+class Teacher(User):
+    def insert(self, course):
+        self.tree.insert(course)
+        self.table.insert(course)
+
+    def remove(self, course):
+        self.tree.remove(course.name)
+        self.table.remove(course.id)
+
+    def revise(self, old_course, new_course):
+        self.tree.revise(old_course, new_course)
+        self.table.revise(old_course, new_course)
+
+# class Student(User):
+
 
 
 c = []
