@@ -6,19 +6,23 @@ carry: string
 class Course:
     name: string
     id: string
+    day: int
     begin_time: int
     duration: int
     week: list
     offline: bool
+    student: list
 
     # id:,name:
-    def __int__(self, name, begin_time, duration, week, offline):
+    def __int__(self, name, day, begin_time, duration, week, offline, student):
         self.name: string = name
         self.id: string
+        self.day = day
         self.begin_time: int = begin_time
         self.duration: int = duration
         self.week: list < bool >= week
         self.offline: bool = offline
+        self.student = student
 
     def __init__(self, name):
         self.name: string = name
@@ -46,21 +50,21 @@ class MyHash:
     def insert(self, value):
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
         if not self.empty:
-            id = self.empty[-1]
+            hash_id = self.empty[-1]
         else:
-            id = len(self.my_hash_table)
-        self.my_hash_table.insert(id, value)
-        return id
+            hash_id = len(self.my_hash_table)
+        self.my_hash_table.insert(hash_id, value)
+        value.id = hash_id
 
-    def find(self, id):
-        if id < len(self.my_hash_table):
-            return self.my_hash_table[id]
+    def find(self, hash_id):
+        if hash_id < len(self.my_hash_table):
+            return self.my_hash_table[hash_id]
         else:
             return None
 
-    def remove(self, id):
-        if id < len(self.my_hash_table):
-            self.my_hash_table[id] = None
+    def remove(self, hash_id):
+        if hash_id < len(self.my_hash_table):
+            self.my_hash_table[hash_id] = None
         else:
             print("hash 删除错误")
 
@@ -220,7 +224,7 @@ class BPlusNode:
 
     """判断要向哪个节点合并或借元素"""
 
-    def find_merage_index(self, parent):
+    def find_merge_index(self, parent):
         self_index = parent.next.index(self)
         # print(f"self_index:{self_index} len(parent.next):{len(parent.next)} parent.keys:{parent.keys}")
         # 如果本节点的索引是0，则合并右侧节点
@@ -243,7 +247,7 @@ class BPlusNode:
             return None
         # 本节点在父节点的索引
         self_index = parent.next.index(self)
-        marge_index = self.find_merage_index(parent)
+        marge_index = self.find_merge_index(parent)
         marge_node = parent.next[marge_index]
         # print(f"marge_node.keys:{marge_node.keys}")
         # 如果有元素可借
@@ -298,7 +302,7 @@ class BPlusNode:
         # 本节点在父节点的索引
         # print(f"parent.keys:{parent.keys},len(parent.next):{len(parent.next)}")
         self_index = parent.next.index(self)
-        marge_index = self.find_merage_index(parent)
+        marge_index = self.find_merge_index(parent)
         marge_node = parent.next[marge_index]
         # 如果有元素可借
         # print(marge_node.keys)
@@ -441,70 +445,116 @@ class BPlusTree:
 
 
 class User:
-    
-    tree: BPlusTree
-    table: MyHash
+    name: string
+    id: int
+    course_tree: BPlusTree
+    course_table: MyHash  # 每一个用户都可以从所有的课程冲查询
 
-    def __init__(self, tree, table):
-        self.tree = tree
-        self.table = table
+    def __init__(self, name, user_id, tree, table):
+        self.name = name
+        self.id = user_id
+        self.course_tree = tree
+        self.course_table = table
 
+    # 通过名称查找
     def find_by_name(self, name):
-        return self.tree.find(name)
+        return self.course_tree.find(name)
 
+    # 通过名称的前缀查找
     def prefix_search(self, name):
-        return self.tree.prefix_search(name)
+        return self.course_tree.prefix_search(name)
 
-    def find_by_id(self, id):
-        return self.table.find(id)
+    # 通过id查找
+    def find_by_id(self, hash_id):
+        return self.course_table.find(hash_id)
 
 
 class Teacher(User):
+    student_table: MyHash
+
+    def __init__(self, name, teacher_id, student_table, course_tree, course_table):
+        super().__init__(name, teacher_id, course_tree, course_table)
+        self.student_table = student_table
+
     def insert(self, course):
-        self.tree.insert(course)
-        self.table.insert(course)
+        self.course_tree.insert(course)
+        self.course_table.insert(course)
+        for st in course.student:
+            self.student_table.find(st).course.append(course)
 
     def remove(self, course):
-        self.tree.remove(course.name)
-        self.table.remove(course.id)
+        self.course_tree.remove(course.name)
+        self.course_table.remove(course.id)
 
     def revise(self, old_course, new_course):
-        self.tree.revise(old_course, new_course)
-        self.table.revise(old_course, new_course)
-
-# class Student(User):
+        self.course_tree.revise(old_course, new_course)
+        self.course_table.revise(old_course, new_course)
 
 
+class Student(User):
+    course: list  # 每个学生自己的课程
 
-c = []
+    def __init__(self, name, student_id, course_tree, course_table):
+        super().__init__(name, student_id, course_tree, course_table)
+        self.course = []
+
+    def sort_by_time(self):
+        course_list = []
+        dic = {}
+        for cour in self.course:
+            dic[cour.begintime + cour.day * 100] = cour
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
+
+    def sort_by_name(self):
+        course_list = []
+        dic = {}
+        for cour in self.course:
+            dic[cour.name] = cour
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
+
+    def sort_by_id(self):
+        course_list = []
+        dic = {}
+        for cour in self.course:
+            dic[cour.id] = cour
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
+
+
+"""c = []
 for i in range(0, 2000):
     c.insert(i, Course("str:" + str(i)))
-tree = BPlusTree()
+course_tree = BPlusTree()
 my_hash = MyHash()
 # a = Course(1)
 # print(tree.find(key=200))
 
 for i in range(0, 500):
-    tree.insert(c[i])
+    course_tree.insert(c[i])
     # my_hash.insert(c[i])
     # print(i)
 for i in range(500, 1001):
-    tree.insert(c[i])
+    course_tree.insert(c[i])
     # my_hash.insert(c[i])
 for i in range(1500, 1000, -1):
-    tree.insert(c[i])
+    course_tree.insert(c[i])
     # my_hash.insert(c[i])
-"""for i in range(0, 100):
+for i in range(0, 100):
     # print(f"remove{i}")
     tree.remove("str:" + str(i))
 for i in range(1000, 1400):
     # print(f"remove{i}")
-    tree.remove("str:" + str(i))"""
-tree.insert(c[1100])
-tree.revise(c[1100], c[1101])
-"""for i in range(100, 500):
-    print(tree.find(name="str:" + str(i)).name)"""
-print(tree.find(name="str:" + str(1)).name)
-for i in tree.prefix_search(name="str:" + str(10)):
+    tree.remove("str:" + str(i))
+course_tree.insert(c[1100])
+course_tree.revise(c[1100], c[1101])
+for i in range(100, 500):
+    print(tree.find(name="str:" + str(i)).name)
+print(course_tree.find(name="str:" + str(1)).name)
+for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
-tree.get_all_data()
+course_tree.get_all_data()"""
