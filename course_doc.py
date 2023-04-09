@@ -1,33 +1,85 @@
-from flask import Flask, request, jsonify, redirect, url_for, render_template
+from flask import Flask, request, jsonify, redirect, url_for, render_template, g
 import pickle
-from course import Course, BPlusNode, BPlusTree
+from course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement
 import os
 import string
 
 app = Flask(__name__)
 
 
+def load_tree_data():
+    # 用于读取数据
+    with open('course_tree.pkl', 'rb') as f:
+        # 将文件中的二进制数据转换成python对象
+        tree_data = pickle.load(f)
+    # 返回一个B+树
+    return tree_data
+
+
+def write_tree_data(data):
+    # 用于写入数据
+    with open('course_tree.pkl', 'wb') as f:
+        pickle.dump(data, f)
+
+
+def load_hash_data():
+    # 用于读取数据
+    with open('course_hash.pkl', 'rb') as f:
+        # 将文件中的二进制数据转换成python对象
+        hash_data = pickle.load(f)
+    # 返回一个哈希表
+    return hash_data
+
+
+def write_hash_data(data):
+    # 用于写入数据
+    with open('course_hash.pkl', 'wb') as f:
+        pickle.dump(data, f)
+
+
+def load_usr_data():
+    # 用于读取数据
+    with open('usr_hash.pkl', 'rb') as f:
+        # 将文件中的二进制数据转换成python对象
+        usr_data = pickle.load(f)
+    # 返回一个哈希表
+    return usr_data
+
+
+def write_usr_data(data):
+    # 用于写入数据
+    with open('usr_hash.pkl', 'wb') as f:
+        pickle.dump(data, f)
+
+
+# 接收请求前
+@app.before_request
+def before_request():
+    # 使用g对象存储文件数据
+    g.tree = load_tree_data()
+    g.course_hash = load_hash_data()
+    g.usr_hash = load_usr_data()
+    management = UserManagement(g.user_hash)
+    g.usr = management.login()
+
+
 # 接收post请求，展示课程列表
-@app.route('/course_list', methods=['GET', 'POST'])
+@app.route('/User/course/list', methods=['GET', 'POST'])
 def course_list():
     # 打开网页时展示课程列表
     if request.method == 'GET':
         # 首先判断文件是否为空
-        if os.path.getsize('course_data.pkl') > 0:
-            with open('course_data.pkl', 'rb') as f:
-                # 将文件中的二进制数据转换成python对象
-                tree = pickle.load(f)
+        if os.path.getsize('course_tree.pkl') > 0:
             # 返回B+树叶子节点的信息
-            return render_template('course_list.html', target_course=tree.get_all_data)
+            return render_template('course_list.html', target_course=g.data.get_all_data)
         # 文件为空时，返回失败响应
         else:
             return jsonify({"error": "An error occurred."}), 500  # 500为http状态码，表示无法完成请求
     # 输入待查询课程名时
     else:
         name = request.form.get('name')
-        if os.path.getsize('course_data.pkl') > 0:
-            with open('course_data.pkl', 'rb') as f:
-                tree = pickle.load(f)
+        type_search = request.form.get('type_search')
+        if os.path.getsize('course_tree.pkl') > 0:
             # 返回模糊查找结果列表
             return render_template('course_search.html', target_course=tree.prefix_search(name))
         else:
@@ -53,8 +105,8 @@ def course_add():
             # 读取文件
 
             # 首先判断文件是否为空
-            if os.path.getsize('course_data.pkl') > 0:
-                with open('course_data.pkl', 'rb') as f:
+            if os.path.getsize('course_tree.pkl') > 0:
+                with open('course_tree.pkl', 'rb') as f:
                     data = pickle.load(f)
 
                 # 将post请求中的course对象插入到B+树中
@@ -66,7 +118,7 @@ def course_add():
                 data = tree.insert(course)
 
             # 将改动后的B+树存入文件
-            with open('course_data.pkl', 'wb') as f:
+            with open('course_tree.pkl', 'wb') as f:
                 # 将data转化为二进制数据传入文件
                 pickle.dump(data, f)
 
@@ -84,15 +136,15 @@ def course_add():
 @app.route('/course_list/<string:id_>/del')
 def course_del(id_):
     # 首先判断文件是否为空
-    if os.path.getsize('course_data.pkl') > 0:
-        with open('course_data.pkl', 'rb') as f:
+    if os.path.getsize('course_tree.pkl') > 0:
+        with open('course_tree.pkl', 'rb') as f:
             data = pickle.load(f)
 
         # 删除该id对应课程
         data.remove(id_)
 
         # 将改动后的树重新存入文件
-        with open('course_data.pkl', 'wb') as f:
+        with open('course_tree.pkl', 'wb') as f:
             pickle.dump(data, f)
 
         # 重定向到课程列表
@@ -118,7 +170,7 @@ def course_revise(course_id):
                                  offline=offline)
 
             # 打开文件加载数据
-            with open('course_data.pkl', 'rb') as f:
+            with open('course_tree.pkl', 'rb') as f:
                 data = pickle.load(f)
 
             # 查找需要修改的结点
@@ -128,7 +180,7 @@ def course_revise(course_id):
             data.revise(course_pre, course_post)
 
             # 将改动后的数据存入文件
-            with open('course_data.pkl', 'wb') as f:
+            with open('course_tree.pkl', 'wb') as f:
                 pickle.dump(data, f)
 
             # 返回课程列表
