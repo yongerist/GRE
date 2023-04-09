@@ -1,7 +1,5 @@
 import string
 
-carry: string
-
 
 class Course:
     name: string
@@ -390,9 +388,9 @@ class BPlusTree:
     # 插入
     """如果根节点需要发生裂变，则产生一个新的头节点，它的两个next分别指向原根节点和新节点"""
 
-    def insert(self, course: Course):
+    def insert(self, value):
         global carry
-        new_node = self.root.insert(course.name, course)
+        new_node = self.root.insert(value.name, value)
         # print(f"{course.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
@@ -447,33 +445,23 @@ class BPlusTree:
 class User:
     name: string
     id: int
-    course_tree: BPlusTree
-    course_table: MyHash  # 每一个用户都可以从所有的课程冲查询
+    academy: string
 
-    def __init__(self, name, user_id, tree, table):
+    def __init__(self, name, user_id, academy):
         self.name = name
         self.id = user_id
-        self.course_tree = tree
-        self.course_table = table
-
-    # 通过名称查找
-    def find_by_name(self, name):
-        return self.course_tree.find(name)
-
-    # 通过名称的前缀查找
-    def prefix_search(self, name):
-        return self.course_tree.prefix_search(name)
-
-    # 通过id查找
-    def find_by_id(self, hash_id):
-        return self.course_table.find(hash_id)
+        self.academy = academy
 
 
 class Teacher(User):
     student_table: MyHash
+    course_tree: BPlusTree
+    course_table: MyHash
 
-    def __init__(self, name, teacher_id, student_table, course_tree, course_table):
-        super().__init__(name, teacher_id, course_tree, course_table)
+    def __init__(self, name, teacher_id, student_table, academy, course_tree, course_table):
+        super().__init__(name, teacher_id, academy)
+        self.course_table = course_table
+        self.course_tree = course_tree
         self.student_table = student_table
 
     def insert(self, course):
@@ -490,12 +478,28 @@ class Teacher(User):
         self.course_tree.revise(old_course, new_course)
         self.course_table.revise(old_course, new_course)
 
+    # 通过名称查找
+    def find_by_name(self, name):
+        return self.course_tree.find(name)
+
+    # 通过名称的前缀查找
+    def prefix_search(self, name):
+        return self.course_tree.prefix_search(name)
+
+    # 通过id查找
+    def find_by_id(self, hash_id):
+        return self.course_table.find(hash_id)
+
 
 class Student(User):
     course: list  # 每个学生自己的课程
+    student_class: int
+    majors: string
 
-    def __init__(self, name, student_id, course_tree, course_table):
-        super().__init__(name, student_id, course_tree, course_table)
+    def __init__(self, name, student_id, academy, student_class, majors):
+        super().__init__(name, student_id, academy)
+        self.student_class = student_class
+        self.majors = majors
         self.course = []
 
     def sort_by_time(self):
@@ -546,14 +550,14 @@ for i in range(1500, 1000, -1):
     # my_hash.insert(c[i])
 for i in range(0, 100):
     # print(f"remove{i}")
-    tree.remove("str:" + str(i))
+    course_tree.remove("str:" + str(i))
 for i in range(1000, 1400):
     # print(f"remove{i}")
-    tree.remove("str:" + str(i))
+    course_tree.remove("str:" + str(i))
 course_tree.insert(c[1100])
 course_tree.revise(c[1100], c[1101])
 for i in range(100, 500):
-    print(tree.find(name="str:" + str(i)).name)
+    print(course_tree.find(name="str:" + str(i)).name)
 print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
