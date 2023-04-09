@@ -445,30 +445,34 @@ class BPlusTree:
 class User:
     name: string
     id: int
+    password: string
     academy: string
+    is_student: bool
 
-    def __init__(self, name, user_id, academy):
+    def __init__(self, name, user_id, password, academy):
         self.name = name
         self.id = user_id
+        self.password = password
         self.academy = academy
 
 
 class Teacher(User):
-    student_table: MyHash
+    user_table: MyHash
     course_tree: BPlusTree
     course_table: MyHash
 
-    def __init__(self, name, teacher_id, student_table, academy, course_tree, course_table):
+    def __init__(self, name, teacher_id, academy, course_tree, course_table,user_table):
         super().__init__(name, teacher_id, academy)
         self.course_table = course_table
         self.course_tree = course_tree
-        self.student_table = student_table
+        self.is_student = False
+        self.user_table=user_table
 
     def insert(self, course):
         self.course_tree.insert(course)
         self.course_table.insert(course)
         for st in course.student:
-            self.student_table.find(st).course.append(course)
+            self.user_table.find(st).course.append(course)
 
     def remove(self, course):
         self.course_tree.remove(course.name)
@@ -501,6 +505,7 @@ class Student(User):
         self.student_class = student_class
         self.majors = majors
         self.course = []
+        self.is_student = True
 
     def sort_by_time(self):
         course_list = []
@@ -528,6 +533,26 @@ class Student(User):
         for key in sorted(dic):
             course_list.append(dic[key])
         return course_list
+
+
+class UserManagement:
+    user_table: MyHash
+
+    def sign_up_teacher(self, name, teacher_id, academy, course_tree, course_table):
+        teacher = Teacher(name, teacher_id, academy, course_tree, course_table,self.user_table)
+        self.user_table.insert(teacher)
+
+    def sign_up_student(self, name, student_id, academy, student_class, majors):
+        student = Student(name, student_id, academy, student_class, majors)
+        self.user_table.insert(student)
+
+    # 登陆成功返回用户，不成功返回None
+    def login(self, user_id, password):
+        user = self.user_table.find(user_id)
+        if password == user.password:
+            return user
+        else:
+            return None
 
 
 """c = []
