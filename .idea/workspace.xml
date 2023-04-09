@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="USER">
+    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="usermanagemnet">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/course.py" afterDir="false" />
     </list>
@@ -128,7 +128,7 @@
       <workItem from="1680752676239" duration="339000" />
       <workItem from="1680841164620" duration="21000" />
       <workItem from="1680912156267" duration="3834000" />
-      <workItem from="1681016985343" duration="3169000" />
+      <workItem from="1681016985343" duration="5015000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1679021338716</created>
@@ -312,7 +312,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681018551815</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="usermanagemnet">
+      <created>1681020465898</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1681020465898</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -342,7 +349,8 @@
     <MESSAGE value="prefix_search" />
     <MESSAGE value=".gitignore" />
     <MESSAGE value="USER" />
-    <option name="LAST_COMMIT_MESSAGE" value="USER" />
+    <MESSAGE value="usermanagemnet" />
+    <option name="LAST_COMMIT_MESSAGE" value="usermanagemnet" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -357,7 +365,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GRE1$test1.coverage" NAME="test1 覆盖结果" MODIFIED="1679021597990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1681018879789" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1681023442487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GRE1$test.coverage" NAME="test 覆盖结果" MODIFIED="1679022473060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.idea" />
   </component>
 </project>

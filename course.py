@@ -22,13 +22,14 @@ class Course:
         self.offline: bool = offline
         self.student = student
 
-    def __init__(self, name):
+    def __init__(self, name, student):
         self.name: string = name
         self.id: string
         self.begin_time: int
         self.duration: int
         self.week: list = []
         self.offline: bool
+        self.student = student
 
     def get_id(self):
         # print(type(self.name))
@@ -38,12 +39,12 @@ class Course:
 
 
 class MyHash:
-    my_hash_table: list
-    empty: list
+    my_hash_table: list = []
+    empty: list = []
 
     def __init__(self):
-        my_hash_table: list
-        empty: list
+        my_hash_table: list = []
+        empty: list = []
 
     def insert(self, value):
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
@@ -70,6 +71,12 @@ class MyHash:
         if self.find(old_course) is not None:
             self.remove(old_course.id)
             self.insert(new_course)
+
+    def empty(self):
+        if len(self.my_hash_table) == 0:
+            return True
+        else:
+            return False
 
 
 class BPlusNode:
@@ -449,9 +456,8 @@ class User:
     academy: string
     is_student: bool
 
-    def __init__(self, name, user_id, password, academy):
+    def __init__(self, name, password, academy):
         self.name = name
-        self.id = user_id
         self.password = password
         self.academy = academy
 
@@ -461,12 +467,12 @@ class Teacher(User):
     course_tree: BPlusTree
     course_table: MyHash
 
-    def __init__(self, name, teacher_id, academy, course_tree, course_table,user_table):
-        super().__init__(name, teacher_id, academy)
+    def __init__(self, name, password, academy, course_tree, course_table, user_table):
+        super().__init__(name, password, academy)
         self.course_table = course_table
         self.course_tree = course_tree
         self.is_student = False
-        self.user_table=user_table
+        self.user_table = user_table
 
     def insert(self, course):
         self.course_tree.insert(course)
@@ -500,8 +506,8 @@ class Student(User):
     student_class: int
     majors: string
 
-    def __init__(self, name, student_id, academy, student_class, majors):
-        super().__init__(name, student_id, academy)
+    def __init__(self, name, password, academy, student_class, majors):
+        super().__init__(name, password, academy)
         self.student_class = student_class
         self.majors = majors
         self.course = []
@@ -538,12 +544,15 @@ class Student(User):
 class UserManagement:
     user_table: MyHash
 
-    def sign_up_teacher(self, name, teacher_id, academy, course_tree, course_table):
-        teacher = Teacher(name, teacher_id, academy, course_tree, course_table,self.user_table)
+    def __init__(self, user_table):
+        self.user_table = user_table
+
+    def sign_up_teacher(self, name, password, academy, course_tree, course_table):
+        teacher = Teacher(name, password, academy, course_tree, course_table, self.user_table)
         self.user_table.insert(teacher)
 
-    def sign_up_student(self, name, student_id, academy, student_class, majors):
-        student = Student(name, student_id, academy, student_class, majors)
+    def sign_up_student(self, name, password, academy, student_class, majors):
+        student = Student(name, password, academy, student_class, majors)
         self.user_table.insert(student)
 
     # 登陆成功返回用户，不成功返回None
@@ -554,6 +563,22 @@ class UserManagement:
         else:
             return None
 
+
+# 先把课程的B+树、哈希，和学生的哈希读出来
+course_tree = BPlusTree()
+course_table = MyHash()
+user_table = MyHash()
+# 实例化用户管理对象
+user_management = UserManagement(user_table)
+# 注册
+user_management.sign_up_teacher("teacher", "000", "1", course_tree, course_table)
+user_management.sign_up_student("student1", "111", '1', "1", "0")
+# 登录
+teacher = user_management.login(0, "000")
+student = user_management.login(1, "111")
+# 面向用户操作
+teacher.insert(Course("computer", [1]))
+print(student.sort_by_name()[0].name)
 
 """c = []
 for i in range(0, 2000):
