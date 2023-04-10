@@ -1,7 +1,5 @@
 import string
 
-carry: string
-
 
 class Course:
     name: string
@@ -24,13 +22,14 @@ class Course:
         self.offline: bool = offline
         self.student = student
 
-    def __init__(self, name):
+    def __init__(self, name, student):
         self.name: string = name
         self.id: string
         self.begin_time: int
         self.duration: int
         self.week: list = []
         self.offline: bool
+        self.student = student
 
     def get_id(self):
         # print(type(self.name))
@@ -40,12 +39,12 @@ class Course:
 
 
 class MyHash:
-    my_hash_table: list
-    empty: list
+    my_hash_table: list = []
+    empty: list = []
 
     def __init__(self):
-        my_hash_table: list
-        empty: list
+        my_hash_table: list = []
+        empty: list = []
 
     def insert(self, value):
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
@@ -72,6 +71,12 @@ class MyHash:
         if self.find(old_course) is not None:
             self.remove(old_course.id)
             self.insert(new_course)
+
+    def empty(self):
+        if len(self.my_hash_table) == 0:
+            return True
+        else:
+            return False
 
 
 class BPlusNode:
@@ -390,9 +395,9 @@ class BPlusTree:
     # 插入
     """如果根节点需要发生裂变，则产生一个新的头节点，它的两个next分别指向原根节点和新节点"""
 
-    def insert(self, course: Course):
+    def insert(self, value):
         global carry
-        new_node = self.root.insert(course.name, course)
+        new_node = self.root.insert(value.name, value)
         # print(f"{course.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
@@ -447,14 +452,41 @@ class BPlusTree:
 class User:
     name: string
     id: int
-    course_tree: BPlusTree
-    course_table: MyHash  # 每一个用户都可以从所有的课程冲查询
+    password: string
+    academy: string
+    is_student: bool
 
-    def __init__(self, name, user_id, tree, table):
+    def __init__(self, name, password, academy):
         self.name = name
-        self.id = user_id
-        self.course_tree = tree
-        self.course_table = table
+        self.password = password
+        self.academy = academy
+
+
+class Teacher(User):
+    user_table: MyHash
+    course_tree: BPlusTree
+    course_table: MyHash
+
+    def __init__(self, name, password, academy, course_tree, course_table, user_table):
+        super().__init__(name, password, academy)
+        self.course_table = course_table
+        self.course_tree = course_tree
+        self.is_student = False
+        self.user_table = user_table
+
+    def insert(self, course):
+        self.course_tree.insert(course)
+        self.course_table.insert(course)
+        for st in course.student:
+            self.user_table.find(st).course.append(course)
+
+    def remove(self, course):
+        self.course_tree.remove(course.name)
+        self.course_table.remove(course.id)
+
+    def revise(self, old_course, new_course):
+        self.course_tree.revise(old_course, new_course)
+        self.course_table.revise(old_course, new_course)
 
     # 通过名称查找
     def find_by_name(self, name):
@@ -469,34 +501,17 @@ class User:
         return self.course_table.find(hash_id)
 
 
-class Teacher(User):
-    student_table: MyHash
-
-    def __init__(self, name, teacher_id, student_table, course_tree, course_table):
-        super().__init__(name, teacher_id, course_tree, course_table)
-        self.student_table = student_table
-
-    def insert(self, course):
-        self.course_tree.insert(course)
-        self.course_table.insert(course)
-        for st in course.student:
-            self.student_table.find(st).course.append(course)
-
-    def remove(self, course):
-        self.course_tree.remove(course.name)
-        self.course_table.remove(course.id)
-
-    def revise(self, old_course, new_course):
-        self.course_tree.revise(old_course, new_course)
-        self.course_table.revise(old_course, new_course)
-
-
 class Student(User):
     course: list  # 每个学生自己的课程
+    student_class: int
+    majors: string
 
-    def __init__(self, name, student_id, course_tree, course_table):
-        super().__init__(name, student_id, course_tree, course_table)
+    def __init__(self, name, password, academy, student_class, majors):
+        super().__init__(name, password, academy)
+        self.student_class = student_class
+        self.majors = majors
         self.course = []
+        self.is_student = True
 
     def sort_by_time(self):
         course_list = []
@@ -526,6 +541,45 @@ class Student(User):
         return course_list
 
 
+class UserManagement:
+    user_table: MyHash
+
+    def __init__(self, user_table):
+        self.user_table = user_table
+
+    def sign_up_teacher(self, name, password, academy, course_tree, course_table):
+        teacher = Teacher(name, password, academy, course_tree, course_table, self.user_table)
+        self.user_table.insert(teacher)
+
+    def sign_up_student(self, name, password, academy, student_class, majors):
+        student = Student(name, password, academy, student_class, majors)
+        self.user_table.insert(student)
+
+    # 登陆成功返回用户，不成功返回None
+    def login(self, user_id, password):
+        user = self.user_table.find(user_id)
+        if password == user.password:
+            return user
+        else:
+            return None
+
+
+# 先把课程的B+树、哈希，和学生的哈希读出来
+course_tree = BPlusTree()
+course_table = MyHash()
+user_table = MyHash()
+# 实例化用户管理对象
+user_management = UserManagement(user_table)
+# 注册
+user_management.sign_up_teacher("teacher", "000", "1", course_tree, course_table)
+user_management.sign_up_student("student1", "111", '1', "1", "0")
+# 登录
+teacher = user_management.login(0, "000")
+student = user_management.login(1, "111")
+# 面向用户操作
+teacher.insert(Course("computer", [1]))
+print(student.sort_by_name()[0].name)
+
 """c = []
 for i in range(0, 2000):
     c.insert(i, Course("str:" + str(i)))
@@ -546,14 +600,14 @@ for i in range(1500, 1000, -1):
     # my_hash.insert(c[i])
 for i in range(0, 100):
     # print(f"remove{i}")
-    tree.remove("str:" + str(i))
+    course_tree.remove("str:" + str(i))
 for i in range(1000, 1400):
     # print(f"remove{i}")
-    tree.remove("str:" + str(i))
+    course_tree.remove("str:" + str(i))
 course_tree.insert(c[1100])
 course_tree.revise(c[1100], c[1101])
 for i in range(100, 500):
-    print(tree.find(name="str:" + str(i)).name)
+    print(course_tree.find(name="str:" + str(i)).name)
 print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
