@@ -1,0 +1,19 @@
+[[source]]
+url = "http://pypi.doubanio.com/simple"
+verify_ssl = false
+name = "pip_conf_index_global"
+
+[packages]
+flask = "*"
+python-dotenv = "*"
+flask-wtf = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-login = "*"
+email-validator = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+python_full_version = "3.9.7"
