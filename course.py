@@ -450,68 +450,17 @@ class BPlusTree:
 
 
 class User:
-    name: string
+    username: string
     id: int
-    password: string
+    userNumber:int
+    email: string
     academy: string
-    is_student: bool
+    course: list
 
-    def __init__(self, name, password, academy):
-        self.name = name
-        self.password = password
-        self.academy = academy
-
-
-class Teacher(User):
-    user_table: MyHash
-    course_tree: BPlusTree
-    course_table: MyHash
-
-    def __init__(self, name, password, academy, course_tree, course_table, user_table):
-        super().__init__(name, password, academy)
-        self.course_table = course_table
-        self.course_tree = course_tree
-        self.is_student = False
-        self.user_table = user_table
-
-    def insert(self, course):
-        self.course_tree.insert(course)
-        self.course_table.insert(course)
-        for st in course.student:
-            self.user_table.find(st).course.append(course)
-
-    def remove(self, course):
-        self.course_tree.remove(course.name)
-        self.course_table.remove(course.id)
-
-    def revise(self, old_course, new_course):
-        self.course_tree.revise(old_course, new_course)
-        self.course_table.revise(old_course, new_course)
-
-    # 通过名称查找
-    def find_by_name(self, name):
-        return self.course_tree.find(name)
-
-    # 通过名称的前缀查找
-    def prefix_search(self, name):
-        return self.course_tree.prefix_search(name)
-
-    # 通过id查找
-    def find_by_id(self, hash_id):
-        return self.course_table.find(hash_id)
-
-
-class Student(User):
-    course: list  # 每个学生自己的课程
-    student_class: int
-    majors: string
-
-    def __init__(self, name, password, academy, student_class, majors):
-        super().__init__(name, password, academy)
-        self.student_class = student_class
-        self.majors = majors
-        self.course = []
-        self.is_student = True
+    def __init__(self, username, email,userNumber):
+        self.username = username
+        self.email = email
+        self.userNumber = userNumber
 
     def sort_by_time(self):
         course_list = []
@@ -547,13 +496,9 @@ class UserManagement:
     def __init__(self, user_table):
         self.user_table = user_table
 
-    def sign_up_teacher(self, name, password, academy, course_tree, course_table):
-        teacher = Teacher(name, password, academy, course_tree, course_table, self.user_table)
-        self.user_table.insert(teacher)
-
-    def sign_up_student(self, name, password, academy, student_class, majors):
-        student = Student(name, password, academy, student_class, majors)
-        self.user_table.insert(student)
+    def user_init(self, username, email,userNumber):
+        user = User(username, email,userNumber)
+        self.user_table.insert(user)
 
     # 登陆成功返回用户，不成功返回None
     def login(self, user_id, password):
@@ -565,7 +510,7 @@ class UserManagement:
 
 
 # 先把课程的B+树、哈希，和学生的哈希读出来
-course_tree = BPlusTree()
+"""rse_tree = BPlusTree()
 course_table = MyHash()
 user_table = MyHash()
 # 实例化用户管理对象
@@ -578,7 +523,7 @@ teacher = user_management.login(0, "000")
 student = user_management.login(1, "111")
 # 面向用户操作
 teacher.insert(Course("computer", [1]))
-print(student.sort_by_name()[0].name)
+print(student.sort_by_name()[0].name)"""
 
 """c = []
 for i in range(0, 2000):

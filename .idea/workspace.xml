@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="usermanagemnet">
+    <list default="true" id="aa855fda-576e-4e76-90ec-bd60391d6e62" name="变更" comment="usermanagement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/course.py" afterDir="false" />
     </list>
@@ -128,7 +128,10 @@
       <workItem from="1680752676239" duration="339000" />
       <workItem from="1680841164620" duration="21000" />
       <workItem from="1680912156267" duration="3834000" />
-      <workItem from="1681016985343" duration="5015000" />
+      <workItem from="1681016985343" duration="5716000" />
+      <workItem from="1681215560005" duration="109000" />
+      <workItem from="1681216088805" duration="28000" />
+      <workItem from="1681221516885" duration="336000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1679021338716</created>
@@ -319,7 +322,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681020465898</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="usermanagement">
+      <created>1681023674259</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1681023674259</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -350,7 +360,8 @@
     <MESSAGE value=".gitignore" />
     <MESSAGE value="USER" />
     <MESSAGE value="usermanagemnet" />
-    <option name="LAST_COMMIT_MESSAGE" value="usermanagemnet" />
+    <MESSAGE value="usermanagement" />
+    <option name="LAST_COMMIT_MESSAGE" value="usermanagement" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
