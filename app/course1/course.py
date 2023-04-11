@@ -398,7 +398,7 @@ class BPlusTree:
     def insert(self, value):
         global carry
         new_node = self.root.insert(value.name, value)
-        # print(f"{course.id}")
+        # print(f"{course1.id}")
         # 如果根节点也要发生裂变则要创建新的根节点
         if new_node is not None:
             # print(f"new_node.keys:{new_node.keys}")
@@ -407,7 +407,7 @@ class BPlusTree:
             new_root.next = [self.root, new_node]
             self.root = new_root
             # print(type(self.root.next))
-        # print(f"{course.id}")
+        # print(f"{course1.id}")
 
     def remove(self, name):
         # print(f"root:{self.root.keys}")
