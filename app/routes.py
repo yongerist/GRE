@@ -87,11 +87,12 @@ def before_request():
     g.course_hash = load_hash_data()
     g.usr_hash = load_usr_data()
     g.manage = UserManagement(g.usr_hash)
-    g.usr_id = current_user.id
+
 
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
 def course_list():
+    g.usr_id = current_user.id
     user = g.manage.login(g.usr_id)
     # 打开网页时展示课程列表
     if request.method == 'GET':
@@ -100,6 +101,7 @@ def course_list():
 
 @app.route('/course_list/add', methods=['GET', 'POST'])
 def course_add():
+    g.usr_id = current_user.id
     if request.method == 'POST':
         try:
             # 获取post请求中的数据
@@ -139,6 +141,7 @@ def course_add():
 
 @app.route('/course/list/<string:id_>/del')
 def course_del(id_):
+    g.usr_id = current_user.id
     # 首先判断文件是否为空
     if os.path.getsize('course_tree.pkl') > 0:
         # 删除该id对应课程
@@ -157,6 +160,7 @@ def course_del(id_):
 
 @app.route('/course_list/<string:course_id>/revise', methods=['GET', 'POST'])
 def course_revise(course_id):
+    g.usr_id = current_user.id
     if request.method == 'POST':
         try:
             id_ = request.form.get("id")

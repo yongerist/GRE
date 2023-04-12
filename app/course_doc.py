@@ -7,51 +7,60 @@ import string
 
 app = Flask(__name__)
 
+course_tree_path = os.path.join(os.path.dirname(__file__), 'course_tree.pkl')
+course_hash_path = os.path.join(os.path.dirname(__file__), 'course_hash.pkl')
+usr_hash_path = os.path.join(os.path.dirname(__file__), 'usr_hash.pkl')
+
+
+def write_tree_data(data):
+    # 用于写入数据
+    with open(course_tree_path, 'wb') as f:
+        pickle.dump(data, f)
+
+
+def write_hash_data(data):
+    # 用于写入数据
+    with open(course_hash_path, 'wb') as f:
+        pickle.dump(data, f)
+
+
+def write_usr_data(data):
+    # 用于写入数据
+    with open(usr_hash_path, 'wb') as f:
+        pickle.dump(data, f)
+
+
+a = 1
+write_hash_data(a)
+write_tree_data(a)
+write_usr_data(a)
+
 
 def load_tree_data():
     # 用于读取数据
-    with open(r'D:\Code\GRE_2\app\course_tree.pkl', 'rb') as f:
+    with open(course_tree_path, 'rb') as f:
         # 将文件中的二进制数据转换成python对象
         tree_data = pickle.load(f)
     # 返回一个B+树
     return tree_data
 
 
-
-def write_tree_data(data):
-    # 用于写入数据
-    with open(r'D:\Code\GRE_2\app\course_tree.pkl', 'wb') as f:
-        pickle.dump(data, f)
-
-
 def load_hash_data():
     # 用于读取数据
-    with open(r'D:\Code\GRE_2\app\course_hash.pkl', 'rb') as f:
+    with open(course_hash_path, 'rb') as f:
         # 将文件中的二进制数据转换成python对象
         hash_data = pickle.load(f)
     # 返回一个哈希表
     return hash_data
 
 
-def write_hash_data(data):
-    # 用于写入数据
-    with open(r'D:\Code\GRE_2\app\course_hash.pkl', 'wb') as f:
-        pickle.dump(data, f)
-
-
 def load_usr_data():
     # 用于读取数据
-    with open(r'D:\Code\GRE_2\app\usr_hash.pkl', 'rb') as f:
+    with open(usr_hash_path, 'rb') as f:
         # 将文件中的二进制数据转换成python对象
         usr_data = pickle.load(f)
     # 返回一个哈希表
     return usr_data
-
-
-def write_usr_data(data):
-    # 用于写入数据
-    with open(r'D:\Code\GRE_2\app\usr_hash.pkl', 'wb') as f:
-        pickle.dump(data, f)
 
 
 # 接收请求前
@@ -156,7 +165,8 @@ def course_revise(course_id):
             offline = request.form.get("offline")
 
             # 创建新结点
-            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
+            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week,
+                                 offline=offline)
 
             # 查找需要修改的结点
             course_pre = g.course_hash.find(course_id)
