@@ -5,11 +5,10 @@ from flask_login import current_user, login_user
 from app.models import User
 from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
-import pickle
-from app.course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement, MyHash
-from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, write_usr_data
+from app.course import Course, BPlusTree, User, UserManagement, MyHash
+from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
+    write_usr_data
 import os
-from flask_login import current_user
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -68,7 +67,7 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data )
+        user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         user.set_password(form.password.data)
         g.manage.usr_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         write_usr_data(g.usr_hash)
@@ -79,6 +78,7 @@ def register():
         flash('恭喜, 注册成功!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
 
 @app.before_request
 def before_request():
@@ -167,7 +167,8 @@ def course_revise(course_id):
             offline = request.form.get("offline")
 
             # 创建新结点
-            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
+            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week,
+                                 offline=offline)
 
             # 查找需要修改的结点
             course_pre = g.course_hash.find(course_id)
