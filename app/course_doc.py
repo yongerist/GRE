@@ -30,37 +30,42 @@ def write_usr_data(data):
         pickle.dump(data, f)
 
 
-a = 1
-write_hash_data(a)
-write_tree_data(a)
-write_usr_data(a)
 
 
 def load_tree_data():
     # 用于读取数据
-    with open(course_tree_path, 'rb') as f:
-        # 将文件中的二进制数据转换成python对象
-        tree_data = pickle.load(f)
-    # 返回一个B+树
-    return tree_data
+    try:
+        with open(course_tree_path, 'rb') as f:
+            # 将文件中的二进制数据转换成python对象
+            tree_data = pickle.load(f)
+        # 返回一个B+树
+        return tree_data
+    except EOFError:
+        return BPlusTree()
 
 
 def load_hash_data():
-    # 用于读取数据
-    with open(course_hash_path, 'rb') as f:
-        # 将文件中的二进制数据转换成python对象
-        hash_data = pickle.load(f)
-    # 返回一个哈希表
-    return hash_data
+    try:
+        # 用于读取数据
+        with open(course_hash_path, 'rb') as f:
+            # 将文件中的二进制数据转换成python对象
+            hash_data = pickle.load(f)
+        # 返回一个哈希表
+        return hash_data
+    except EOFError:
+        return MyHash()
 
 
 def load_usr_data():
-    # 用于读取数据
-    with open(usr_hash_path, 'rb') as f:
-        # 将文件中的二进制数据转换成python对象
-        usr_data = pickle.load(f)
-    # 返回一个哈希表
-    return usr_data
+    try:
+        # 用于读取数据
+        with open(usr_hash_path, 'rb') as f:
+            # 将文件中的二进制数据转换成python对象
+            usr_data = pickle.load(f)
+        # 返回一个哈希表
+        return usr_data
+    except EOFError:
+        return MyHash()
 
 
 # 接收请求前

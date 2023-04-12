@@ -6,7 +6,7 @@ from app.models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(message= u'username不能为空')])
+    # username = StringField('Username', validators=[DataRequired(message= u'username不能为空')])
     userNumber = StringField(u'学号', validators=[DataRequired(message= u'学号不能为空')])
     password = PasswordField(u'密码', validators=[DataRequired(message= u'密码不能为空')])
     remember_me = BooleanField('记住密码')

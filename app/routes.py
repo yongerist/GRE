@@ -9,6 +9,9 @@ from app.course import Course, BPlusTree, Usr, UserManagement, MyHash
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data
 import os
+from flask import Flask, render_template, request
+
+
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -87,7 +90,6 @@ def before_request():
     g.course_hash = load_hash_data()
     g.usr_hash = load_usr_data()
     g.manage = UserManagement(g.usr_hash)
-
 
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
