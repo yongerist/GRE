@@ -5,9 +5,11 @@ from flask_login import current_user, login_user
 from app.models import User
 from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
-from course1.course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement, MyHash
-from course1.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, write_usr_data
+import pickle
+from app.course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement, MyHash
+from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, write_usr_data
 import os
+from flask_login import current_user
 @app.route('/')
 @app.route('/index')
 @login_required
