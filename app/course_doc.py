@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, redirect, url_for, render_template, g
 import pickle
-from course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement, MyHash
+from app.course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement, MyHash
 import os
 from flask_login import current_user
 import string
@@ -10,22 +10,23 @@ app = Flask(__name__)
 
 def load_tree_data():
     # 用于读取数据
-    with open('course_tree.pkl', 'rb') as f:
+    with open(r'D:\Code\GRE_2\app\course_tree.pkl', 'rb') as f:
         # 将文件中的二进制数据转换成python对象
         tree_data = pickle.load(f)
     # 返回一个B+树
     return tree_data
 
 
+
 def write_tree_data(data):
     # 用于写入数据
-    with open('course_tree.pkl', 'wb') as f:
+    with open(r'D:\Code\GRE_2\app\course_tree.pkl', 'wb') as f:
         pickle.dump(data, f)
 
 
 def load_hash_data():
     # 用于读取数据
-    with open('course_hash.pkl', 'rb') as f:
+    with open(r'D:\Code\GRE_2\app\course_hash.pkl', 'rb') as f:
         # 将文件中的二进制数据转换成python对象
         hash_data = pickle.load(f)
     # 返回一个哈希表
@@ -34,13 +35,13 @@ def load_hash_data():
 
 def write_hash_data(data):
     # 用于写入数据
-    with open('course_hash.pkl', 'wb') as f:
+    with open(r'D:\Code\GRE_2\app\course_hash.pkl', 'wb') as f:
         pickle.dump(data, f)
 
 
 def load_usr_data():
     # 用于读取数据
-    with open('usr_hash.pkl', 'rb') as f:
+    with open(r'D:\Code\GRE_2\app\usr_hash.pkl', 'rb') as f:
         # 将文件中的二进制数据转换成python对象
         usr_data = pickle.load(f)
     # 返回一个哈希表
@@ -49,7 +50,7 @@ def load_usr_data():
 
 def write_usr_data(data):
     # 用于写入数据
-    with open('usr_hash.pkl', 'wb') as f:
+    with open(r'D:\Code\GRE_2\app\usr_hash.pkl', 'wb') as f:
         pickle.dump(data, f)
 
 
