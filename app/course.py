@@ -449,7 +449,7 @@ class BPlusTree:
         return self.root.find_prefix_value(name)
 
 
-class User:
+class Usr:
     name: string
     id: int
     password: string
@@ -462,7 +462,7 @@ class User:
         self.academy = academy
 
 
-class Teacher(User):
+class Teacher(Usr):
     user_table: MyHash
     course_tree: BPlusTree
     course_table: MyHash
@@ -501,7 +501,7 @@ class Teacher(User):
         return self.course_table.find(hash_id)
 
 
-class Student(User):
+class Student(Usr):
     course: list  # 每个学生自己的课程
     student_class: int
     majors: string
@@ -547,13 +547,9 @@ class UserManagement:
     def __init__(self, user_table):
         self.user_table = user_table
 
-    def sign_up_teacher(self, name, password, academy, course_tree, course_table):
-        teacher = Teacher(name, password, academy, course_tree, course_table, self.user_table)
-        self.user_table.insert(teacher)
-
-    def sign_up_student(self, name, password, academy, student_class, majors):
-        student = Student(name, password, academy, student_class, majors)
-        self.user_table.insert(student)
+    def user_init(self, username, email, userNumber):
+        user = Usr(username, email, userNumber)
+        self.user_table.insert(user)
 
     # 登陆成功返回用户，不成功返回None
     def login(self, user_id, password):
@@ -564,21 +560,21 @@ class UserManagement:
             return None
 
 
-# 先把课程的B+树、哈希，和学生的哈希读出来
-course_tree = BPlusTree()
-course_table = MyHash()
-user_table = MyHash()
-# 实例化用户管理对象
-user_management = UserManagement(user_table)
-# 注册
-user_management.sign_up_teacher("teacher", "000", "1", course_tree, course_table)
-user_management.sign_up_student("student1", "111", '1', "1", "0")
-# 登录
-teacher = user_management.login(0, "000")
-student = user_management.login(1, "111")
-# 面向用户操作
-teacher.insert(Course("computer", [1]))
-print(student.sort_by_name()[0].name)
+# # 先把课程的B+树、哈希，和学生的哈希读出来
+# course_tree = BPlusTree()
+# course_table = MyHash()
+# user_table = MyHash()
+# # 实例化用户管理对象
+# user_management = UserManagement(user_table)
+# # 注册
+# # user_management.sign_up_teacher("teacher", "000", "1", course_tree, course_table)
+# # user_management.sign_up_student("student1", "111", '1', "1", "0")
+# # 登录
+# teacher = user_management.login(0, "000")
+# student = user_management.login(1, "111")
+# # 面向用户操作
+# teacher.insert(Course("computer", [1]))
+# print(student.sort_by_name()[0].name)
 
 """c = []
 for i in range(0, 2000):

@@ -5,7 +5,7 @@ from flask_login import current_user, login_user
 from app.models import User
 from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
-from app.course import Course, BPlusTree, User, UserManagement, MyHash
+from app.course import Course, BPlusTree, Usr, UserManagement, MyHash
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data
 import os
@@ -69,7 +69,7 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         user.set_password(form.password.data)
-        g.manage.usr_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
+        g.manage.user_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         write_usr_data(g.usr_hash)
         db.session.add(user)
         # print(user.email, user.userNumber, user.username)

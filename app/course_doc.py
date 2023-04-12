@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, redirect, url_for, render_template, g
 import pickle
-from app.course import Course, BPlusNode, BPlusTree, User, Teacher, Student, UserManagement, MyHash
+from app.course import Course, BPlusNode, BPlusTree, Usr, Teacher, Student, UserManagement, MyHash
 import os
 from flask_login import current_user
 import string
