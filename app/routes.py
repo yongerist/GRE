@@ -77,7 +77,7 @@ def course_list():
     user = g.manage.login(g.usr_id)
     # 打开网页时展示课程列表
     if request.method == 'GET':
-        return render_template('course_list.html', target_course=user.sort_by_name())
+        return render_template('student_course_list.html', target_course=user.sort_by_name())
 
 
 @app.route('/course_list/add', methods=['GET', 'POST'])

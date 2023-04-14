@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <a href="/teacher/index">老师主页</a>
+        <a href="/all/course/list">所有课程</a>
+        <a href="/course/add">添加课程</a>
+    </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>课程名</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for obj in queryset %}
+          <tr>
+            <th scope="row">{{ obj.id }}</th>
+            <td>{{ obj.name }}</td>
+            <td>{{ obj.begin_time }}</td>
+            <td>{{ obj.end_time }}</td>
+            <td>{{ obj.name }}</td>
+            <td>
+                <a href="/course/{{ obj.id }}/info/"> 更多 </a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}

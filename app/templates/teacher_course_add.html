@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>添加课程</title>
+</head>
+<body>
+    <div>
+        <a href="/teacher/index">老师主页</a>
+        <a href="/all/course/list">所有课程</a>
+        <a href="/course/add">添加课程</a>
+    </div>
+    <div>
+    <form  method="post">
+        <div><label>课程名: <input type="text"  placeholder="课程名" name="name"></label></div>
+        <div><label>周: <input type="week"  name="week"></label></div>
+        <div><label>日: <input type="date"  name="day"></label></div>
+        <div><label>开始时间: <input type="time"  name="begin_time"></label></div>
+        <div><label>结束时间: <input type="time"  name="end_time"></label></div>
+        <div><label>方式:
+            线上 <input type="radio" name="method" value="online">
+            线下 <input type="radio" name="method" value="offline" checked="checked">
+        </label></div>
+        <div><label>上课: <input type="text"  placeholder="网课链接/路线" name="road"></label></div>
+        <input type="submit" value="确认添加">
+        <input type="reset" value="重新填写">
+    </form>
+    </div>
+</body>
+</html>

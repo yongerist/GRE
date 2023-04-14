@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改课程</title>
+</head>
+<body>
+    <div>
+        <a href="/teacher/index">老师主页</a>
+        <a href="/all/course/list">所有课程</a>
+        <a href="/course/add">添加课程</a>
+    </div>
+    <div>
+        <form method="post" novalidate>
+            {% csrf_token %}
+              {% for field in form%}
+                  <div>
+                      <label>{{ field.label }}</label>
+                      {{ field }}
+                      <span style="color: red">{{ field.errors.0 }}</span>
+                  </div>
+              {% endfor %}
+            <button type="submit" >保 存</button>
+        </form>
+    </div>
+</body>
+</html>
