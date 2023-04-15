@@ -69,6 +69,7 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         user.set_password(form.password.data)
+
         g.manage.user_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         write_usr_data(g.usr_hash)
         db.session.add(user)
@@ -86,7 +87,9 @@ def before_request():
     g.tree = load_tree_data()
     g.course_hash = load_hash_data()
     g.usr_hash = load_usr_data()
+    # print(type(g.user_hash))
     g.manage = UserManagement(g.usr_hash)
+    print(type(g.manage.user_table))
 
 
 

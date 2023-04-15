@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ed1bde4e-0942-4608-988a-57d8bbff0e16" name="更改" comment="第一次提交-登陆注册">
-      <change afterPath="$PROJECT_DIR$/app/course1/usr_hash.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/GRE1.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/course.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/course/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/app/course1/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/course/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/course1/course.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/course/course_doc.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/course1/course_doc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/course/course_hash.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/app/course1/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/course/course_tree.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/app/course1/course_hash.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/course/usr_hash.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/app/course1/course_tree.pkl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,22 +57,61 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Code/GRE_2&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/14024/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0/LocalCache/local-packages/Python310/Scripts/pipenv.exe&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PythonContentEntriesConfigurable&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;PyConsoleConfigurable.Python 控制台&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="GRE" is-module-sdk="true">
+        <envs>
+          <env key="C:\Users\14024\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\" value="Python31=\Scripts=" />
+        </envs>
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="GRE" />
+        <option name="myEnvs">
+          <map>
+            <entry key="C:\Users\14024\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\" value="Python31=\Scripts=" />
+          </map>
+        </option>
+      </console-settings>
+    </option>
+  </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\zhaoquan\git\data structure\app" />
       <recent name="D:\Code\GRE_2\app" />
     </key>
   </component>
-  <component name="RunManager" selected="Flask 服务器.GRE1">
+  <component name="RunManager" selected="Flask 服务器.GRE">
+    <configuration name="GRE" type="PythonConfigurationType" factoryName="Python">
+      <module name="GRE" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/__init__.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="routes" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="GRE1" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -103,7 +134,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Flask (app/course1/course_doc.py)" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
+    <configuration name="Flask" type="Python.FlaskServer" temporary="true" nameIsGenerated="true">
       <module name="GRE1" />
       <option name="target" value="$PROJECT_DIR$/app/course1/course_doc.py" />
       <option name="targetType" value="PATH" />
@@ -112,6 +143,21 @@
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="GRE" type="Python.FlaskServer">
+      <module name="GRE" />
+      <option name="target" value="$PROJECT_DIR$/app/__init__.py" />
+      <option name="targetType" value="PATH" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -151,7 +197,6 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.routes" />
-        <item itemvalue="Flask 服务器.Flask (app/course1/course_doc.py)" />
       </list>
     </recent_temporary>
   </component>
@@ -169,6 +214,15 @@
       <workItem from="1681209089147" duration="1376000" />
       <workItem from="1681210552979" duration="8334000" />
       <workItem from="1681221928381" duration="1943000" />
+      <workItem from="1681309129248" duration="7000" />
+      <workItem from="1681309145469" duration="2375000" />
+      <workItem from="1681311649153" duration="584000" />
+      <workItem from="1681312256569" duration="792000" />
+      <workItem from="1681313061483" duration="181000" />
+      <workItem from="1681313251313" duration="69000" />
+      <workItem from="1681313328800" duration="199000" />
+      <workItem from="1681569136812" duration="1514000" />
+      <workItem from="1681570683215" duration="630000" />
     </task>
     <task id="LOCAL-00001" summary="第一次提交-登陆注册">
       <created>1681131639628</created>
@@ -199,16 +253,17 @@
     <option name="LAST_COMMIT_MESSAGE" value="第一次提交-登陆注册" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/data_structure$routes.coverage" NAME="routes 覆盖结果" MODIFIED="1681210379394" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/data_structure$GRE1.coverage" NAME="GRE1 覆盖结果" MODIFIED="1681223626227" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/data_structure$course.coverage" NAME="course 覆盖结果" MODIFIED="1680691538674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/env_py$GRE.coverage" NAME="GRE 覆盖结果" MODIFIED="1681313304588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/data_structure$course_doc__1_.coverage" NAME="course_doc (1) 覆盖结果" MODIFIED="1680523769661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/course_doc_py$routes.coverage" NAME="routes 覆盖结果" MODIFIED="1681134074609" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/GRE1$test.coverage" NAME="test 覆盖结果" MODIFIED="1679022473060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.idea" />
-    <SUITE FILE_PATH="coverage/data_structure$Flask__course_doc_py_.coverage" NAME="Flask (course_doc.py) 覆盖结果" MODIFIED="1680712652848" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/course_doc_py$course_doc__2_.coverage" NAME="course_doc (2) 覆盖结果" MODIFIED="1681145894960" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/course" />
-    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1680093719240" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/data_structure$Flask__course_course_doc_py_.coverage" NAME="Flask (course/course_doc.py) 覆盖结果" MODIFIED="1681210300101" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/GRE1$test1.coverage" NAME="test1 覆盖结果" MODIFIED="1679021597990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/data_structure$GRE1.coverage" NAME="GRE1 覆盖结果" MODIFIED="1681223626227" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/course_doc_py$course_doc__2_.coverage" NAME="course_doc (2) 覆盖结果" MODIFIED="1681145894960" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/course" />
+    <SUITE FILE_PATH="coverage/data_structure$routes.coverage" NAME="routes 覆盖结果" MODIFIED="1681210379394" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/data_structure$course.coverage" NAME="course 覆盖结果" MODIFIED="1680691538674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/data_structure$Flask__course_doc_py_.coverage" NAME="Flask (course_doc.py) 覆盖结果" MODIFIED="1680712652848" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/GRE1$course.coverage" NAME="course 覆盖结果" MODIFIED="1680093719240" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GRE1$test.coverage" NAME="test 覆盖结果" MODIFIED="1679022473060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.idea" />
+    <SUITE FILE_PATH="coverage/data_structure$Flask__course_course_doc_py_.coverage" NAME="Flask (course/course_doc.py) 覆盖结果" MODIFIED="1681210300101" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
