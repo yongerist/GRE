@@ -30,8 +30,6 @@ def write_usr_data(data):
         pickle.dump(data, f)
 
 
-
-
 def load_tree_data():
     # 用于读取数据
     try:
@@ -98,6 +96,12 @@ def course_list():
     #         return jsonify({"error": "An error occurred."}), 500  # 500为http状态码，表示无法完成请求
 
 
+# @app.route('/Teacher/course/list', method=['GET', 'POST'])
+# def teacher_course_list():
+#     if request.method == 'GET':
+#         return render_template('teacher_course_list.html', target_course=g.tree.get_all_data)
+
+
 # 接收post请求，执行课程增添
 @app.route('/course_list/add', methods=['GET', 'POST'])
 def course_add():
@@ -106,36 +110,28 @@ def course_add():
             # 获取post请求中的数据
             id_ = request.form.get("id")
             name = request.form.get("name")
+            day = request.form.get("day")
             begin_time = request.form.get("begin_time")
-            duration = request.form.get("duration")
+            end_time = request.form.get("end_time")
             week = request.form.get("week")
-            offline = request.form.get("offline")
-
+            offline = request.form.get("method")
             # 建立course对象
-            course = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week, offline=offline)
+            course = Course(id=id_, name=name, begin_time=begin_time, end_time=end_time, week=week, offline=offline)
 
-            # 首先判断文件是否为空
-            if os.path.getsize('course_tree.pkl') > 0:
-                # 将post请求中的course对象插入到B+树中
-                g.tree.insert(course)
-                g.course_hash.insert(course)
-            # 文件为空时，建一个空树并将课程插入到该树上
-            else:
-                tree = BPlusTree()
-                course_hash = MyHash()
-                g.tree = tree.insert(course)
-                g.course_hash = course_hash.insert(course)
+            # 将post请求中的course对象插入到B+树中
+            g.tree.insert(course)
+            g.course_hash.insert(course)
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)
             # 重定向到课程列表
             return redirect(url_for('course_list'))
 
-            # 返回失败响应
+        # 返回失败响应
         except:
             return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
-        return render_template('add.html')
+        return render_template('teacher_course_add.html')
 
 
 # 执行课程删减

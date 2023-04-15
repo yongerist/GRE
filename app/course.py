@@ -7,7 +7,7 @@ class Course:
     id: string
     day: int
     begin_time: int
-    duration: int
+    end_time: int
     week: list
     offline: bool
     student: list
@@ -18,7 +18,7 @@ class Course:
         self.id: string
         self.day = day
         self.begin_time: int = begin_time
-        self.duration: int = duration
+        self.end_time: int = duration
         self.week: list < bool >= week
         self.offline: bool = offline
         self.student = student
@@ -27,7 +27,7 @@ class Course:
         self.name: string = name
         self.id: string
         self.begin_time: int
-        self.duration: int
+        self.end_time: int
         self.week: list = []
         self.offline: bool
         self.student = student
