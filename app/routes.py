@@ -87,12 +87,13 @@ def course_add():
         # 获取post请求中的数据
         # id_ = request.form.get("id")
         name = request.form.get("name")
-        day = request.form.get("day")
+        day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
         end_time = request.form.get("end_time")
-        week = request.form.get("week")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
-        print(f"name:{name},begin:{begin_time},end:{end_time},week:{week},off:{offline}")
+        # print(type(week))
+        # print(f"name:{name},begin:{begin_time},end:{end_time},week:{week},day:{day},off:{offline}")
         # # 建立course对象
         # course = Course(id=id_, name=name, begin_time=begin_time, end_time=end_time, week=week, offline=offline)
         #
