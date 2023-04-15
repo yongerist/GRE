@@ -1,4 +1,3 @@
-import os.path
 import string
 
 
@@ -6,21 +5,27 @@ class Course:
     name: string
     id: string
     day: int
-    begin_time: int
-    end_time: int
+    begin_time: list
+    end_time: list
     week: list
     offline: bool
     student: list
 
     # id:,name:
-    def __int__(self, name, day, begin_time, duration, week, offline, student):
+    def __int__(self, name, day, begin_time, end_time, week, offline, student):
         self.name: string = name
-        self.id: string
-        self.day = day
-        self.begin_time: int = begin_time
-        self.end_time: int = duration
-        self.week: list < bool >= week
-        self.offline: bool = offline
+        self.day = int(day)
+        begin_hour = int(begin_time[:2])
+        begin_minute = int(begin_time[3:])
+        self.begin_time: list = [begin_hour, begin_minute]
+        end_hour = int(end_time[:2])
+        end_minute = int(end_time[3:])
+        self.end_time: list = [end_hour, end_minute]
+        self.week: list = [int(x) for x in week]
+        if offline == 1:
+            self.offline: bool = True
+        else:
+            self.offline: bool = False
         self.student = student
 
     def __init__(self, name, student):
@@ -31,12 +36,6 @@ class Course:
         self.week: list = []
         self.offline: bool
         self.student = student
-
-    def get_id(self):
-        # print(type(self.name))
-        unicode_points = [ord(ch) for ch in self.name]
-        print(unicode_points)
-        self.id = ''.join(str(point) for point in unicode_points)
 
 
 class MyHash:
@@ -559,6 +558,12 @@ class UserManagement:
             return user
         else:
             return None
+
+    def all_student(self):
+        dic: dict
+        for i in range(0, len(self.user_table.my_hash_table)):
+            dic[i] = self.user_table.my_hash_table[i].name
+        return dic
 
 
 # # 先把课程的B+树、哈希，和学生的哈希读出来
