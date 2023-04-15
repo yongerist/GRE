@@ -80,6 +80,12 @@ def course_list():
         return render_template('student_course_list.html', target_course=user.sort_by_name())
 
 
+@app.route('/teacher/course/list', methods=['GET', 'POST'])
+def all_course_list():
+    if request.method == 'GET':
+        return render_template('teacher_course_list.html', target_course=g.tree.get_all_data)
+
+
 @app.route('/course_list/add', methods=['GET', 'POST'])
 def course_add():
     if request.method == 'POST':
@@ -92,38 +98,31 @@ def course_add():
         end_time = request.form.get("end_time")
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
-        # print(type(week))
-        # print(f"name:{name},begin:{begin_time},end:{end_time},week:{week},day:{day},off:{offline}")
-        # # 建立course对象
-        # course = Course(id=id_, name=name, begin_time=begin_time, end_time=end_time, week=week, offline=offline)
-        #
-        # # 首先判断文件是否为空
-        # if os.path.getsize('course_tree.pkl') > 0:
-        #     # 将post请求中的course对象插入到B+树中
-        #     g.tree.insert(course)
-        #     g.course_hash.insert(course)
-        # # 文件为空时，建一个空树并将课程插入到该树上
-        # else:
-        #     tree = BPlusTree()
-        #     course_hash = MyHash()
-        #     g.tree = tree.insert(course)
-        #     g.course_hash = course_hash.insert(course)
-        # # 将改动后的B+树存入文件
-        # write_tree_data(g.tree)
-        # write_hash_data(g.course_hash)
-        # # 重定向到课程列表
-        # return redirect(url_for('course_list'))
+        # 建立course对象
+        course = Course(id=id_, name=name, day=day, begin_time=begin_time, end_time=end_time, week=week,
+                        offline=offline)
+
+        # 将post请求中的course对象插入到B+树中
+        g.tree.insert(course)
+        g.course_hash.insert(course)
+        # 将改动后的B+树存入文件
+        write_tree_data(g.tree)
+        write_hash_data(g.course_hash)
+        # 将改动后的B+树存入文件
+        write_tree_data(g.tree)
+        write_hash_data(g.course_hash)
+        # 重定向到课程列表
+        return redirect(url_for('all_course_list'))
 
         # 返回失败响应
         # except:
         #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
-        return render_template('teacher_course_add.html')
+        return render_template('teacher_course_add.html', student=g.manage.all_student)
 
 
-@app.route('/course/list/<string:id_>/del')
+@app.route('/course/list/<string:id_>/del', methods=['GET', 'POST'])
 def course_del(id_):
-    g.usr_id = current_user.id
     # 首先判断文件是否为空
     if os.path.getsize('course_tree.pkl') > 0:
         # 删除该id对应课程
@@ -145,16 +144,18 @@ def course_revise(course_id):
     g.usr_id = current_user.id
     if request.method == 'POST':
         try:
-            id_ = request.form.get("id")
+            # try:
+            # 获取post请求中的数据
+            # id_ = request.form.get("id")
             name = request.form.get("name")
+            day = request.form.getlist("day[]")
             begin_time = request.form.get("begin_time")
-            duration = request.form.get("duration")
-            week = request.form.get("week")
-            offline = request.form.get("offline")
-
-            # 创建新结点
-            course_post = Course(id=id_, name=name, begin_time=begin_time, duration=duration, week=week,
-                                 offline=offline)
+            end_time = request.form.get("end_time")
+            week = request.form.getlist("week[]")
+            offline = request.form.get("method")
+            # 建立course对象
+            course_post = Course(id=id_, name=name, day=day, begin_time=begin_time, end_time=end_time, week=week,
+                            offline=offline)
 
             # 查找需要修改的结点
             course_pre = g.course_hash.find(course_id)
@@ -167,8 +168,8 @@ def course_revise(course_id):
             write_hash_data(g.course_hash)
 
             # 返回课程列表
-            return redirect(url_for('course_list'))
+            return redirect(url_for('all_course_list'))
         except:
             return jsonify({"error": "An error occurred."}), 500
     else:
-        return render_template('revise.html')
+        return render_template('teacher_course_edit.html')
