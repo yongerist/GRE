@@ -366,7 +366,7 @@ class BPlusNode:
                 # 如果存在删除keys和value
 
                 # print(self.keys)
-                if len(self.keys) < BPlusTree.min_keys + 1:
+                if len(self.keys) < BPlusTree.min_keys + 1 and parent is not None:
                     return self.merge_leaves(parent, index)
                 else:
                     del self.keys[index]
@@ -508,7 +508,7 @@ class Student(Usr):
 
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
-        self.course=[]
+        self.course = []
 
     """def __init__(self, name, password, academy, student_class, majors):
         super().__init__(username, email, userNumber)
@@ -562,7 +562,7 @@ class UserManagement:
         return user
 
     def all_student(self):
-            return self.user_table.my_hash_table
+        return self.user_table.my_hash_table
 
 
 # # 先把课程的B+树、哈希，和学生的哈希读出来
