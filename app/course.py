@@ -4,7 +4,7 @@ import string
 class Course:
     name: string
     id: string
-    day: int
+    day: list
     begin_time: list
     end_time: list
     week: list
@@ -14,7 +14,7 @@ class Course:
     # id:,name:
     def __int__(self, name, day, begin_time, end_time, week, offline, student):
         self.name: string = name
-        self.day = int(day)
+        self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
         begin_minute = int(begin_time[3:])
         self.begin_time: list = [begin_hour, begin_minute]
