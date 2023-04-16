@@ -442,7 +442,6 @@ class BPlusTree:
             # print(node.next[0].keys)
             all_data.extend(node.next[0].values)
             node = node.next[0]
-        all_data.extend(node.values)
         return all_data
 
     def prefix_search(self, name):
