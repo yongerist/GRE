@@ -80,6 +80,13 @@ def course_list():
         return render_template('student_course_list.html', target_course=user.sort_by_name())
 
 
+@app.route('/del/all', methods=['GET', 'POST'])
+def del_all():
+    db.session.query(User).delete()
+    db.session.commit()
+    return "delete success"
+
+
 @app.route('/teacher/course/list', methods=['GET', 'POST'])
 def all_course_list():
     if request.method == 'GET':
