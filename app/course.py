@@ -366,7 +366,7 @@ class BPlusNode:
                 # 如果存在删除keys和value
 
                 # print(self.keys)
-                if len(self.keys) < BPlusTree.min_keys + 1:
+                if len(self.keys) < BPlusTree.min_keys + 1 and parent is not None:
                     return self.merge_leaves(parent, index)
                 else:
                     del self.keys[index]
