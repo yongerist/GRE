@@ -50,6 +50,17 @@
         </select>
         </label>
         </div>
+        <div>
+        <label>
+        学生:
+        <select name="student[]" multiple="multiple">
+            <option value="">--请选择--</option>
+            {% for obj in student %}
+            <option value={{ obj.id }}>{{ obj.name }}</option>
+            {% endfor %}
+        </select>
+        </label>
+        </div>
         <div><label>开始时间: <input type="time"  name="begin_time"></label></div>
         <div><label>结束时间: <input type="time"  name="end_time"></label></div>
         <div><label>方式:

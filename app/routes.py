@@ -110,7 +110,10 @@ def course_add():
         end_time = request.form.get("end_time")
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
-        student = [1]
+        student = request.form.getlist("student[]")
+        for obj in student:
+            print(obj)
+        # student = [1]
         # 建立course对象
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
                         student=student)
@@ -136,7 +139,7 @@ def course_add():
         # except:
         #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
-        return render_template('teacher_course_add.html', student=g.manage.all_student)
+        return render_template('teacher_course_add.html', student=g.manage.all_student())
 
 
 @app.route('/course/list/<string:id_>/del', methods=['GET', 'POST'])

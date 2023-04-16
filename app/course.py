@@ -26,7 +26,7 @@ class Course:
             self.offline: bool = True
         else:
             self.offline: bool = False
-        self.student = student
+        self.student = [int(x) for x in student]
 
     """def __init__(self, name, student):
         self.name: string = name
@@ -561,10 +561,7 @@ class UserManagement:
         return user
 
     def all_student(self):
-        dic: dict
-        for i in range(0, len(self.user_table.my_hash_table)):
-            dic[i] = self.user_table.my_hash_table[i].name
-        return dic
+            return self.user_table.my_hash_table
 
 
 # # 先把课程的B+树、哈希，和学生的哈希读出来
