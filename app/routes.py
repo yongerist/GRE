@@ -52,7 +52,7 @@ def register():
         user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         user.set_password(form.password.data)
         g.manage.user_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
-        print(type(g.manage.user_table.my_hash_table))
+        print(g.manage.user_table.my_hash_table)
         write_usr_data(g.usr_hash)
         db.session.add(user)
         # print(user.email, user.userNumber, user.username)
@@ -74,7 +74,7 @@ def before_request():
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
 def course_list():
-    g.usr_id = current_user.id-1
+    g.usr_id = current_user.id - 1
     print(g.usr_id)
     user = g.manage.login(g.usr_id)
     print(g.manage.user_table.my_hash_table)
@@ -101,20 +101,25 @@ def course_add():
     if request.method == 'POST':
         # try:
         # 获取post请求中的数据
-        # id_ = request.form.get("id")
+        # id_ = int(request.form.get("id"))
         name = request.form.get("name")
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
         end_time = request.form.get("end_time")
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
+        student = [1]
         # 建立course对象
-        course = Course(id=id_, name=name, day=day, begin_time=begin_time, end_time=end_time, week=week,
-                        offline=offline)
+        course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
+                        student=student)
 
         # 将post请求中的course对象插入到B+树中
         g.tree.insert(course)
         g.course_hash.insert(course)
+        print(course.student)
+        for st in course.student:
+            g.manage.user_table.find(st).course.append(course)
+            print(g.manage.user_table.find(st).course)
         # 将改动后的B+树存入文件
         write_tree_data(g.tree)
         write_hash_data(g.course_hash)
@@ -156,7 +161,7 @@ def course_revise(course_id):
         try:
             # try:
             # 获取post请求中的数据
-            # id_ = request.form.get("id")
+            id_ = request.form.get("id")
             name = request.form.get("name")
             day = request.form.getlist("day[]")
             begin_time = request.form.get("begin_time")
@@ -165,7 +170,7 @@ def course_revise(course_id):
             offline = request.form.get("method")
             # 建立course对象
             course_post = Course(id=id_, name=name, day=day, begin_time=begin_time, end_time=end_time, week=week,
-                            offline=offline)
+                                 offline=offline)
 
             # 查找需要修改的结点
             course_pre = g.course_hash.find(course_id)

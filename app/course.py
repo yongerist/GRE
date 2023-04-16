@@ -12,7 +12,7 @@ class Course:
     student: list
 
     # id:,name:
-    def __int__(self, name, day, begin_time, end_time, week, offline, student):
+    def __init__(self, name, day, begin_time, end_time, week, offline, student):
         self.name: string = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -28,14 +28,14 @@ class Course:
             self.offline: bool = False
         self.student = student
 
-    def __init__(self, name, student):
+    """def __init__(self, name, student):
         self.name: string = name
         self.id: string
         self.begin_time: int
         self.end_time: int
         self.week: list = []
         self.offline: bool
-        self.student = student
+        self.student = student"""
 
 
 class MyHash:
@@ -507,6 +507,7 @@ class Student(Usr):
 
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
+        self.course=[]
 
     """def __init__(self, name, password, academy, student_class, majors):
         super().__init__(username, email, userNumber)
