@@ -43,12 +43,12 @@ class MyHash:
     empty: list = []
 
     def __init__(self):
-        my_hash_table: list = []
-        empty: list = []
+        self.my_hash_table: list = []
+        self.empty: list = []
 
     def insert(self, value):
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
-        if not self.empty:
+        if self.empty:
             hash_id = self.empty[-1]
         else:
             hash_id = len(self.my_hash_table)
@@ -549,14 +549,12 @@ class UserManagement:
     def user_init(self, username, email, userNumber):
         user = Usr(username, email, userNumber)
         self.user_table.insert(user)
+        print(user.id)
 
     # 登陆成功返回用户，不成功返回None
-    def login(self, user_id, password):
+    def login(self, user_id):
         user = self.user_table.find(user_id)
-        if password == user.password:
-            return user
-        else:
-            return None
+        return user
 
     def all_student(self):
         dic: dict

@@ -52,6 +52,7 @@ def register():
         user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
         user.set_password(form.password.data)
         g.manage.user_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
+        print(type(g.manage.user_table.my_hash_table))
         write_usr_data(g.usr_hash)
         db.session.add(user)
         # print(user.email, user.userNumber, user.username)
@@ -73,8 +74,10 @@ def before_request():
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
 def course_list():
-    g.usr_id = current_user.id
+    g.usr_id = current_user.id-1
+    print(g.usr_id)
     user = g.manage.login(g.usr_id)
+    print(g.manage.user_table.my_hash_table)
     # 打开网页时展示课程列表
     if request.method == 'GET':
         return render_template('student_course_list.html', target_course=user.sort_by_name())
