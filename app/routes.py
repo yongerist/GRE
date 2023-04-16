@@ -142,7 +142,7 @@ def course_add():
         return render_template('teacher_course_add.html', student=g.manage.all_student())
 
 
-@app.route('/course/<int:id_>/del', methods=['GET', 'POST'])
+@app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
 def course_del(id_):
     # 首先判断文件是否为空
     # if os.path.getsize(course_tree_path) > 0:
@@ -157,7 +157,7 @@ def course_del(id_):
     write_hash_data(g.course_hash)
 
     # 重定向到课程列表
-    return redirect(url_for('course_list'))
+    return redirect(url_for('all_course_list'))
     # else:
     #     return jsonify({"error": "An error occurred."}), 500
 

@@ -369,6 +369,8 @@ class BPlusNode:
                 if len(self.keys) < BPlusTree.min_keys + 1:
                     return self.merge_leaves(parent, index)
                 else:
+                    del self.keys[index]
+                    del self.values[index]
                     return None
         # 如果不是叶子节点，且子节点返回了一个要删除的索引，则删除索引
         # print(f"delete_key:{delete_key}")
