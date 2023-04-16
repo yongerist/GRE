@@ -92,10 +92,10 @@ def del_all():
     return "delete success"
 
 
-@app.route('/teacher/course/list', methods=['GET', 'POST'])
+@app.route('/all/course/list', methods=['GET', 'POST'])
 def all_course_list():
     if request.method == 'GET':
-        return render_template('teacher_course_list.html', target_course=g.tree.get_all_data)
+        return render_template('teacher_course_list.html', queryset=g.tree.get_all_data())
 
 
 @app.route('/course_list/add', methods=['GET', 'POST'])
