@@ -505,12 +505,15 @@ class Student(Usr):
     student_class: int
     majors: string
 
-    def __init__(self, name, password, academy, student_class, majors):
-        super().__init__(name, password, academy)
+    def __init__(self, username, email, userNumber):
+        super().__init__(username, email, userNumber)
+
+    """def __init__(self, name, password, academy, student_class, majors):
+        super().__init__(username, email, userNumber)
         self.student_class = student_class
         self.majors = majors
         self.course = []
-        self.is_student = True
+        self.is_student = True"""
 
     def sort_by_time(self):
         course_list = []
@@ -547,7 +550,7 @@ class UserManagement:
         self.user_table = user_table
 
     def user_init(self, username, email, userNumber):
-        user = Usr(username, email, userNumber)
+        user = Student(username, email, userNumber)
         self.user_table.insert(user)
         print(user.id)
 
