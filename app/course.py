@@ -452,14 +452,13 @@ class BPlusTree:
 class Usr:
     name: string
     id: int
-    password: string
-    academy: string
-    is_student: bool
+    email: string
+    userNumber: string
 
-    def __init__(self, name, password, academy):
-        self.name = name
-        self.password = password
-        self.academy = academy
+    def __init__(self, username, email, userNumber):
+        self.name = username
+        self.email = email
+        self.userNumber = userNumber
 
 
 class Teacher(Usr):
