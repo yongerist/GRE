@@ -77,10 +77,12 @@ def course_list():
     g.usr_id = current_user.id - 1
     print(g.usr_id)
     user = g.manage.login(g.usr_id)
-    print(g.manage.user_table.my_hash_table)
+    print(user.course[0].name)
+    for obj in user.sort_by_name():
+        print(obj.name)
     # 打开网页时展示课程列表
     if request.method == 'GET':
-        return render_template('student_course_list.html', target_course=user.sort_by_name())
+        return render_template('student_course_list.html', queryset=user.sort_by_name())
 
 
 @app.route('/del/all', methods=['GET', 'POST'])
@@ -119,13 +121,14 @@ def course_add():
         print(course.student)
         for st in course.student:
             g.manage.user_table.find(st).course.append(course)
-            print(g.manage.user_table.find(st).course)
+            print(g.manage.user_table.find(st))
         # 将改动后的B+树存入文件
         write_tree_data(g.tree)
         write_hash_data(g.course_hash)
         # 将改动后的B+树存入文件
         write_tree_data(g.tree)
         write_hash_data(g.course_hash)
+        write_usr_data(g.usr_hash)
         # 重定向到课程列表
         return redirect(url_for('all_course_list'))
 
