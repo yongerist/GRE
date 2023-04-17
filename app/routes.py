@@ -154,15 +154,19 @@ def course_del(id_):
     # 首先判断文件是否为空
     # if os.path.getsize(course_tree_path) > 0:
     # 删除该id对应课程
+    course = g.course_hash.find(id_)
     print(id_)
-    name = g.course_hash.find(id_).name
+    name = course.name
+    student = course.student
     print(name)
     g.tree.remove(g.course_hash.find(id_).name)
     g.course_hash.remove(id_)
+    for st in student:
+        g.manage.user_table.find(st).course.remove(course)
     # 将改动后的树重新存入文件
     write_tree_data(g.tree)
     write_hash_data(g.course_hash)
-
+    write_usr_data(g.usr_hash)
     # 重定向到课程列表
     return redirect(url_for('all_course_list'))
     # else:
