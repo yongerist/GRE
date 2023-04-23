@@ -517,29 +517,29 @@ class Student(Usr):
         self.course = []
         self.is_student = True"""
 
-    def sort_by_time(self):
+    def sort_by_time(self, course_hash):
         course_list = []
         dic = {}
-        for cour in self.course:
-            dic[cour.begintime + cour.day * 100] = cour
+        for x in self.course:
+            dic[course_hash.find(x).begintime + course_hash[x].day * 100] = course_hash.find(x)
         for key in sorted(dic):
             course_list.append(dic[key])
         return course_list
 
-    def sort_by_name(self):
+    def sort_by_name(self,course_hash):
         course_list = []
         dic = {}
-        for cour in self.course:
-            dic[cour.name] = cour
+        for x in self.course:
+            dic[course_hash.find(x).name] = course_hash.find(x)
         for key in sorted(dic):
             course_list.append(dic[key])
         return course_list
 
-    def sort_by_id(self):
+    def sort_by_id(self,course_hash):
         course_list = []
         dic = {}
-        for cour in self.course:
-            dic[cour.id] = cour
+        for x in self.course:
+            dic[course_hash.find(x).id] = course_hash.find(x)
         for key in sorted(dic):
             course_list.append(dic[key])
         return course_list
@@ -563,6 +563,16 @@ class UserManagement:
 
     def all_student(self):
         return self.user_table.my_hash_table
+
+    def add_student_course(self, course):
+        for st in course.student:
+            self.user_table.find(st).course.append(course.id)
+
+    def del_student_course(self, course):
+        print(course)
+        for st in course.student:
+            print(f"st:{self.user_table.find(st).name},course:{self.user_table.find(st).course}")
+            self.user_table.find(st).course.remove(course.id)
 
 
 # # 先把课程的B+树、哈希，和学生的哈希读出来
