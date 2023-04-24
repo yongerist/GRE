@@ -38,47 +38,74 @@ class Course:
         self.student = student"""
 
 
-# 简单的哈希表，为用户自动分配id
+# 简单的哈希表，使用平方取中法散列
 class MyHash:
     my_hash_table: list = []
-    empty: list = []
+    fail_rate: int
 
     def __init__(self):
-        self.my_hash_table: list = []
-        self.empty: list = []
+        self.my_hash_table: list = [None] * 100
+        self.fail_rate = 0
 
     def insert(self, value):
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
-        if self.empty:
-            hash_id = self.empty[-1]
+        if len(value.id) > 100:
+            hash_id = (int(value.id) * int(value.id) // 10 ** 10) % len(self.my_hash_table)
         else:
-            hash_id = len(self.my_hash_table)
-        self.my_hash_table.insert(hash_id, value)
-        value.id = hash_id
+            hash_id = int(value.id)
+        if self.my_hash_table[hash_id] is None:
+            self.my_hash_table[hash_id] = value
+        else:
+            # 如果存在冲突，则向后找到最近的一个None添加进去
+            for x in range(hash_id, len(self.my_hash_table) + 1):
+                self.fail_rate = self.fail_rate + 1
+                if self.my_hash_table[x] is None:
+                    self.my_hash_table[x] = value
+        # 当失败率过高时，重构哈希表
+        if self.fail_rate > len(self.my_hash_table) / 5:
+            self.rehash()
 
-    def find(self, hash_id):
-        if hash_id < len(self.my_hash_table):
+    def find(self, value_id):
+        if len(value_id) > 100:
+            hash_id = (int(value_id) * int(value_id) // 1000000000) % len(self.my_hash_table)
+        else:
+            hash_id = int(value_id)
+        if self.my_hash_table[hash_id].id == value_id:
             return self.my_hash_table[hash_id]
         else:
-            return None
+            for x in range(hash_id, len(self.my_hash_table) - 1):
+                if self.my_hash_table[x].id == value_id:
+                    return self.my_hash_table[x]
 
-    def remove(self, hash_id):
-        if hash_id < len(self.my_hash_table):
-            self.my_hash_table[hash_id] = None
-            self.empty.append(hash_id)
+    def remove(self, value_id):
+        if len(value_id) > 100:
+            hash_id = (int(value_id) * int(value_id) // 1000000000) % len(self.my_hash_table)
         else:
-            print("hash 删除错误")
+            hash_id = int(value_id)
+        if self.my_hash_table[hash_id].id == value_id:
+            self.my_hash_table[hash_id] = None
+        else:
+            for x in range(hash_id, len(self.my_hash_table) - 1):
+                if self.my_hash_table[x].id == value_id:
+                    self.my_hash_table[x] = None
 
+    # 先删再增
     def revise(self, old_course, new_course):
         if self.find(old_course) is not None:
             self.remove(old_course.id)
             self.insert(new_course)
 
-    def empty(self):
-        if len(self.my_hash_table) == 0:
-            return True
-        else:
-            return False
+    # 当哈希表容量不够或一次插入失败率过高时重构哈希表
+    def rehash(self):
+        temp = []
+        # 将所有的值先暂存起来
+        for value in self.my_hash_table:
+            if value is not None:
+                temp.append(value)
+        self.my_hash_table = [None] * 10 * len(self.my_hash_table)
+        for value in temp:
+            self.insert(value)
+        self.fail_rate = 0
 
 
 class BPlusNode:
