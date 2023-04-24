@@ -38,6 +38,7 @@ class Course:
         self.student = student"""
 
 
+# 简单的哈希表，为用户自动分配id
 class MyHash:
     my_hash_table: list = []
     empty: list = []
@@ -64,6 +65,7 @@ class MyHash:
     def remove(self, hash_id):
         if hash_id < len(self.my_hash_table):
             self.my_hash_table[hash_id] = None
+            self.empty.append(hash_id)
         else:
             print("hash 删除错误")
 
@@ -502,7 +504,7 @@ class Teacher(Usr):
 
 
 class Student(Usr):
-    course: list  # 每个学生自己的课程
+    course: list  # 每个学生自己的课程,只存课程的id而不是课程的类
     student_class: int
     majors: string
 
@@ -526,7 +528,7 @@ class Student(Usr):
             course_list.append(dic[key])
         return course_list
 
-    def sort_by_name(self,course_hash):
+    def sort_by_name(self, course_hash):
         course_list = []
         dic = {}
         for x in self.course:
@@ -535,7 +537,7 @@ class Student(Usr):
             course_list.append(dic[key])
         return course_list
 
-    def sort_by_id(self,course_hash):
+    def sort_by_id(self, course_hash):
         course_list = []
         dic = {}
         for x in self.course:
