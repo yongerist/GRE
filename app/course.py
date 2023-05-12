@@ -537,7 +537,9 @@ class Student(Usr):
 
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
+        day = [False] * 24
         self.course = []
+        self.time = [day] * 7
 
     """def __init__(self, name, password, academy, student_class, majors):
         super().__init__(username, email, userNumber)
@@ -593,9 +595,16 @@ class UserManagement:
     def all_student(self):
         return self.user_table.my_hash_table
 
+    def course_time_conflicts(self, course):
+        for st in course.student:
+            if any(self.user_table.find(st).time[course.begin_time, course.end_time]):
+                return False
+        return True
+
     def add_student_course(self, course):
         for st in course.student:
             self.user_table.find(st).course.append(course.id)
+
 
     def del_student_course(self, course):
         print(course)

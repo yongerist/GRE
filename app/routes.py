@@ -121,17 +121,21 @@ def course_add():
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
                         student=student)
 
-        # 将post请求中的course对象插入到B+树中
-        g.tree.insert(course)
-        g.course_hash.insert(course)
-        g.manage.add_student_course(course)
-        # 将改动后的B+树存入文件
-        write_tree_data(g.tree)
-        write_hash_data(g.course_hash)
-        # 将改动后的B+树存入文件
-        write_tree_data(g.tree)
-        write_hash_data(g.course_hash)
-        write_usr_data(g.usr_hash)
+        # 首先检验学生是否有时间冲突
+        if g.manage.course_time_conflicts(course):
+            # 将post请求中的course对象插入到B+树中
+            g.tree.insert(course)
+            g.course_hash.insert(course)
+            g.manage.add_student_course(course)
+            # 将改动后的B+树存入文件
+            write_tree_data(g.tree)
+            write_hash_data(g.course_hash)
+            # 将改动后的B+树存入文件
+            write_tree_data(g.tree)
+            write_hash_data(g.course_hash)
+            write_usr_data(g.usr_hash)
+        else:
+
         # 重定向到课程列表
         return redirect(url_for('all_course_list'))
 
