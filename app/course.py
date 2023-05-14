@@ -5,7 +5,7 @@ class Course:
     name: string
     id: string
     day: list
-    # begin_time: list
+    begin_time: list
     end_time: list
     week: list
     offline: bool
@@ -15,13 +15,12 @@ class Course:
     def __init__(self, name, day, begin_time, end_time, week, offline, student):
         self.name: string = name
         self.day = [int(x) for x in day]
-        # begin_hour = int(begin_time[:2])
-        # begin_minute = int(begin_time[3:])
-        self.begin_time: int(begin_time)
-        # end_hour = int(end_time[:2])
-        # end_minute = int(end_time[3:])
-        # self.end_time: list = [end_hour, end_minute]
-        self.end_time: int(end_time)
+        begin_hour = int(begin_time[:2])
+        begin_minute = int(begin_time[3:])
+        self.begin_time: list = [begin_hour, begin_minute]
+        end_hour = int(end_time[:2])
+        end_minute = int(end_time[3:])
+        self.end_time: list = [end_hour, end_minute]
         self.week: list = [int(x) for x in week]
         if offline == 1:
             self.offline: bool = True
@@ -40,7 +39,7 @@ class Course:
 
 
 # 简单的哈希表，使用平方取中法散列
-class MyHash:
+"""class MyHash:
     my_hash_table: list = []
     fail_rate: int
 
@@ -106,7 +105,48 @@ class MyHash:
         self.my_hash_table = [None] * 10 * len(self.my_hash_table)
         for value in temp:
             self.insert(value)
-        self.fail_rate = 0
+        self.fail_rate = 0"""
+
+
+class MyHash:
+    my_hash_table: list = []
+    empty: list = []
+
+    def __init__(self):
+        self.my_hash_table: list = []
+        self.empty: list = []
+
+    def insert(self, value):
+        # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
+        if self.empty:
+            hash_id = self.empty[-1]
+        else:
+            hash_id = len(self.my_hash_table)
+        self.my_hash_table.insert(hash_id, value)
+        value.id = hash_id
+
+    def find(self, hash_id):
+        if hash_id < len(self.my_hash_table):
+            return self.my_hash_table[hash_id]
+        else:
+            return None
+
+    def remove(self, hash_id):
+        if hash_id < len(self.my_hash_table):
+            self.my_hash_table[hash_id] = None
+        else:
+            print("hash 删除错误")
+
+    def revise(self, old_course, new_course):
+        if self.find(old_course) is not None:
+            self.remove(old_course.id)
+            self.insert(new_course)
+
+    def empty(self):
+        if len(self.my_hash_table) == 0:
+            return True
+        else:
+            return False
 
 
 class BPlusNode:
@@ -538,7 +578,9 @@ class Student(Usr):
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
         self.course = []
-        self.time = [[False] * 24] * 7
+        day = [False] * 24
+        week = [day] * 7
+        self.time = [week] * 16
 
     """def __init__(self, name, password, academy, student_class, majors):
         super().__init__(username, email, userNumber)
@@ -600,9 +642,12 @@ class UserManagement:
 
     def time_conflicts(self, course):
         for st in course.student:
-            for x in course.day:
-                if any(self.user_table.find(st).time[x][course.begin_time:course.end_time]):
-                    return False
+            for week in course.week:
+                for x in course.day:
+                    if any(self.user_table.find(st).time[week][x][course.begin_time[0]:course.end_time[0]]):
+                        print("false")
+                        return False
+        print("true")
         return True
 
     def del_student_course(self, course):

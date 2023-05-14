@@ -81,15 +81,13 @@ def before_request():
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
 def course_list():
-    g.usr_id = current_user.userNumber
+    g.usr_id = current_user.id - 1
     print(g.usr_id)
     user = g.manage.login(g.usr_id)
-    # print(user.course[0].name)
-    # for obj in user.sort_by_name():
-    #    print(obj.name)
+
     # 打开网页时展示课程列表
     if request.method == 'GET':
-        return render_template('student_course_list.html', queryset=user.sort_by_name())
+        return render_template('student_course_list.html', queryset=user.sort_by_name(g.course_hash))
 
 
 @app.route('/del/all', methods=['GET', 'POST'])
@@ -118,20 +116,22 @@ def course_add():
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
-
+        for obj in student:
+            print(obj)
         # student = [1]
         # 建立course对象
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
                         student=student)
-
         if g.manage.time_conflicts(course):
             # 将post请求中的course对象插入到B+树中
             g.tree.insert(course)
             g.course_hash.insert(course)
-            print(course.student)
             for st in course.student:
-                g.manage.user_table.find(st).course.append(course)
-                print(g.manage.user_table.find(st))
+                g.manage.user_table.find(st).course.append(course.id)
+                for week in course.week:
+                    for x in course.day:
+                        for i in range(course.begin_time[0], course.end_time[0]):
+                            g.manage.user_table.find(st).time[week][x][i] = True
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)
@@ -139,7 +139,7 @@ def course_add():
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)
             write_usr_data(g.usr_hash)
-        # 重定向到课程列表
+            # 重定向到课程列表
         return redirect(url_for('all_course_list'))
 
         # 返回失败响应
@@ -162,7 +162,7 @@ def course_del(id_):
     g.tree.remove(g.course_hash.find(id_).name)
     g.course_hash.remove(id_)
     for st in student:
-        g.manage.user_table.find(st).course.remove(course)
+        g.manage.user_table.find(st).course.remove(course.id)
     # 将改动后的树重新存入文件
     write_tree_data(g.tree)
     write_hash_data(g.course_hash)
