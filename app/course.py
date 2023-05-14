@@ -578,9 +578,9 @@ class Student(Usr):
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
         self.course = []
-        day = [False] * 24
-        week = [day] * 7
-        self.time = [week] * 16
+        day = [False] * 25
+        week = [day] * 8
+        self.time = [week] * 17
 
     """def __init__(self, name, password, academy, student_class, majors):
         super().__init__(username, email, userNumber)
