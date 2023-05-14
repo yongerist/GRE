@@ -5,7 +5,7 @@ class Course:
     name: string
     id: string
     day: list
-    begin_time: list
+    # begin_time: list
     end_time: list
     week: list
     offline: bool
@@ -15,12 +15,13 @@ class Course:
     def __init__(self, name, day, begin_time, end_time, week, offline, student):
         self.name: string = name
         self.day = [int(x) for x in day]
-        begin_hour = int(begin_time[:2])
-        begin_minute = int(begin_time[3:])
-        self.begin_time: list = [begin_hour, begin_minute]
-        end_hour = int(end_time[:2])
-        end_minute = int(end_time[3:])
-        self.end_time: list = [end_hour, end_minute]
+        # begin_hour = int(begin_time[:2])
+        # begin_minute = int(begin_time[3:])
+        self.begin_time: int(begin_time)
+        # end_hour = int(end_time[:2])
+        # end_minute = int(end_time[3:])
+        # self.end_time: list = [end_hour, end_minute]
+        self.end_time: int(end_time)
         self.week: list = [int(x) for x in week]
         if offline == 1:
             self.offline: bool = True
@@ -49,8 +50,8 @@ class MyHash:
 
     def insert(self, value):
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
-        if len(value.id) > 100:
-            hash_id = (int(value.id) * int(value.id) // 10 ** 10) % len(self.my_hash_table)
+        if int(value.id) > 100:
+            hash_id = (int(value.id) * int(value.id) // 10 ** len(value.id)) % len(self.my_hash_table)
         else:
             hash_id = int(value.id)
         if self.my_hash_table[hash_id] is None:
@@ -66,8 +67,8 @@ class MyHash:
             self.rehash()
 
     def find(self, value_id):
-        if len(value_id) > 100:
-            hash_id = (int(value_id) * int(value_id) // 1000000000) % len(self.my_hash_table)
+        if int(value_id) > 100:
+            hash_id = (int(value_id) * int(value_id) // 10 ** len(value_id)) % len(self.my_hash_table)
         else:
             hash_id = int(value_id)
         if self.my_hash_table[hash_id].id == value_id:
@@ -78,8 +79,8 @@ class MyHash:
                     return self.my_hash_table[x]
 
     def remove(self, value_id):
-        if len(value_id) > 100:
-            hash_id = (int(value_id) * int(value_id) // 1000000000) % len(self.my_hash_table)
+        if int(value_id) > 100:
+            hash_id = (int(value_id) * int(value_id) // 10 ** len(value_id)) % len(self.my_hash_table)
         else:
             hash_id = int(value_id)
         if self.my_hash_table[hash_id].id == value_id:
@@ -481,14 +482,13 @@ class BPlusTree:
 
 class Usr:
     name: string
-    id: int
     email: string
-    userNumber: string
+    id: string
 
     def __init__(self, username, email, userNumber):
         self.name = username
         self.email = email
-        self.userNumber = userNumber
+        self.id = userNumber
 
 
 class Teacher(Usr):
@@ -537,9 +537,8 @@ class Student(Usr):
 
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
-        day = [False] * 24
         self.course = []
-        self.time = [day] * 7
+        self.time = [[False] * 24] * 7
 
     """def __init__(self, name, password, academy, student_class, majors):
         super().__init__(username, email, userNumber)
@@ -595,16 +594,16 @@ class UserManagement:
     def all_student(self):
         return self.user_table.my_hash_table
 
-    def course_time_conflicts(self, course):
-        for st in course.student:
-            if any(self.user_table.find(st).time[course.begin_time, course.end_time]):
-                return False
-        return True
-
     def add_student_course(self, course):
         for st in course.student:
             self.user_table.find(st).course.append(course.id)
 
+    def time_conflicts(self, course):
+        for st in course.student:
+            for x in course.day:
+                if any(self.user_table.find(st).time[x][course.begin_time:course.end_time]):
+                    return False
+        return True
 
     def del_student_course(self, course):
         print(course)
