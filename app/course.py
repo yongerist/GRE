@@ -38,6 +38,21 @@ class Course:
         self.student = student"""
 
 
+class Activity:
+    name: string
+    day: list
+    begin_time: list
+    end_time: list
+    week: list
+
+    def __init__(self, name, day, begin_time, end_time, week):
+        self.name = name
+        self.day = day
+        self.begin_time = begin_time
+        self.end_time = end_time
+        self.week = week
+
+
 # 简单的哈希表，使用平方取中法散列
 """class MyHash:
     my_hash_table: list = []
@@ -120,7 +135,6 @@ class MyHash:
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
         if self.empty:
             hash_id = self.empty[-1]
-            self.empty.pop()
         else:
             hash_id = len(self.my_hash_table)
         self.my_hash_table.insert(hash_id, value)
@@ -128,20 +142,18 @@ class MyHash:
 
     def find(self, hash_id):
         if hash_id < len(self.my_hash_table):
-            print('x')
             return self.my_hash_table[hash_id]
         else:
             return None
 
     def remove(self, hash_id):
         if hash_id < len(self.my_hash_table):
-            self.empty.append(hash_id)
             self.my_hash_table[hash_id] = None
         else:
             print("hash 删除错误")
 
     def revise(self, old_course, new_course):
-        if self.find(old_course.id) is not None:
+        if self.find(old_course) is not None:
             self.remove(old_course.id)
             self.insert(new_course)
 
@@ -584,13 +596,20 @@ class Student(Usr):
         day = [False] * 25
         week = [day] * 8
         self.time = [week] * 17
+        self.activities = []
 
-    """def __init__(self, name, password, academy, student_class, majors):
-        super().__init__(username, email, userNumber)
-        self.student_class = student_class
-        self.majors = majors
-        self.course = []
-        self.is_student = True"""
+    # 如果没有时间冲突则添加活动并返回true，有时间冲突返回false
+    def add_activity(self, activity):
+        for week in activity.week:
+            for x in activity.day:
+                if any(self.time[week][x][activity.begin_time[0]:activity.end_time[0]]):
+                    return False
+        self.activities.append(activity)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    self.time[week][x][i] = True
+        return True
 
     def sort_by_time(self, course_hash):
         course_list = []
@@ -667,18 +686,14 @@ class UserManagement:
                     for i in range(course.begin_time[0], course.end_time[0]):
                         self.user_table.find(st).time[week][x][i] = False
 
-    def revise_time_conflicts(self, old_course, new_course):
+    def revise_student_course(self, old_course, new_course):
         for st in old_course.student:
             for week in old_course.week:
                 for x in old_course.day:
                     for i in range(old_course.begin_time[0], old_course.end_time[0]):
                         self.user_table.find(st).time[week][x][i] = False
         if self.time_conflicts(new_course):
-            for st in old_course.student:
-                for week in old_course.week:
-                    for x in old_course.day:
-                        for i in range(old_course.begin_time[0], old_course.end_time[0]):
-                            self.user_table.find(st).time[week][x][i] = True
+            self.add_student_course(new_course)
             return True
         else:
             for st in old_course.student:
@@ -687,10 +702,6 @@ class UserManagement:
                         for i in range(old_course.begin_time[0], old_course.end_time[0]):
                             self.user_table.find(st).time[week][x][i] = True
             return False
-
-    def revise_student_course(self, old_course, new_course):
-        self.add_student_course(old_course)
-        self.del_student_course(new_course)
 
 
 # # 先把课程的B+树、哈希，和学生的哈希读出来
