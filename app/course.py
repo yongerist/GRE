@@ -589,6 +589,7 @@ class Student(Usr):
     course: list  # 每个学生自己的课程,只存课程的id而不是课程的类
     student_class: int
     majors: string
+    activities:list
 
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
