@@ -120,6 +120,7 @@ class MyHash:
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
         if self.empty:
             hash_id = self.empty[-1]
+            self.empty.pop()
         else:
             hash_id = len(self.my_hash_table)
         self.my_hash_table.insert(hash_id, value)
@@ -127,18 +128,20 @@ class MyHash:
 
     def find(self, hash_id):
         if hash_id < len(self.my_hash_table):
+            print('x')
             return self.my_hash_table[hash_id]
         else:
             return None
 
     def remove(self, hash_id):
         if hash_id < len(self.my_hash_table):
+            self.empty.append(hash_id)
             self.my_hash_table[hash_id] = None
         else:
             print("hash 删除错误")
 
     def revise(self, old_course, new_course):
-        if self.find(old_course) is not None:
+        if self.find(old_course.id) is not None:
             self.remove(old_course.id)
             self.insert(new_course)
 
@@ -639,6 +642,10 @@ class UserManagement:
     def add_student_course(self, course):
         for st in course.student:
             self.user_table.find(st).course.append(course.id)
+            for week in course.week:
+                for x in course.day:
+                    for i in range(course.begin_time[0], course.end_time[0]):
+                        self.user_table.find(st).time[week][x][i] = True
 
     def time_conflicts(self, course):
         for st in course.student:
@@ -653,8 +660,37 @@ class UserManagement:
     def del_student_course(self, course):
         print(course)
         for st in course.student:
-            print(f"st:{self.user_table.find(st).name},course:{self.user_table.find(st).course}")
+            # print(f"st:{self.user_table.find(st).name},course:{self.user_table.find(st).course}")
             self.user_table.find(st).course.remove(course.id)
+            for week in course.week:
+                for x in course.day:
+                    for i in range(course.begin_time[0], course.end_time[0]):
+                        self.user_table.find(st).time[week][x][i] = False
+
+    def revise_time_conflicts(self, old_course, new_course):
+        for st in old_course.student:
+            for week in old_course.week:
+                for x in old_course.day:
+                    for i in range(old_course.begin_time[0], old_course.end_time[0]):
+                        self.user_table.find(st).time[week][x][i] = False
+        if self.time_conflicts(new_course):
+            for st in old_course.student:
+                for week in old_course.week:
+                    for x in old_course.day:
+                        for i in range(old_course.begin_time[0], old_course.end_time[0]):
+                            self.user_table.find(st).time[week][x][i] = True
+            return True
+        else:
+            for st in old_course.student:
+                for week in old_course.week:
+                    for x in old_course.day:
+                        for i in range(old_course.begin_time[0], old_course.end_time[0]):
+                            self.user_table.find(st).time[week][x][i] = True
+            return False
+
+    def revise_student_course(self, old_course, new_course):
+        self.add_student_course(old_course)
+        self.del_student_course(new_course)
 
 
 # # 先把课程的B+树、哈希，和学生的哈希读出来

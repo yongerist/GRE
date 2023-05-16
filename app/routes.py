@@ -105,6 +105,7 @@ def all_course_list():
 
 @app.route('/course_list/add', methods=['GET', 'POST'])
 def course_add():
+    error = None
     if request.method == 'POST':
         # try:
         # 获取post请求中的数据
@@ -126,12 +127,7 @@ def course_add():
             # 将post请求中的course对象插入到B+树中
             g.tree.insert(course)
             g.course_hash.insert(course)
-            for st in course.student:
-                g.manage.user_table.find(st).course.append(course.id)
-                for week in course.week:
-                    for x in course.day:
-                        for i in range(course.begin_time[0], course.end_time[0]):
-                            g.manage.user_table.find(st).time[week][x][i] = True
+            g.manage.add_student_course(course)
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)
@@ -140,13 +136,18 @@ def course_add():
             write_hash_data(g.course_hash)
             write_usr_data(g.usr_hash)
             # 重定向到课程列表
-        return redirect(url_for('all_course_list'))
-
+            print('注册成功')
+            flash('注册成功!')
+            return redirect(url_for('all_course_list'))
+        else:
+            print('注册失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
         # 返回失败响应
         # except:
         #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
-        return render_template('teacher_course_add.html', student=g.manage.all_student())
+        return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
 
 
 @app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
@@ -173,37 +174,45 @@ def course_del(id_):
     #     return jsonify({"error": "An error occurred."}), 500
 
 
-@app.route('/course_list/<string:course_id>/revise', methods=['GET', 'POST'])
+# 修改课程
+@app.route('/course/<int:course_id>/edit/', methods=['GET', 'POST'])
 def course_revise(course_id):
-    g.usr_id = current_user.id
+    course_old = g.course_hash.find(course_id)
+    print(course_old.name)
+    error = None
     if request.method == 'POST':
-        try:
-            # try:
-            # 获取post请求中的数据
-            id_ = request.form.get("id")
-            name = request.form.get("name")
-            day = request.form.getlist("day[]")
-            begin_time = request.form.get("begin_time")
-            end_time = request.form.get("end_time")
-            week = request.form.getlist("week[]")
-            offline = request.form.get("method")
-            # 建立course对象
-            course_post = Course(id=id_, name=name, day=day, begin_time=begin_time, end_time=end_time, week=week,
-                                 offline=offline)
-
-            # 查找需要修改的结点
-            course_pre = g.course_hash.find(course_id)
-
-            # 执行修改操作
-            g.tree.revise(course_pre, course_post)
-
-            # 将改动后的数据存入文件
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        end_time = request.form.get("end_time")
+        week = request.form.getlist("week[]")
+        offline = request.form.get("method")
+        student = request.form.getlist("student[]")
+        # 建立course对象
+        course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
+                        student=student)
+        if g.manage.revise_time_conflicts(course_old, course):
+            # 将post请求中的course对象插入到B+树中
+            g.tree.revise(course_old, course)
+            g.course_hash.revise(course_old, course)
+            g.manage.revise_student_course(course_old, course)
+            # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)
-
-            # 返回课程列表
+            # 将改动后的B+树存入文件
+            write_tree_data(g.tree)
+            write_hash_data(g.course_hash)
+            write_usr_data(g.usr_hash)
+            # 重定向到课程列表
+            print('修改成功')
+            flash('修改成功!')
             return redirect(url_for('all_course_list'))
-        except:
-            return jsonify({"error": "An error occurred."}), 500
+        else:
+            print('修改失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
+        # 返回失败响应
+        # except:
+        #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
-        return render_template('teacher_course_edit.html')
+        return render_template('teacher_course_edit.html', course=course_old, student=g.manage.all_student())
