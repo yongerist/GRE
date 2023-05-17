@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>修改课程</title>
+    <title>添加团体活动</title>
 </head>
 <body>
     <div>
@@ -11,9 +11,9 @@
         <a href="/course_list/add">添加课程</a>
         <a href="/group_activity/add">添加团体活动</a>
     </div>
-<div>
+    <div>
     <form  method="post">
-        <div><label>课程名: <input type="text"  placeholder="课程名" name="name" value="{{ course.name }}"></label></div>
+        <div><label>团体活动名: <input type="text"  placeholder="团体活动名" name="name"></label></div>
         <div>
         <label>
                 周:
@@ -63,12 +63,11 @@
         </label>
         </div>
         <div><label>开始时间: <input type="time"  name="begin_time"></label></div>
-        <div><label>结束时间: <input type="time"  name="end_time"></label></div>
         <div><label>方式:
             线上 <input type="radio" name="method" value="0">
             线下 <input type="radio" name="method" value="1" checked="checked">
         </label></div>
-        <div><label>上课: <input type="text"  placeholder="网课链接/路线" name="road"></label></div>
+        <div><label>活动: <input type="text"  placeholder="网课链接/路线" name="road"></label></div>
         <input type="submit" value="确认添加">
         <input type="reset" value="重新填写">
     </form>

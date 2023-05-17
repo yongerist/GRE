@@ -10,6 +10,7 @@ app = Flask(__name__)
 course_tree_path = os.path.join(os.path.dirname(__file__), 'course_tree.pkl')
 course_hash_path = os.path.join(os.path.dirname(__file__), 'course_hash.pkl')
 usr_hash_path = os.path.join(os.path.dirname(__file__), 'usr_hash.pkl')
+gro_act_tree_path = os.path.join(os.path.dirname(__file__), 'gro_act_tree.pkl')
 
 
 def write_tree_data(data):
@@ -17,6 +18,9 @@ def write_tree_data(data):
     with open(course_tree_path, 'wb') as f:
         pickle.dump(data, f)
 
+def write_gro_act_tree_data(data):
+    with open(gro_act_tree_path, 'wb') as f:
+        pickle.dump(data,f)
 
 def write_hash_data(data):
     # 用于写入数据
@@ -41,6 +45,16 @@ def load_tree_data():
     except EOFError:
         return BPlusTree()
 
+def load_gro_act_tree_data():
+    # 用于读取数据
+    try:
+        with open(gro_act_tree_path, 'rb') as f:
+            # 将文件中的二进制数据转换成python对象
+            tree_data = pickle.load(f)
+        # 返回一个B+树
+        return tree_data
+    except EOFError:
+        return BPlusTree()
 
 def load_hash_data():
     try:

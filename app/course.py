@@ -45,16 +45,17 @@ class Activity:
     end_time: list
     week: list
 
-    def __init__(self, name, day, begin_time, end_time, week):
+    def __init__(self, name, day, begin_time, week, offline, student):
         self.name = name
-        self.day = day
+        self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
         begin_minute = int(begin_time[3:])
         self.begin_time: list = [begin_hour, begin_minute]
-        end_hour = int(end_time[:2])
-        end_minute = int(end_time[3:])
-        self.end_time: list = [end_hour, end_minute]
-        self.week = week
+        self.end_time: list = [begin_hour + 1]
+        self.week: list = [int(x) for x in week]
+        if student is not None:
+            self.student = [int(x) for x in student]
+        self.offline = offline
 
 
 # 简单的哈希表，使用平方取中法散列
@@ -627,6 +628,25 @@ class Student(Usr):
                 for i in range(activity.begin_time[0], activity.end_time[0]):
                     self.time[week][x][i] = "personal_activity " + activity.name
 
+    # 临时事务的时间检验
+    def temp_time_conflicts(self, activity):
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    if (self.time[week][x][i] is not None) or self.time[week][x][i][0] == 't':
+                        print(f"{week},{x},{i}{self.time[week][x][i]}")
+                        print("False")
+                        return False
+        print("true")
+        return True
+
+    def add_temp_thing(self, activity):
+        self.personal_activities.insert(activity)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    self.time[week][x][i] = "temp_thing " + activity.name
+
     def sort_by_time(self, course_hash):
         course_list = []
         dic = {}
@@ -699,7 +719,7 @@ class UserManagement:
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
-                        print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
+                        print(f"week{week},x{x},i{i} ")
                         if self.user_table.find(st).time[week][x][i] is not None:
                             # print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                             print("False")
@@ -791,4 +811,3 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
-

@@ -5,9 +5,9 @@ from flask_login import current_user, login_user
 from app.models import User
 from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
-from app.course import Course, BPlusTree, Usr, UserManagement, MyHash
+from app.course import Course, BPlusTree, Usr, UserManagement, MyHash, Activity
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
-    write_usr_data
+    write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 import os
 from flask import Flask, render_template, request
 
@@ -74,6 +74,7 @@ def register():
 def before_request():
     # 使用g对象存储文件数据
     g.tree = load_tree_data()
+    g.gro_act_tree = load_gro_act_tree_data()
     g.course_hash = load_hash_data()
     g.usr_hash = load_usr_data()
     g.manage = UserManagement(g.usr_hash)
@@ -131,16 +132,13 @@ def course_add():
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)
-            # 将改动后的B+树存入文件
-            write_tree_data(g.tree)
-            write_hash_data(g.course_hash)
             write_usr_data(g.usr_hash)
             # 重定向到课程列表
-            print('注册成功')
-            flash('注册成功!')
+            print('添加成功')
+            flash('添加成功!')
             return redirect(url_for('all_course_list'))
         else:
-            print('注册失败')
+            print('添加失败')
             error = "时间已经被占用,添加失败!"
             return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
         # 返回失败响应
@@ -148,6 +146,44 @@ def course_add():
         #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
         return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
+
+
+@app.route('/group_activity/add', methods=['GET', 'POST'])
+def group_activity_add():
+    error = None
+    if request.method == 'POST':
+        # try:
+        # 获取post请求中的数据
+        # id_ = int(request.form.get("id"))
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        week = request.form.getlist("week[]")
+        offline = request.form.get("method")
+        student = request.form.getlist("student[]")
+        for obj in student:
+            print(obj)
+        # student = [1]
+        # 建立course对象
+        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
+                        student=student)
+        if g.manage.time_conflicts(activity):
+            # 将post请求中的course对象插入到B+树中
+            g.gro_act_tree.insert(activity)
+            g.manage.add_student_activities(activity)
+            # 将改动后的B+树存入文件
+            write_gro_act_tree_data(g.gro_act_tree)
+            write_usr_data(g.usr_hash)
+            # 重定向到课程列表
+            print('添加成功')
+            flash('添加成功!')
+            return redirect(url_for('group_activity_list'))
+        else:
+            print('添加失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
+    else:
+        return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
 
 
 @app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
