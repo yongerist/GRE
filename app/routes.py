@@ -104,6 +104,12 @@ def all_course_list():
         return render_template('teacher_course_list.html', queryset=g.tree.get_all_data())
 
 
+@app.route('/group_activity/list', methods=['GET', 'POST'])
+def group_activity_list():
+    if request.method == 'GET':
+        return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+
+
 @app.route('/course_list/add', methods=['GET', 'POST'])
 def course_add():
     error = None
