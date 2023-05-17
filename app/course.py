@@ -606,7 +606,7 @@ class Student(Usr):
         week = [day] * 8
         self.time = [week] * 17
         self.personal_activities = BPlusTree()
-        self.group_activities = BPlusTree()
+        self.group_activities = []
         self.thing = BPlusTree()
 
     def time_conflicts(self, activity):
@@ -674,6 +674,23 @@ class Student(Usr):
             course_list.append(dic[key])
         return course_list
 
+    def sort_by_time_p(self, activities_tree):
+        activities_list = []
+        dic = {}
+        for x in self.course:
+            dic[activities_tree.find(x).begintime + activities_tree[x].day * 100] = activities_tree.find(x)
+        for key in sorted(dic):
+            activities_list.append(dic[key])
+        return activities_list
+
+    def sort_by_name_p(self, course_hash):
+        course_list = []
+        dic = {}
+        for x in self.course:
+            dic[course_hash.find(x).name] = course_hash.find(x)
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
 
 class UserManagement:
     user_table: MyHash
@@ -697,7 +714,7 @@ class UserManagement:
     # 如果没有时间冲突则添加活动并返回true，有时间冲突返回false
     def add_student_activities(self, activity):
         for st in activity.student:
-            self.user_table.find(st).course.append(activity.id)
+            self.user_table.find(st).group_activities.append(activity.name)
             for week in activity.week:
                 for x in activity.day:
                     for i in range(activity.begin_time[0], activity.end_time[0]):
