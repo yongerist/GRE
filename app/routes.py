@@ -1,15 +1,15 @@
-from app import app, db
-from flask import render_template, flash, redirect, url_for, request, g, jsonify
-from app.forms import LoginForm, RegistrationForm
+from flask import flash, redirect, url_for, g
+from flask import render_template, request
 from flask_login import current_user, login_user
-from app.models import User
 from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
-from app.course import Course, BPlusTree, Usr, UserManagement, MyHash, Activity
+
+from app import app, db
+from app.course import Course, UserManagement, Activity
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
-import os
-from flask import Flask, render_template, request
+from app.forms import LoginForm, RegistrationForm
+from app.models import User
 
 
 @app.route('/')
@@ -104,6 +104,44 @@ def all_course_list():
         return render_template('teacher_course_list.html', queryset=g.tree.get_all_data())
 
 
+@app.route('/course/<int:id_>/info/', methods=['GET', 'POST'])
+def course_info(id_):
+    course = g.course_hash.find(id_)
+    print('id=' + str(id_))
+    name = course.name
+    print(name)
+    time = []
+    for week in course.week:
+        for day in course.day:
+            time.append(f'第{week}周   周{day}   {course.begin_time[0]}时{course.begin_time[1]}分--{course.end_time[0]}时{course.end_time[1]}分')
+    students = []
+    for obj in course.student:
+        print(obj)
+        obj = int(obj)
+        print(type(obj))
+        user = User.query.filter_by(id=obj+1).first()
+        print(user)
+        students.append(str(user.username))
+    return render_template('teacher_course_info.html', course=course, time=time, students=students)
+
+
+@app.route('/group_activity/<string:name>/info/', methods=['GET', 'POST'])
+def group_activity_info(name):
+    print(name)
+    print(type(name))
+    activity = g.gro_act_tree.find(name)
+    time = []
+    for week in activity.week:
+        for day in activity.day:
+            time.append(f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+    students = []
+    for obj in activity.student:
+        obj = int(obj)
+        user = User.query.filter_by(id=obj+1).first()
+        students.append(str(user.username))
+    return render_template('teacher_group_activity_info.html', activity=activity, time=time, students=students)
+
+
 @app.route('/group_activity/list', methods=['GET', 'POST'])
 def group_activity_list():
     if request.method == 'GET':
@@ -172,7 +210,7 @@ def group_activity_add():
         # student = [1]
         # 建立course对象
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
-                        student=student)
+                            student=student)
         if g.manage.time_conflicts(activity):
             # 将post请求中的course对象插入到B+树中
             g.gro_act_tree.insert(activity)
@@ -192,28 +230,18 @@ def group_activity_add():
         return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
 
 
-@app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
-def course_del(id_):
-    # 首先判断文件是否为空
-    # if os.path.getsize(course_tree_path) > 0:
-    # 删除该id对应课程
-    course = g.course_hash.find(id_)
-    print(id_)
-    name = course.name
-    student = course.student
-    print(name)
-    g.tree.remove(g.course_hash.find(id_).name)
-    g.course_hash.remove(id_)
+@app.route('/group_activity/<string:name>/del/', methods=['GET', 'POST'])
+def group_activity_del(name):
+    activity = g.gro_act_tree.find(name)
+    student = activity.student
+    g.gro_act_tree.remove(name)
     for st in student:
-        g.manage.user_table.find(st).course.remove(course.id)
+        g.manage.del_student_activities(activity)
     # 将改动后的树重新存入文件
-    write_tree_data(g.tree)
-    write_hash_data(g.course_hash)
+    write_gro_act_tree_data(g.gro_act_tree)
     write_usr_data(g.usr_hash)
     # 重定向到课程列表
-    return redirect(url_for('all_course_list'))
-    # else:
-    #     return jsonify({"error": "An error occurred."}), 500
+    return redirect('/group_activity/list')
 
 
 # 修改课程

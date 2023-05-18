@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>课程管理</title>
+</head>
+<body>
+<div>
+    <a href="/teacher/index">老师主页</a>
+    <a href="/all/course/list">所有课程</a>
+    <a href="/course_list/add">添加课程</a>
+    <a href="/group_activity/add">添加团体活动</a>
+    <a href="/group_activity/list">所有团体活动</a>
+</div>
+<table width="600" border="1">
+    <tr>
+        <td>课程名:</td>
+        <td>{{ course.name }}</td>
+    </tr>
+    <tr>
+        <td>课程id:</td>
+        <td>{{ course.id }}</td>
+    </tr>
+    <tr>
+        <td>课程时间:</td>
+        <td>
+            <select>
+                {% for obj in time %}
+                    <option>{{ obj }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>学生:</td>
+        <td>
+            <select>
+                {% for obj in students %}
+                    <option>{{ obj }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

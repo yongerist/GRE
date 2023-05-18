@@ -651,11 +651,12 @@ class Student(Usr):
         course_list = []
         dic = {}
         for x in self.course:
-            dic[course_hash.find(x).begintime + course_hash[x].day * 100] = course_hash.find(x)
+            dic[course_hash.find(x).begintime + course_hash.find(x).day * 100] = course_hash.find(x)
         for key in sorted(dic):
             course_list.append(dic[key])
         return course_list
 
+    # 可以排用哈希存储的课程也可以排用b+树存储的课外活动
     def sort_by_name(self, course_hash):
         course_list = []
         dic = {}
@@ -674,23 +675,24 @@ class Student(Usr):
             course_list.append(dic[key])
         return course_list
 
-    def sort_by_time_p(self, activities_tree):
+    def sort_by_time_p(self):
         activities_list = []
         dic = {}
-        for x in self.course:
-            dic[activities_tree.find(x).begintime + activities_tree[x].day * 100] = activities_tree.find(x)
+        for x in self.personal_activities.get_all_data():
+            dic[x.begintime + x.day * 100] = x
         for key in sorted(dic):
             activities_list.append(dic[key])
         return activities_list
 
-    def sort_by_name_p(self, course_hash):
+    def sort_by_name_p(self):
         course_list = []
         dic = {}
-        for x in self.course:
-            dic[course_hash.find(x).name] = course_hash.find(x)
+        for x in self.personal_activities.get_all_data():
+            dic[x.name] = x.find(x)
         for key in sorted(dic):
             course_list.append(dic[key])
         return course_list
+
 
 class UserManagement:
     user_table: MyHash
@@ -720,6 +722,15 @@ class UserManagement:
                     for i in range(activity.begin_time[0], activity.end_time[0]):
                         print("course")
                         self.user_table.find(st).time[week][x][i] = "group_activity " + activity.name
+
+    def del_student_activities(self, activity):
+        for st in activity.student:
+            # print(f"st:{self.user_table.find(st).name},course:{self.user_table.find(st).course}")
+            self.user_table.find(st).group_activities.remove(activity.name)
+            for week in activity.week:
+                for x in activity.day:
+                    for i in range(activity.begin_time[0], activity.end_time[0]):
+                        self.user_table.find(st).time[week][x][i] = None
 
     def add_student_course(self, course):
         for st in course.student:
@@ -828,3 +839,4 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
+

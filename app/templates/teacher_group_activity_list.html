@@ -15,7 +15,6 @@
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
             <th>团体活动名</th>
             <th>开始时间</th>
             <th>结束时间</th>
@@ -25,14 +24,13 @@
         <tbody>
         {% for obj in queryset %}
           <tr>
-            <th scope="row">{{ obj.id }}</th>
             <td>{{ obj.name }}</td>
             <td>{{ obj.begin_time }}</td>
             <td>{{ obj.end_time }}</td>
             <td>
-                <a href="/course/{{ obj.id }}/info/"> 更多 </a>
-                <a class="btn btn-primary btn-xs" href="/course/{{ obj.id }}/edit/"> 编辑</a>
-                <a class="btn btn-danger btn-xs" href="/course/{{ obj.id }}/del/"> 删除</a>
+                <a href="/group_activity/{{ obj.name }}/info/"> 更多 </a>
+                <a class="btn btn-primary btn-xs" href="/group_activity/{{ obj.id }}/edit/"> 编辑</a>
+                <a class="btn btn-danger btn-xs" href="/group_activity/{{ obj.name }}/del/"> 删除</a>
             </td>
           </tr>
         {% endfor %}
