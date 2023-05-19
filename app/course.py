@@ -27,15 +27,22 @@ class Course:
         else:
             self.offline: bool = False
         self.student = [int(x) for x in student]
+        self.test = None
 
-    """def __init__(self, name, student):
-        self.name: string = name
-        self.id: string
-        self.begin_time: int
-        self.end_time: int
-        self.week: list = []
-        self.offline: bool
-        self.student = student"""
+
+class Test:
+
+    def __init__(self, name, day, begin_time, week, offline, student):
+        self.name = name
+        self.day = [int(x) for x in day]
+        begin_hour = int(begin_time[:2])
+        begin_minute = int(begin_time[3:])
+        self.begin_time: list = [begin_hour, begin_minute]
+        self.end_time: list = [begin_hour + 1]
+        self.week: list = [int(x) for x in week]
+        if student is not None:
+            self.student = [int(x) for x in student]
+        self.offline = offline
 
 
 class Activity:
@@ -609,6 +616,26 @@ class Student(Usr):
         self.group_activities = []
         self.thing = BPlusTree()
 
+    def find_all_by_time(self, week, day, begin_time, end_time):
+        personal_activities_list = []
+        group_activities_list = []
+        thing_list = []
+        for week in week:
+            for x in day:
+                for i in range(begin_time, end_time):
+                    if self.time[week][x][i] is not None:
+                        if self.time[week][x][i][0] == 't':
+                            temp = self.time[week][x][i].split("/")
+                            for z in temp:
+                                temp1 = z.split(" ")
+                                thing_list.append(temp1[1])
+                        elif self.time[week][x][i][0] == 'p':
+                            temp = self.time[week][x][i].split(" ")
+                            personal_activities_list.append(temp[1])
+                        else:
+                            temp = self.time[week][x][i].split(" ")
+                            group_activities_list.append(temp[1])
+
     def get_all_course(self, course_hash):
         course_list = []
         for x in self.course:
@@ -764,6 +791,31 @@ class UserManagement:
                     for i in range(activity.begin_time[0], activity.end_time[0]):
                         self.user_table.find(st).time[week][x][i] = None
 
+    def revise_student_activity(self, old_activity, new_activity):
+        self.del_student_activities(old_activity)
+        self.add_student_activities(new_activity)
+
+    def add_student_test(self, test):
+        for st in test.student:
+            self.user_table.find(st).group_activities.append(test.name)
+            for week in test.week:
+                for x in test.day:
+                    for i in range(test.begin_time[0], test.end_time[0]):
+                        print("course")
+                        self.user_table.find(st).time[week][x][i] = "test " + test.name
+
+    def del_student_test(self, test):
+        for st in test.student:
+            self.user_table.find(st).group_activities.remove(test.name)
+            for week in test.week:
+                for x in test.day:
+                    for i in range(test.begin_time[0], test.end_time[0]):
+                        self.user_table.find(st).time[week][x][i] = None
+
+    def revise_student_test(self, old_test, new_test):
+        self.del_student_test(old_test)
+        self.add_student_test(new_test)
+
     def add_student_course(self, course):
         for st in course.student:
             self.user_table.find(st).course.append(course.id)
@@ -798,6 +850,12 @@ class UserManagement:
                         self.user_table.find(st).time[week][x][i] = None
 
     def revise_time_conflicts(self, old_course, new_course):
+        if isinstance(old_course, Course):
+            header = "course "
+        elif isinstance(old_course, Activity):
+            header = "group_activity "
+        elif isinstance(old_course, Test):
+            header = "test "
         for st in old_course.student:
             for week in old_course.week:
                 for x in old_course.day:
@@ -808,14 +866,14 @@ class UserManagement:
                 for week in old_course.week:
                     for x in old_course.day:
                         for i in range(old_course.begin_time[0], old_course.end_time[0]):
-                            self.user_table.find(st).time[week][x][i] = "course " + old_course.name
+                            self.user_table.find(st).time[week][x][i] = header + old_course.name
             return True
         else:
             for st in old_course.student:
                 for week in old_course.week:
                     for x in old_course.day:
                         for i in range(old_course.begin_time[0], old_course.end_time[0]):
-                            self.user_table.find(st).time[week][x][i] = "course " + old_course.name
+                            self.user_table.find(st).time[week][x][i] = header + old_course.name
             return False
 
     def revise_student_course(self, old_course, new_course):
