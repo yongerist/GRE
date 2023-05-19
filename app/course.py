@@ -609,6 +609,18 @@ class Student(Usr):
         self.group_activities = []
         self.thing = BPlusTree()
 
+    def get_all_course(self, course_hash):
+        course_list = []
+        for x in self.course:
+            course_list.append(course_hash.find(x))
+        return course_list
+
+    def get_all_group_activities(self, group_activities_tree):
+        course_list = []
+        for x in self.course:
+            course_list.append(group_activities_tree.find(x))
+        return course_list
+
     def time_conflicts(self, activity):
         for week in activity.week:
             for x in activity.day:
@@ -620,7 +632,6 @@ class Student(Usr):
         print("true")
         return True
 
-    # 如果没有时间冲突则添加活动并返回true，有时间冲突返回false
     def add_personal_activities(self, activity):
         self.personal_activities.insert(activity)
         for week in activity.week:
@@ -628,24 +639,46 @@ class Student(Usr):
                 for i in range(activity.begin_time[0], activity.end_time[0]):
                     self.time[week][x][i] = "personal_activity " + activity.name
 
+    def del_personal_activities(self, activity):
+        self.personal_activities.remove(activity.name)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    self.time[week][x][i] = None
+
     # 临时事务的时间检验
     def temp_time_conflicts(self, activity):
         for week in activity.week:
             for x in activity.day:
                 for i in range(activity.begin_time[0], activity.end_time[0]):
-                    if (self.time[week][x][i] is not None) or self.time[week][x][i][0] == 't':
-                        print(f"{week},{x},{i}{self.time[week][x][i]}")
-                        print("False")
-                        return False
+                    if self.time[week][x][i] is not None:
+                        if self.time[week][x][i][0] != 't':
+                            return False
         print("true")
         return True
 
     def add_temp_thing(self, activity):
-        self.personal_activities.insert(activity)
+        self.thing.insert(activity)
         for week in activity.week:
             for x in activity.day:
                 for i in range(activity.begin_time[0], activity.end_time[0]):
-                    self.time[week][x][i] = "temp_thing " + activity.name
+                    if self.time[week][x][i] is not None:
+                        self.time[week][x][i] = self.time[week][x][i] + "/temp_thing " + activity.name
+                    else:
+                        self.time[week][x][i] = "temp_thing " + activity.name
+
+    def find_temp_thing(self, activity_name):
+        return self.personal_activities.find(activity_name)
+
+    def del_temp_thing(self, activity):
+        self.thing.remove(activity.name)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    if self.time[week][x][i] == "/temp_thing " + activity.name:
+                        self.time[week][x][i] = None
+                    else:
+                        self.time[week][x][i].replace("/temp_thing " + activity.name, "")
 
     def sort_by_time(self, course_hash):
         course_list = []
@@ -725,7 +758,6 @@ class UserManagement:
 
     def del_student_activities(self, activity):
         for st in activity.student:
-            # print(f"st:{self.user_table.find(st).name},course:{self.user_table.find(st).course}")
             self.user_table.find(st).group_activities.remove(activity.name)
             for week in activity.week:
                 for x in activity.day:
@@ -791,6 +823,94 @@ class UserManagement:
         self.add_student_course(new_course)
 
 
+def quick_sort_by_time(mylist, start, end):  # start,end 是指指针
+    i, j = start, end
+    if start < end:
+        base = mylist[i]  # 设置基准数为i,即为start
+        while i < j:
+            while (i < j) and mylist[j].begintime + mylist[
+                j].day * 100 >= base.begintime + base.day * 100:  # 找到比基准数小的数字
+                j -= 1  # 将炮兵j向左移动
+            mylist[i] = mylist[j]  # 将找到的j复制给i
+            # 同样的方法执行前半区域
+            while (i < j) and mylist[j].begintime + mylist[j].day * 100 <= base.begintime + base.day * 100:
+                i += 1
+            mylist[j] = mylist[i]
+        mylist[i] = base  # i=j,即将这个数设置为base
+
+        quick_sort_by_time(mylist, start, i - 1)
+        quick_sort_by_time(mylist, j + 1, end)
+    return mylist
+
+
+def quicksort_by_name(mylist, start, end):  # start,end 是指指针
+    i, j = start, end
+    if start < end:
+        base = mylist[i]  # 设置基准数为i,即为start
+        while i < j:
+            while (i < j) and mylist[j].name >= base.name:  # 找到比基准数小的数字
+                j -= 1  # 将炮兵j向左移动
+            mylist[i] = mylist[j]  # 将找到的j复制给i
+            # 同样的方法执行前半区域
+            while (i < j) and mylist[i].name <= base.name:
+                i += 1
+            mylist[j] = mylist[i]
+        mylist[i] = base  # i=j,即将这个数设置为base
+
+        quicksort_by_name(mylist, start, i - 1)
+        quicksort_by_name(mylist, j + 1, end)
+    return mylist
+
+
+def quicksort_by_id(mylist, start, end):  # start,end 是指指针
+    i, j = start, end
+    if start < end:
+        base = mylist[i]  # 设置基准数为i,即为start
+        while i < j:
+            while (i < j) and mylist[j].id >= base.id:  # 找到比基准数小的数字
+                j -= 1  # 将炮兵j向左移动
+            mylist[i] = mylist[j]  # 将找到的j复制给i
+            # 同样的方法执行前半区域
+            while (i < j) and mylist[i].id <= base.id:
+                i += 1
+            mylist[j] = mylist[i]
+        mylist[i] = base  # i=j,即将这个数设置为base
+
+        quicksort_by_id(mylist, start, i - 1)
+        quicksort_by_id(mylist, j + 1, end)
+    return mylist
+
+
+"""def sort_by_time(unsorted_list):
+    sorted_list = []
+    dic = {}
+    for x in unsorted_list:
+        dic[unsorted_list[x].begintime + unsorted_list[x].day * 100] = unsorted_list[x]
+    for key in sorted(dic):
+        sorted_list.append(dic[key])
+    return sorted_list
+
+
+# 可以排用哈希存储的课程也可以排用b+树存储的课外活动
+def sort_by_name(unsorted_list):
+    sorted_list = []
+    dic = {}
+    for x in unsorted_list:
+        dic[unsorted_list[x].name] = unsorted_list[x]
+    for key in sorted(dic):
+        sorted_list.append(dic[key])
+    return sorted_list
+
+
+def sort_by_id(unsorted_list):
+    sorted_list = []
+    dic = {}
+    for x in unsorted_list:
+        dic[unsorted_list[x].id] = unsorted_list[x]
+    for key in sorted(dic):
+        sorted_list.append(dic[key])
+    return sorted_list"""
+
 # # 先把课程的B+树、哈希，和学生的哈希读出来
 # course_tree = BPlusTree()
 # course_table = MyHash()
@@ -839,4 +959,3 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
-

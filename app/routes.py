@@ -104,6 +104,23 @@ def all_course_list():
         return render_template('teacher_course_list.html', queryset=g.tree.get_all_data())
 
 
+@app.route('/Student/person_activity/list', methods=['GET', 'POST'])
+def person_activity_list():
+    if request.method == 'GET':
+        g.usr_id = current_user.id - 1
+        user = g.manage.login(g.usr_id)
+        return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
+
+
+@app.route('/temp/list', methods=['GET', 'POST'])
+def temp_list():
+    if request.method == 'GET':
+        g.usr_id = current_user.id - 1
+        user = g.manage.login(g.usr_id)
+        print(user.thing.get_all_data())
+        return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
+
+
 @app.route('/course/<int:id_>/info/', methods=['GET', 'POST'])
 def course_info(id_):
     course = g.course_hash.find(id_)
@@ -113,13 +130,14 @@ def course_info(id_):
     time = []
     for week in course.week:
         for day in course.day:
-            time.append(f'第{week}周   周{day}   {course.begin_time[0]}时{course.begin_time[1]}分--{course.end_time[0]}时{course.end_time[1]}分')
+            time.append(
+                f'第{week}周   周{day}   {course.begin_time[0]}时{course.begin_time[1]}分--{course.end_time[0]}时{course.end_time[1]}分')
     students = []
     for obj in course.student:
         print(obj)
         obj = int(obj)
         print(type(obj))
-        user = User.query.filter_by(id=obj+1).first()
+        user = User.query.filter_by(id=obj + 1).first()
         print(user)
         students.append(str(user.username))
     return render_template('teacher_course_info.html', course=course, time=time, students=students)
@@ -133,13 +151,40 @@ def group_activity_info(name):
     time = []
     for week in activity.week:
         for day in activity.day:
-            time.append(f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+            time.append(
+                f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
     students = []
     for obj in activity.student:
         obj = int(obj)
-        user = User.query.filter_by(id=obj+1).first()
+        user = User.query.filter_by(id=obj + 1).first()
         students.append(str(user.username))
     return render_template('teacher_group_activity_info.html', activity=activity, time=time, students=students)
+
+
+@app.route('/person_activity/<string:name>/info/', methods=['GET', 'POST'])
+def person_activity_info(name):
+    print(name)
+    print(type(name))
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    activity = user.personal_activities.find(name)
+    time = []
+    for week in activity.week:
+        for day in activity.day:
+            time.append(
+                f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+    return render_template('student_person_activity_info.html', activity=activity, time=time)
+
+
+@app.route('/temp/<string:name>/info/', methods=['GET', 'POST'])
+def temp_info(name):
+    print(name)
+    print(type(name))
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    activity = user.thing.find(name)
+    time = f'第{activity.week[0]}周   周{activity.day[0]}   {activity.begin_time[0]}时'
+    return render_template('student_temp_info.html', activity=activity, time=time)
 
 
 @app.route('/group_activity/list', methods=['GET', 'POST'])
@@ -179,7 +224,6 @@ def course_add():
             write_usr_data(g.usr_hash)
             # 重定向到课程列表
             print('添加成功')
-            flash('添加成功!')
             return redirect(url_for('all_course_list'))
         else:
             print('添加失败')
@@ -220,7 +264,6 @@ def group_activity_add():
             write_usr_data(g.usr_hash)
             # 重定向到课程列表
             print('添加成功')
-            flash('添加成功!')
             return redirect(url_for('group_activity_list'))
         else:
             print('添加失败')
@@ -228,6 +271,60 @@ def group_activity_add():
             return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
     else:
         return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
+
+
+@app.route('/person_activity/add', methods=['GET', 'POST'])
+def person_activity_add():
+    error = None
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    if request.method == 'POST':
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        week = request.form.getlist("week[]")
+        offline = request.form.get("method")
+        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
+        if user.time_conflicts(activity):
+            user.add_personal_activities(activity)
+            # 将改动后的B+树存入文件
+            write_usr_data(g.usr_hash)
+            # 重定向到课程列表
+            print('添加成功')
+            return redirect(url_for('person_activity_list'))
+        else:
+            print('添加失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('student_person_activity_add.html', error=error)
+    else:
+        return render_template('student_person_activity_add.html', error=error)
+
+
+@app.route('/temp/add', methods=['GET', 'POST'])
+def temp_add():
+    error = None
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    if request.method == 'POST':
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        week = request.form.getlist("week[]")
+        offline = request.form.get("method")
+        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
+        if user.temp_time_conflicts(activity):
+            user.add_temp_thing(activity)
+            # 将改动后的B+树存入文件
+            write_usr_data(g.usr_hash)
+            # 重定向到课程列表
+            print('添加成功')
+            return redirect(url_for('temp_list'))
+        else:
+            print('添加失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('student_temp_add.html', error=error)
+    else:
+        return render_template('student_temp_add.html', error=error)
 
 
 @app.route('/group_activity/<string:name>/del/', methods=['GET', 'POST'])
@@ -242,6 +339,32 @@ def group_activity_del(name):
     write_usr_data(g.usr_hash)
     # 重定向到课程列表
     return redirect('/group_activity/list')
+
+
+@app.route('/person_activity/<string:name>/del/', methods=['GET', 'POST'])
+def person_activity_del(name):
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    print('name=' + name)
+    activity = user.personal_activities.find(name)
+    user.del_personal_activities(activity)
+    # 将改动后的树重新存入文件
+    write_usr_data(g.usr_hash)
+    # 重定向到课程列表
+    return redirect('/Student/person_activity/list')
+
+
+@app.route('/temp/<string:name>/del/', methods=['GET', 'POST'])
+def temp_del(name):
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    print('name=' + name)
+    activity = user.thing.find(name)
+    user.del_temp_thing(activity)
+    # 将改动后的树重新存入文件
+    write_usr_data(g.usr_hash)
+    # 重定向到课程列表
+    return redirect('/temp/list')
 
 
 # 修改课程

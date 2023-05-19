@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <body>
+    <table width="600" border="1">
+        <tr>
+            <td>个人活动名:</td>
+            <td>{{ activity.name }}</td>
+        </tr>
+        <tr>
+            <td>活动时间:</td>
+            <td>
+                <select>
+                    {% for obj in time %}
+                        <option>{{ obj }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+    </table>
+    </body>
+{% endblock %}
+
