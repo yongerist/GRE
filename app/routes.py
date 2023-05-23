@@ -143,7 +143,7 @@ def course_info(id_):
         user = User.query.filter_by(id=obj + 1).first()
         print(user)
         students.append(str(user.username))
-    return render_template('teacher_course_info.html', course=course, time=time, students=students,test_time=test_time)
+    return render_template('teacher_course_info.html', course=course, time=time, students=students, test_time=test_time)
 
 
 @app.route('/group_activity/<string:name>/info/', methods=['GET', 'POST'])
@@ -310,13 +310,12 @@ def test_add():
         student = course_old.student
         # 建立course对象
         test = Test(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
-                            student=student)
+                    student=student)
         if g.manage.time_conflicts(test):
-            course=course_old
-            course.test=test
+
             # 将post请求中的course对象插入到B+树中
-            g.tree.revise(course_old, course)
-            g.course_hash.revise(course_old, course)
+            g.tree.find(course_old.name).test = test
+            g.course_hash.find(course_old.id).test = test
             g.manage.add_student_test(test)
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
@@ -328,9 +327,11 @@ def test_add():
         else:
             print('添加失败')
             error = "时间已经被占用,添加失败!"
-            return render_template('test_add.html', student=g.manage.all_student(), error=error, courses=g.tree.get_all_data())
+            return render_template('test_add.html', student=g.manage.all_student(), error=error,
+                                   courses=g.tree.get_all_data())
     else:
-        return render_template('test_add.html', student=g.manage.all_student(), error=error, courses=g.tree.get_all_data())
+        return render_template('test_add.html', student=g.manage.all_student(), error=error,
+                               courses=g.tree.get_all_data())
 
 
 @app.route('/person_activity/add', methods=['GET', 'POST'])
