@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>添加课程</title>
+    <title>添加团体活动</title>
 </head>
 <body>
     <div>
@@ -12,16 +12,14 @@
         <a href="/group_activity/add">添加团体活动</a>
         <a href="/group_activity/list">所有团体活动</a>
         <a href="/test/add">添加考试</a>
-
-
     </div>
     <div>
     <form  method="post">
-        <div><label>课程名: <input type="text"  placeholder="课程名" name="name"></label></div>
+        <div><label>考试名: <input type="text"  placeholder="考试名" name="name"></label></div>
         <div>
         <label>
                 周:
-        <select name="week[]" multiple="multiple">
+        <select name="week[]" >
             <option value="">--请选择--</option>
             <option value="01">第一周</option>
             <option value="02">第二周</option>
@@ -43,7 +41,7 @@
         </label>
         <label>
                 日:
-        <select name="day[]" multiple="multiple">
+        <select name="day[]" >
             <option value="">--请选择--</option>
             <option value="1">周一</option>
             <option value="2">周二</option>
@@ -57,22 +55,17 @@
         </div>
         <div>
         <label>
-        学生:
-        <select name="student[]" multiple="multiple">
+        课程:
+        <select name="course[]" >
             <option value="">--请选择--</option>
-            {% for obj in student %}
-            <option value={{ obj.id }}>{{ obj.name }}</option>
+            {% for obj in courses %}
+            <option value={{ obj.name }}>{{ obj.name }}</option>
             {% endfor %}
         </select>
         </label>
         </div>
         <div><label>开始时间: <input type="time"  name="begin_time"></label></div>
-        <div><label>结束时间: <input type="time"  name="end_time"></label></div>
-        <div><label>方式:
-            线上 <input type="radio" name="method" value="0">
-            线下 <input type="radio" name="method" value="1" checked="checked">
-        </label></div>
-        <div><label>上课: <input type="text"  placeholder="网课链接/路线" name="road"></label></div>
+        <div><label>地点: <input type="text"  placeholder="路线" name="road"></label></div>
         <input type="submit" value="确认添加">
         <input type="reset" value="重新填写">
     </form>
