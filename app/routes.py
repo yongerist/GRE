@@ -135,7 +135,7 @@ def course_info(id_):
     students = []
     test_time = "没有考试"
     if course.test:
-        test_time = f'第{course.test.week}周   周{course.test.day}   {course.test.begin_time[0]}时{course.test.begin_time[1]}分--{course.test.end_time[0]}时'
+        test_time = f'第{course.test.week[0]}周   周{course.test.day[0]}   {course.test.begin_time[0]}时{course.test.begin_time[1]}分--{course.test.end_time[0]}时'
     for obj in course.student:
         print(obj)
         obj = int(obj)
@@ -324,7 +324,7 @@ def test_add():
             write_usr_data(g.usr_hash)
             # 重定向到课程列表
             print('添加成功')
-            return redirect(url_for('course_list'))
+            return redirect(url_for('all_course_list'))
         else:
             print('添加失败')
             error = "时间已经被占用,添加失败!"
