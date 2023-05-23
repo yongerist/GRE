@@ -5,7 +5,7 @@ from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
 
 from app import app, db
-from app.course import Course, UserManagement, Activity
+from app.course import Course, UserManagement, Activity, Test
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 from app.forms import LoginForm, RegistrationForm
@@ -133,6 +133,9 @@ def course_info(id_):
             time.append(
                 f'第{week}周   周{day}   {course.begin_time[0]}时{course.begin_time[1]}分--{course.end_time[0]}时{course.end_time[1]}分')
     students = []
+    test_time = "没有考试"
+    if course.test:
+        test_time = f'第{course.test.week}周   周{course.test.day}   {course.test.begin_time[0]}时{course.test.begin_time[1]}分--{course.test.end_time[0]}时'
     for obj in course.student:
         print(obj)
         obj = int(obj)
@@ -140,7 +143,7 @@ def course_info(id_):
         user = User.query.filter_by(id=obj + 1).first()
         print(user)
         students.append(str(user.username))
-    return render_template('teacher_course_info.html', course=course, time=time, students=students)
+    return render_template('teacher_course_info.html', course=course, time=time, students=students,test_time=test_time)
 
 
 @app.route('/group_activity/<string:name>/info/', methods=['GET', 'POST'])
@@ -236,6 +239,24 @@ def course_add():
         return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
 
 
+@app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
+def course_del(id_):
+    course = g.course_hash.find(id_)
+    print(id_)
+    name = course.name
+    student = course.student
+    print(name)
+    g.tree.remove(g.course_hash.find(id_).name)
+    g.course_hash.remove(id_)
+    g.manage.del_student_course(course)
+    # 将改动后的树重新存入文件
+    write_tree_data(g.tree)
+    write_hash_data(g.course_hash)
+    write_usr_data(g.usr_hash)
+    # 重定向到课程列表
+    return redirect(url_for('all_course_list'))
+
+
 @app.route('/group_activity/add', methods=['GET', 'POST'])
 def group_activity_add():
     error = None
@@ -271,6 +292,45 @@ def group_activity_add():
             return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
     else:
         return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
+
+
+@app.route('/test/add', methods=['GET', 'POST'])
+def test_add():
+    error = None
+    if request.method == 'POST':
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        week = request.form.getlist("week[]")
+        offline = request.form.get("method")
+        courses = request.form.getlist("course[]")
+        course_name = courses[0]
+        print("course_name" + course_name)
+        course_old = g.tree.find(course_name)
+        student = course_old.student
+        # 建立course对象
+        test = Test(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
+                            student=student)
+        if g.manage.time_conflicts(test):
+            course=course_old
+            course.test=test
+            # 将post请求中的course对象插入到B+树中
+            g.tree.revise(course_old, course)
+            g.course_hash.revise(course_old, course)
+            g.manage.add_student_test(test)
+            # 将改动后的B+树存入文件
+            write_tree_data(g.tree)
+            write_hash_data(g.course_hash)
+            write_usr_data(g.usr_hash)
+            # 重定向到课程列表
+            print('添加成功')
+            return redirect(url_for('course_list'))
+        else:
+            print('添加失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('test_add.html', student=g.manage.all_student(), error=error, courses=g.tree.get_all_data())
+    else:
+        return render_template('test_add.html', student=g.manage.all_student(), error=error, courses=g.tree.get_all_data())
 
 
 @app.route('/person_activity/add', methods=['GET', 'POST'])
@@ -389,9 +449,6 @@ def course_revise(course_id):
             g.tree.revise(course_old, course)
             g.course_hash.revise(course_old, course)
             g.manage.revise_student_course(course_old, course)
-            # 将改动后的B+树存入文件
-            write_tree_data(g.tree)
-            write_hash_data(g.course_hash)
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)

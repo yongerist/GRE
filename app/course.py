@@ -31,7 +31,6 @@ class Course:
 
 
 class Test:
-
     def __init__(self, name, day, begin_time, week, offline, student):
         self.name = name
         self.day = [int(x) for x in day]
@@ -780,7 +779,8 @@ class UserManagement:
             for week in activity.week:
                 for x in activity.day:
                     for i in range(activity.begin_time[0], activity.end_time[0]):
-                        print("course")
+                        print("add")
+                        print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = "group_activity " + activity.name
 
     def del_student_activities(self, activity):
@@ -797,16 +797,15 @@ class UserManagement:
 
     def add_student_test(self, test):
         for st in test.student:
-            self.user_table.find(st).group_activities.append(test.name)
             for week in test.week:
                 for x in test.day:
                     for i in range(test.begin_time[0], test.end_time[0]):
-                        print("course")
+                        print("add")
+                        print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = "test " + test.name
 
     def del_student_test(self, test):
         for st in test.student:
-            self.user_table.find(st).group_activities.remove(test.name)
             for week in test.week:
                 for x in test.day:
                     for i in range(test.begin_time[0], test.end_time[0]):
@@ -822,7 +821,7 @@ class UserManagement:
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
-                        print("course")
+                        print("add")
                         print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = "course " + course.name
 
@@ -831,7 +830,7 @@ class UserManagement:
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
-                        print(f"week{week},x{x},i{i} ")
+                        print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                         if self.user_table.find(st).time[week][x][i] is not None:
                             # print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                             print("False")
@@ -842,11 +841,12 @@ class UserManagement:
     def del_student_course(self, course):
         print(course)
         for st in course.student:
-            # print(f"st:{self.user_table.find(st).name},course:{self.user_table.find(st).course}")
             self.user_table.find(st).course.remove(course.id)
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
+                        print("del")
+                        print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = None
 
     def revise_time_conflicts(self, old_course, new_course):
@@ -1017,3 +1017,4 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
+
