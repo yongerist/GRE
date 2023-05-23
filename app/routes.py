@@ -236,6 +236,24 @@ def course_add():
         return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
 
 
+@app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
+def course_del(id_):
+    course = g.course_hash.find(id_)
+    print(id_)
+    name = course.name
+    student = course.student
+    print(name)
+    g.tree.remove(g.course_hash.find(id_).name)
+    g.course_hash.remove(id_)
+    g.manage.del_student_course(course)
+    # 将改动后的树重新存入文件
+    write_tree_data(g.tree)
+    write_hash_data(g.course_hash)
+    write_usr_data(g.usr_hash)
+    # 重定向到课程列表
+    return redirect(url_for('all_course_list'))
+
+
 @app.route('/group_activity/add', methods=['GET', 'POST'])
 def group_activity_add():
     error = None

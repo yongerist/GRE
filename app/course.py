@@ -770,7 +770,7 @@ class UserManagement:
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
-                        print("course")
+                        print("add")
                         print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = "course " + course.name
 
@@ -779,9 +779,9 @@ class UserManagement:
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
-                        print(f"week{week},x{x},i{i} ")
+                        # print(f"week{week},x{x},i{i} ")
                         if self.user_table.find(st).time[week][x][i] is not None:
-                            # print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
+                            print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                             print("False")
                             return False
         print("true")
@@ -795,6 +795,8 @@ class UserManagement:
             for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
+                        print("del")
+                        print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = None
 
     def revise_time_conflicts(self, old_course, new_course):
