@@ -609,8 +609,13 @@ class Student(Usr):
         super().__init__(username, email, userNumber)
         self.course = []
         day = [None] * 25
-        week = [day] * 8
-        self.time = [week] * 17
+        week = []
+        for _ in range(8):
+            week.append(day.copy())
+        time = []
+        for _ in range(17):
+            time.append([w.copy() for w in week])
+            self.time = time;
         self.personal_activities = BPlusTree()
         self.group_activities = []
         self.thing = BPlusTree()
@@ -824,6 +829,7 @@ class UserManagement:
                         print("add")
                         print(f"{week},{x},{i}")
                         self.user_table.find(st).time[week][x][i] = "course " + course.name
+                        print("add")
 
     def time_conflicts(self, course):
         for st in course.student:
@@ -1017,4 +1023,3 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
-
