@@ -626,7 +626,7 @@ class Student(Usr):
         thing_list = []
         test_list = []
         course_list = []
-        for i in range(begin_time, end_time+1):
+        for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
                 if self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'h':
                     temp = self.time[week][day][i].split("/")
@@ -641,11 +641,16 @@ class Student(Usr):
                     personal_activities_list.append(temp[1])
                 elif self.time[week][day][i][0] == 'c':
                     temp = self.time[week][day][i].split(" ")
-                    course_list.append(temp[1])
+                    if len(course_list) != 0:
+                        if course_list[-1] != temp[1]:
+                            course_list.append(temp[1])
+                    else:
+                        course_list.append(temp[1])
                 else:
                     temp = self.time[week][day][i].split(" ")
                     group_activities_list.append(temp[1])
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
+
 
 def get_all_course(self, course_hash):
     course_list = []
