@@ -1,82 +1,71 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <title>添加团体活动</title>
-</head>
-<body>
-    <div>
-        <a href="/teacher/index">老师主页</a>
-        <a href="/all/course/list">所有课程</a>
-        <a href="/course_list/add">添加课程</a>
-        <a href="/group_activity/add">添加团体活动</a>
-        <a href="/group_activity/list">所有团体活动</a>
-        <a href="/test/add">添加考试</a>
 
-    </div>
+
+
+{% extends "teacher_base.html" %}
+
+{% block content %}
     <div>
-    <form  method="post">
-        <div><label>团体活动名: <input type="text"  placeholder="团体活动名" name="name"></label></div>
-        <div>
-        <label>
-                周:
-        <select name="week[]" multiple="multiple">
-            <option value="">--请选择--</option>
-            <option value="01">第一周</option>
-            <option value="02">第二周</option>
-            <option value="03">第三周</option>
-            <option value="04">第四周</option>
-            <option value="05">第五周</option>
-            <option value="06">第六周</option>
-            <option value="07">第七周</option>
-            <option value="08">第八周</option>
-            <option value="09">第九周</option>
-            <option value="10">第十周</option>
-            <option value="11">第十一周</option>
-            <option value="12">第十二周</option>
-            <option value="13">第十三周</option>
-            <option value="14">第十四周</option>
-            <option value="15">第十五周</option>
-            <option value="16">第十六周</option>
-        </select>
-        </label>
-        <label>
-                日:
-        <select name="day[]" multiple="multiple">
-            <option value="">--请选择--</option>
-            <option value="1">周一</option>
-            <option value="2">周二</option>
-            <option value="3">周三</option>
-            <option value="4">周四</option>
-            <option value="5">周五</option>
-            <option value="6">周六</option>
-            <option value="7">周日</option>
-        </select>
-        </label>
-        </div>
-        <div>
-        <label>
-        学生:
-        <select name="student[]" multiple="multiple">
-            <option value="">--请选择--</option>
-            {% for obj in student %}
-            <option value={{ obj.id }}>{{ obj.name }}</option>
-            {% endfor %}
-        </select>
-        </label>
-        </div>
-        <div><label>开始时间: <input type="time"  name="begin_time"></label></div>
-        <div><label>方式:
-            线上 <input type="radio" name="method" value="0">
-            线下 <input type="radio" name="method" value="1" checked="checked">
-        </label></div>
-        <div><label>活动: <input type="text"  placeholder="网课链接/路线" name="road"></label></div>
-        <input type="submit" value="确认添加">
-        <input type="reset" value="重新填写">
-    </form>
-    {% if error %}
-        <div style="color: red;"><strong>Error</strong>: {{ error }}</div>
-    {% endif %}
+        <form method="post">
+            <div><label>团体活动名: <input type="text" placeholder="团体活动名" name="name"></label></div>
+            <div>
+                <label>
+                    周:
+                    <select name="week[]" multiple="multiple">
+                        <option value="">--请选择--</option>
+                        <option value="01">第一周</option>
+                        <option value="02">第二周</option>
+                        <option value="03">第三周</option>
+                        <option value="04">第四周</option>
+                        <option value="05">第五周</option>
+                        <option value="06">第六周</option>
+                        <option value="07">第七周</option>
+                        <option value="08">第八周</option>
+                        <option value="09">第九周</option>
+                        <option value="10">第十周</option>
+                        <option value="11">第十一周</option>
+                        <option value="12">第十二周</option>
+                        <option value="13">第十三周</option>
+                        <option value="14">第十四周</option>
+                        <option value="15">第十五周</option>
+                        <option value="16">第十六周</option>
+                    </select>
+                </label>
+                <label>
+                    日:
+                    <select name="day[]" multiple="multiple">
+                        <option value="">--请选择--</option>
+                        <option value="1">周一</option>
+                        <option value="2">周二</option>
+                        <option value="3">周三</option>
+                        <option value="4">周四</option>
+                        <option value="5">周五</option>
+                        <option value="6">周六</option>
+                        <option value="7">周日</option>
+                    </select>
+                </label>
+            </div>
+            <div>
+                <label>
+                    学生:
+                    <select name="student[]" multiple="multiple">
+                        <option value="">--请选择--</option>
+                        {% for obj in student %}
+                            <option value={{ obj.id }}>{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div><label>开始时间: <input type="time" name="begin_time"></label></div>
+            <div><label>方式:
+                线上 <input type="radio" name="method" value="0">
+                线下 <input type="radio" name="method" value="1" checked="checked">
+            </label></div>
+            <div><label>活动: <input type="text" placeholder="网课链接/路线" name="road"></label></div>
+            <input type="submit" value="确认添加">
+            <input type="reset" value="重新填写">
+        </form>
+        {% if error %}
+            <div style="color: red;"><strong>Error</strong>: {{ error }}</div>
+        {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}

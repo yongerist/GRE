@@ -1,43 +1,30 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <title>课程管理</title>
-</head>
-<body>
-    <div>
-        <a href="/teacher/index">老师主页</a>
-        <a href="/all/course/list">所有课程</a>
-        <a href="/course_list/add">添加课程</a>
-        <a href="/group_activity/add">添加团体活动</a>
-        <a href="/group_activity/list">所有团体活动</a>
-        <a href="/test/add">添加考试</a>
 
-    </div>
-      <table class="table">
+
+{% extends "teacher_base.html" %}
+
+{% block content %}
+    <table class="table">
         <thead>
-          <tr>
+        <tr>
             <th>团体活动名</th>
             <th>开始时间</th>
             <th>结束时间</th>
             <th>操作</th>
-          </tr>
+        </tr>
         </thead>
         <tbody>
         {% for obj in queryset %}
-          <tr>
-            <td>{{ obj.name }}</td>
-            <td>{{ obj.begin_time }}</td>
-            <td>{{ obj.end_time }}</td>
-            <td>
-                <a href="/group_activity/{{ obj.name }}/info/"> 更多 </a>
-                <a class="btn btn-primary btn-xs" href="/group_activity/{{ obj.id }}/edit/"> 编辑</a>
-                <a class="btn btn-danger btn-xs" href="/group_activity/{{ obj.name }}/del/"> 删除</a>
-            </td>
-          </tr>
+            <tr>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.begin_time }}</td>
+                <td>{{ obj.end_time }}</td>
+                <td>
+                    <a href="/group_activity/{{ obj.name }}/info/"> 更多 </a>
+                    <a class="btn btn-primary btn-xs" href="/group_activity/{{ obj.id }}/edit/"> 编辑</a>
+                    <a class="btn btn-danger btn-xs" href="/group_activity/{{ obj.name }}/del/"> 删除</a>
+                </td>
+            </tr>
         {% endfor %}
         </tbody>
-      </table>
-
-</body>
-</html>
+    </table>
+{% endblock %}

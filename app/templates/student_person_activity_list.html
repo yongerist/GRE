@@ -1,32 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-      <body>
-      <table class="table">
+    <body>
+    <table class="table">
         <thead>
-          <tr>
+        <tr>
             <th>个人活动名</th>
             <th>开始时间</th>
             <th>结束时间</th>
             <th>操作</th>
-          </tr>
+        </tr>
         </thead>
         <tbody>
         {% for obj in queryset %}
-          <tr>
-            <td>{{ obj.name }}</td>
-            <td>{{ obj.begin_time }}</td>
-            <td>{{ obj.end_time }}</td>
-            <td>
-                <a href="/person_activity/{{ obj.name }}/info/"> 更多 </a>
-                <a class="btn btn-primary btn-xs" href="/person_activity/{{ obj.id }}/edit/"> 编辑</a>
-                <a class="btn btn-danger btn-xs" href="/person_activity/{{ obj.name }}/del/"> 删除</a>
-            </td>
-          </tr>
+            <tr>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.begin_time }}</td>
+                <td>{{ obj.end_time }}</td>
+                <td>
+                    <a href="/person_activity/{{ obj.name }}/info/"> 更多 </a>
+                    <a class="btn btn-primary btn-xs" href="/person_activity/{{ obj.id }}/edit/"> 编辑</a>
+                    <a class="btn btn-danger btn-xs" href="/person_activity/{{ obj.name }}/del/"> 删除</a>
+                </td>
+            </tr>
         {% endfor %}
         </tbody>
-      </table>
+    </table>
 
-</body>
+    </body>
 {% endblock %}
 
