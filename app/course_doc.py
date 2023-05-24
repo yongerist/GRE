@@ -127,7 +127,7 @@ def course_add():
             day = request.form.get("day")
             begin_time = request.form.get("begin_time")
             end_time = request.form.get("end_time")
-            week = request.form.get("gweek")
+            week = request.form.get("week")
             offline = request.form.get("method")
             # 建立course对象
             course = Course(id=id_, name=name, begin_time=begin_time, end_time=end_time, week=week, offline=offline)
@@ -176,7 +176,7 @@ def course_revise(course_id):
             name = request.form.get("name")
             begin_time = request.form.get("begin_time")
             duration = request.form.get("duration")
-            week = request.form.get("gweek")
+            week = request.form.get("week")
             offline = request.form.get("offline")
 
             # 创建新结点

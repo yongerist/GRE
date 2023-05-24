@@ -662,7 +662,7 @@ def get_all_group_activities(self, group_activities_tree):
 
 
 def time_conflicts(self, activity):
-    for week in activity.gweek:
+    for week in activity.week:
         for x in activity.day:
             for i in range(activity.begin_time[0], activity.end_time[0]):
                 if self.time[week][x][i] is not None:
@@ -675,7 +675,7 @@ def time_conflicts(self, activity):
 
 def add_personal_activities(self, activity):
     self.personal_activities.insert(activity)
-    for week in activity.gweek:
+    for week in activity.week:
         for x in activity.day:
             for i in range(activity.begin_time[0], activity.end_time[0]):
                 self.time[week][x][i] = "personal_activity " + activity.name
@@ -683,7 +683,7 @@ def add_personal_activities(self, activity):
 
 def del_personal_activities(self, activity):
     self.personal_activities.remove(activity.name)
-    for week in activity.gweek:
+    for week in activity.week:
         for x in activity.day:
             for i in range(activity.begin_time[0], activity.end_time[0]):
                 self.time[week][x][i] = None
@@ -691,7 +691,7 @@ def del_personal_activities(self, activity):
 
 # 临时事务的时间检验
 def temp_time_conflicts(self, activity):
-    for week in activity.gweek:
+    for week in activity.week:
         for x in activity.day:
             for i in range(activity.begin_time[0], activity.end_time[0]):
                 if self.time[week][x][i] is not None:
@@ -703,7 +703,7 @@ def temp_time_conflicts(self, activity):
 
 def add_temp_thing(self, activity):
     self.thing.insert(activity)
-    for week in activity.gweek:
+    for week in activity.week:
         for x in activity.day:
             for i in range(activity.begin_time[0], activity.end_time[0]):
                 if self.time[week][x][i] is not None:
@@ -718,7 +718,7 @@ def find_temp_thing(self, activity_name):
 
 def del_temp_thing(self, activity):
     self.thing.remove(activity.name)
-    for week in activity.gweek:
+    for week in activity.week:
         for x in activity.day:
             for i in range(activity.begin_time[0], activity.end_time[0]):
                 if self.time[week][x][i] == "/temp_thing " + activity.name:
@@ -801,7 +801,7 @@ class UserManagement:
     def add_student_activities(self, activity):
         for st in activity.student:
             self.user_table.find(st).group_activities.append(activity.name)
-            for week in activity.gweek:
+            for week in activity.week:
                 for x in activity.day:
                     for i in range(activity.begin_time[0], activity.end_time[0]):
                         print("add")
@@ -811,7 +811,7 @@ class UserManagement:
     def del_student_activities(self, activity):
         for st in activity.student:
             self.user_table.find(st).group_activities.remove(activity.name)
-            for week in activity.gweek:
+            for week in activity.week:
                 for x in activity.day:
                     for i in range(activity.begin_time[0], activity.end_time[0]):
                         self.user_table.find(st).time[week][x][i] = None
@@ -819,7 +819,7 @@ class UserManagement:
     def possible_time(self, activity):
         p_time = []
         for st in activity.student:
-            for week in activity.gweek:
+            for week in activity.week:
                 for x in activity.day:
                     for i in range(0, 25):
                         print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
@@ -834,7 +834,7 @@ class UserManagement:
 
     def add_student_test(self, test):
         for st in test.student:
-            for week in test.gweek:
+            for week in test.week:
                 for x in test.day:
                     for i in range(test.begin_time[0], test.end_time[0]):
                         print("add")
@@ -843,7 +843,7 @@ class UserManagement:
 
     def del_student_test(self, test):
         for st in test.student:
-            for week in test.gweek:
+            for week in test.week:
                 for x in test.day:
                     for i in range(test.begin_time[0], test.end_time[0]):
                         self.user_table.find(st).time[week][x][i] = None
@@ -855,7 +855,7 @@ class UserManagement:
     def add_student_course(self, course):
         for st in course.student:
             self.user_table.find(st).course.append(course.id)
-            for week in course.gweek:
+            for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
                         print("add")
@@ -865,12 +865,12 @@ class UserManagement:
 
     def time_conflicts(self, course):
         for st in course.student:
-            for week in course.gweek:
+            for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
                         print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                         if self.user_table.find(st).time[week][x][i] is not None:
-                            # print(f"{gweek},{x},{i} {self.user_table.find(st).time[gweek][x][i]}")
+                            # print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                             print("False")
                             return False
         print("true")
@@ -880,7 +880,7 @@ class UserManagement:
         print(course)
         for st in course.student:
             self.user_table.find(st).course.remove(course.id)
-            for week in course.gweek:
+            for week in course.week:
                 for x in course.day:
                     for i in range(course.begin_time[0], course.end_time[0]):
                         print("del")

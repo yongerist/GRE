@@ -1,25 +1,29 @@
 from flask import flash, redirect, url_for, g
 from flask import render_template, request
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, login_required
 from flask_login import logout_user
 from werkzeug.urls import url_parse
-# from test.reminder import gweek, gday, my_time
-from app import db
+from app.reminder import gweek, gday, my_time
+from app import db, app
 from app.course import Course, UserManagement, Activity, Test, quicksort_by_name
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
+my_time()
 
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    # tomorrow = current_user.find_all_by_time(gweek, (gday + 1) % 7, 0, 24)
-    # for obj in tomorrow:
-    #     for i in obj:
-    #         print(i)
+    g.usr_id = current_user.id - 1
+    print(g.usr_id)
+    user = g.manage.login(g.usr_id)
+    tomorrow = user.find_all_by_time(gweek, (gday + 1) % 7, 0, 24)
+    for obj in tomorrow:
+        for i in obj:
+            print(i)
     return render_template('index.html', title='Home Page')
 
 
@@ -142,14 +146,14 @@ def course_info(id_):
     name = course.name
     print(name)
     time = []
-    for week in course.gweek:
+    for week in course.week:
         for day in course.day:
             time.append(
                 f'第{week}周   周{day}   {course.begin_time[0]}时{course.begin_time[1]}分--{course.end_time[0]}时{course.end_time[1]}分')
     students = []
     test_time = "没有考试"
     if course.test:
-        test_time = f'第{course.test.gweek[0]}周   周{course.test.day[0]}   {course.test.begin_time[0]}时{course.test.begin_time[1]}分--{course.test.end_time[0]}时'
+        test_time = f'第{course.test.week[0]}周   周{course.test.day[0]}   {course.test.begin_time[0]}时{course.test.begin_time[1]}分--{course.test.end_time[0]}时'
     for obj in course.student:
         print(obj)
         obj = int(obj)
@@ -166,7 +170,7 @@ def group_activity_info(name):
     print(type(name))
     activity = g.gro_act_tree.find(name)
     time = []
-    for week in activity.gweek:
+    for week in activity.week:
         for day in activity.day:
             time.append(
                 f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
@@ -186,7 +190,7 @@ def person_activity_info(name):
     user = g.manage.login(g.usr_id)
     activity = user.personal_activities.find(name)
     time = []
-    for week in activity.gweek:
+    for week in activity.week:
         for day in activity.day:
             time.append(
                 f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
@@ -200,7 +204,7 @@ def temp_info(name):
     g.usr_id = current_user.id - 1
     user = g.manage.login(g.usr_id)
     activity = user.thing.find(name)
-    time = f'第{activity.gweek[0]}周   周{activity.day[0]}   {activity.begin_time[0]}时'
+    time = f'第{activity.week[0]}周   周{activity.day[0]}   {activity.begin_time[0]}时'
     return render_template('student_temp_info.html', activity=activity, time=time)
 
 
@@ -221,7 +225,7 @@ def course_add():
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
         end_time = request.form.get("end_time")
-        week = request.form.getlist("gweek[]")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
         for obj in student:
@@ -281,7 +285,7 @@ def group_activity_add():
         name = request.form.get("name")
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
-        week = request.form.getlist("gweek[]")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
         for obj in student:
@@ -316,7 +320,7 @@ def test_add():
         name = request.form.get("name")
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
-        week = request.form.getlist("gweek[]")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
         courses = request.form.getlist("course[]")
         course_name = courses[0]
@@ -358,7 +362,7 @@ def person_activity_add():
         name = request.form.get("name")
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
-        week = request.form.getlist("gweek[]")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
         if user.time_conflicts(activity):
@@ -385,7 +389,7 @@ def temp_add():
         name = request.form.get("name")
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
-        week = request.form.getlist("gweek[]")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
         if user.temp_time_conflicts(activity):
@@ -454,7 +458,7 @@ def course_revise(course_id):
         day = request.form.getlist("day[]")
         begin_time = request.form.get("begin_time")
         end_time = request.form.get("end_time")
-        week = request.form.getlist("gweek[]")
+        week = request.form.getlist("week[]")
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
         # 建立course对象

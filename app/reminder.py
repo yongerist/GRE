@@ -33,5 +33,6 @@ def my_time():
         gday = 1
         gweek += 1
         print(gweek, gday, ghour, gmini, gsecond)
+    print(gweek, gday, ghour, gmini, gsecond)
     threading.Timer(1, my_time).start()
 
