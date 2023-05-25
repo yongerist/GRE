@@ -1,6 +1,51 @@
-import networkx as nx
+from collections import deque
 
-G = nx.Graph()
+
+class Graph:
+    def __init__(self):
+        self.nodes = {}
+        self.edges = {}
+
+    def add_node(self, node_id, **kwargs):
+        self.nodes[node_id] = kwargs
+
+    def add_edge(self, node1, node2, **kwargs):
+        edge_id = (node1, node2)
+        self.edges[edge_id] = kwargs
+
+    def shortest_path(self, start_node, end_node):
+        if start_node not in self.nodes or end_node not in self.nodes:
+            return None
+
+        queue = deque()
+        queue.append((start_node, [start_node]))
+
+        while queue:
+            current_node, path = queue.popleft()
+
+            if current_node == end_node:
+                return path
+
+            for neighbor in self.get_neighbors(current_node):
+                if neighbor not in path:
+                    queue.append((neighbor, path + [neighbor]))
+
+        return None
+
+    def get_neighbors(self, node):
+        neighbors = []
+        for edge, _ in self.edges.items():
+            if edge[0] == node:
+                neighbors.append(edge[1])
+            elif edge[1] == node:
+                neighbors.append(edge[0])
+        return neighbors
+
+    def __str__(self):
+        return f"Nodes: {self.nodes}\nEdges: {self.edges}"
+
+
+G = Graph()
 
 G.add_node("酒店", color='b')
 G.add_node("学11公寓", color='b')
@@ -90,7 +135,6 @@ G.add_node('85', color='r')
 G.add_node('86', color='r')
 G.add_node('校医院', color='b')
 G.add_node('88', color='r')
-
 
 G.add_edge('酒店', '学11公寓', weight=8)
 G.add_edge('学11公寓', '88', weight=2)
@@ -212,21 +256,6 @@ G.add_edge('85', '80', weight=16)
 G.add_edge('82', '86', weight=5)
 G.add_edge('86', '校医院', weight=10)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-path = nx.shortest_path(G, "教三", "学五公寓", weight="weight")
+# path = nx.shortest_path(G, "教三", "学五公寓", weight="weight")
+path = G.shortest_path("主楼", "学五公寓")
 print(path)
