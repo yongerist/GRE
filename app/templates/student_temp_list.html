@@ -1,29 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-      <body>
-      <table class="table">
+    <body>
+        <div>
+        <form method="post" action="/temp/list">
+            <div>
+                <label>查询临时活动: <input type="text" placeholder="临时活动名" name="target"></label>
+                <input type="submit" value="查询">
+            </div>
+        </form>
+    </div>
+    <table class="table">
         <thead>
-          <tr>
+        <tr>
             <th>临时活动名</th>
             <th>时间</th>
             <th>操作</th>
-          </tr>
+        </tr>
         </thead>
         <tbody>
         {% for obj in queryset %}
-          <tr>
-            <td>{{ obj.name }}</td>
-            <td>{{ obj.begin_time }}</td>
-            <td>
-                <a href="/temp/{{ obj.name }}/info/"> 更多 </a>
-                <a class="btn btn-primary btn-xs" href="/temp/{{ obj.id }}/edit/"> 编辑</a>
-                <a class="btn btn-danger btn-xs" href="/temp/{{ obj.name }}/del/"> 删除</a>
-            </td>
-          </tr>
+            <tr>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.begin_time }}</td>
+                <td>
+                    <a href="/temp/{{ obj.name }}/info/"> 更多 </a>
+                    <a class="btn btn-primary btn-xs" href="/temp/{{ obj.id }}/edit/"> 编辑</a>
+                    <a class="btn btn-danger btn-xs" href="/temp/{{ obj.name }}/del/"> 删除</a>
+                </td>
+            </tr>
         {% endfor %}
         </tbody>
-      </table>
+    </table>
 
-</body>
+    </body>
 {% endblock %}

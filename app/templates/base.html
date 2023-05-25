@@ -1,36 +1,42 @@
 <html>
-    <head>
-        {% if title %}
+<head>
+    {% if title %}
         <title>{{ title }} - GRE</title>
-        {% else %}
+    {% else %}
         <title>GRE</title>
-        {% endif %}
-    </head>
-    <body>
-    <div>
-        GRE:
-        <a href="{{ url_for('index') }}">主页</a>
-        {% if current_user.is_anonymous %}
+    {% endif %}
+</head>
+<body>
+<div>
+    GRE:
+    <a href="{{ url_for('index') }}">主页</a>
+    {% if current_user.is_anonymous %}
         <a href="{{ url_for('login') }}">登录</a>
-        {% else %}
+    {% else %}
         <a href="{{ url_for('logout') }}">登出</a>
         <a href="/Student/course/list">我的课程</a>
+        <a href="/Student/group/list">我的团体活动</a>
         <a href="/Student/person_activity/list">我的个人活动</a>
         <a href="/person_activity/add">添加个人活动</a>
         <a href="/temp/list">我的临时活动</a>
         <a href="/temp/add">添加临时活动</a>
-        {% endif %}
-    </div>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
+    {% endif %}
+</div>
+<hr>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
         <ul>
             {% for message in messages %}
-            <li>{{ message }}</li>
+                <li>{{ message }}</li>
             {% endfor %}
         </ul>
-        {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
+    {% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+</body>
 </html>
+
+{% block scripts %}
+    {#    {{ super() }}#}
+    {{ moment.include_moment() }}
+{% endblock %}

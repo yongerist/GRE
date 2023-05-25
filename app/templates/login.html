@@ -9,19 +9,19 @@
             {{ form.userNumber.label }}<br>
             {{ form.userNumber(size=32) }}<br>
             {% for error in form.userNumber.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}<br>
             {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-<!--        {% if form.errors %}-->
-<!--        {{ form.errors }}-->
-<!--        {% endif %}-->
+        <!--        {% if form.errors %}-->
+            <!--        {{ form.errors }}-->
+            <!--        {% endif %}-->
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit() }}</p>
     </form>

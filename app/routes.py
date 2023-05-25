@@ -1,22 +1,34 @@
 from flask import flash, redirect, url_for, g
 from flask import render_template, request
-from flask_login import current_user, login_user
-from flask_login import logout_user, login_required
+from flask_login import current_user, login_user, login_required
+from flask_login import logout_user
 from werkzeug.urls import url_parse
 
-from app import app, db
-from app.course import Course, UserManagement, Activity
+from app import db, app
+from app.course import Course, UserManagement, Activity, Test, quicksort_by_name
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
+from app.reminder import gweek, gday, my_time, ghour
+
+my_time()
 
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    return render_template('index.html', title='Home Page')
+    g.usr_id = current_user.id - 1
+    print(g.usr_id)
+    user = g.manage.login(g.usr_id)
+    tomorrow = user.find_all_by_time(gweek, (gday + 1) % 7, 0, 24)
+    for obj in tomorrow:
+        for i in obj:
+            print("明天要上的课是:" + i)
+    print("结束")
+    after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -85,10 +97,20 @@ def course_list():
     g.usr_id = current_user.id - 1
     print(g.usr_id)
     user = g.manage.login(g.usr_id)
-
+    course = []
+    for x in user.course:
+        course.append(g.course_hash.find(x))
     # 打开网页时展示课程列表
     if request.method == 'GET':
-        return render_template('student_course_list.html', queryset=user.sort_by_name(g.course_hash))
+        return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
+    else:
+        target = request.form.get("target")
+        print("我要查:" + target)
+        if target == "":
+            return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
+        my_list = user.find_course(target, g.tree)
+        # print("我查到:" + my_list[0].name)
+        return render_template('student_course_list.html', queryset=my_list)
 
 
 @app.route('/del/all', methods=['GET', 'POST'])
@@ -106,19 +128,41 @@ def all_course_list():
 
 @app.route('/Student/person_activity/list', methods=['GET', 'POST'])
 def person_activity_list():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
     if request.method == 'GET':
-        g.usr_id = current_user.id - 1
-        user = g.manage.login(g.usr_id)
         return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
+    else:
+        target = request.form.get('target')
+        if target == "":
+            return render_template('student_person_activity_list.html',
+                                   queryset=user.personal_activities.get_all_data())
+        my_list = user.personal_activities.prefix_search(target)
+        if my_list == None:
+            my_list = []
+        print('找到了:')
+        print(target)
+        return render_template('student_person_activity_list.html', queryset=my_list)
 
 
 @app.route('/temp/list', methods=['GET', 'POST'])
 def temp_list():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    print(user.thing.get_all_data())
     if request.method == 'GET':
-        g.usr_id = current_user.id - 1
-        user = g.manage.login(g.usr_id)
-        print(user.thing.get_all_data())
         return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
+    else:
+        target = request.form.get('target')
+        if target == "":
+            return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
+        my_list = user.thing.prefix_search(target)
+        print(my_list)
+        if my_list == None:
+            my_list = []
+        print('找到了:')
+        print(my_list)
+        return render_template('student_temp_list.html', queryset=my_list)
 
 
 @app.route('/course/<int:id_>/info/', methods=['GET', 'POST'])
@@ -133,6 +177,9 @@ def course_info(id_):
             time.append(
                 f'第{week}周   周{day}   {course.begin_time[0]}时{course.begin_time[1]}分--{course.end_time[0]}时{course.end_time[1]}分')
     students = []
+    test_time = "没有考试"
+    if course.test:
+        test_time = f'第{course.test.week[0]}周   周{course.test.day[0]}   {course.test.begin_time[0]}时{course.test.begin_time[1]}分--{course.test.end_time[0]}时'
     for obj in course.student:
         print(obj)
         obj = int(obj)
@@ -140,7 +187,7 @@ def course_info(id_):
         user = User.query.filter_by(id=obj + 1).first()
         print(user)
         students.append(str(user.username))
-    return render_template('teacher_course_info.html', course=course, time=time, students=students)
+    return render_template('teacher_course_info.html', course=course, time=time, students=students, test_time=test_time)
 
 
 @app.route('/group_activity/<string:name>/info/', methods=['GET', 'POST'])
@@ -161,6 +208,22 @@ def group_activity_info(name):
     return render_template('teacher_group_activity_info.html', activity=activity, time=time, students=students)
 
 
+@app.route('/my/group_activity/<string:name>/info/', methods=['GET', 'POST'])
+def my_group_activity_info(name):
+    print(name)
+    print(type(name))
+    activity = g.gro_act_tree.find(name)
+    time = []
+    for week in activity.week:
+        for day in activity.day:
+            time.append(
+                f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+    students = []
+    for obj in activity.student:
+        obj = int(obj)
+        user = User.query.filter_by(id=obj + 1).first()
+        students.append(str(user.username))
+    return render_template('student_group_activity_info.html', activity=activity, time=time, students=students)
 @app.route('/person_activity/<string:name>/info/', methods=['GET', 'POST'])
 def person_activity_info(name):
     print(name)
@@ -191,6 +254,31 @@ def temp_info(name):
 def group_activity_list():
     if request.method == 'GET':
         return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+
+
+@app.route('/Student/group/list', methods=['GET', 'POST'])
+# def group_activity_list():
+#     if request.method == 'GET':
+#         return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+def my_group_list():
+    g.usr_id = current_user.id - 1
+    print(g.usr_id)
+    user = g.manage.login(g.usr_id)
+    # group_activities = []
+    # for x in user.group_activities:
+    #     group_activities.append(g.course_hash.find(x))
+    # 打开网页时展示课程列表
+    if request.method == 'GET':
+        return render_template('student_group_list.html', queryset=g.gro_act_tree.get_all_data())
+    else:
+        target = request.form.get("target")
+        print("我要查:" + target)
+        if target == "":
+            return render_template('student_group_list.html', queryset=g.gro_act_tree.get_all_data())
+        my_list = user.find_course(target, g.gro_act_tree)
+        # print("我查到:" + my_list[0].name)
+        return render_template('student_group_list.html', queryset=my_list)
+
 
 
 @app.route('/course_list/add', methods=['GET', 'POST'])
@@ -236,6 +324,24 @@ def course_add():
         return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
 
 
+@app.route('/course/<int:id_>/del/', methods=['GET', 'POST'])
+def course_del(id_):
+    course = g.course_hash.find(id_)
+    print(id_)
+    name = course.name
+    student = course.student
+    print(name)
+    g.tree.remove(g.course_hash.find(id_).name)
+    g.course_hash.remove(id_)
+    g.manage.del_student_course(course)
+    # 将改动后的树重新存入文件
+    write_tree_data(g.tree)
+    write_hash_data(g.course_hash)
+    write_usr_data(g.usr_hash)
+    # 重定向到课程列表
+    return redirect(url_for('all_course_list'))
+
+
 @app.route('/group_activity/add', methods=['GET', 'POST'])
 def group_activity_add():
     error = None
@@ -266,11 +372,52 @@ def group_activity_add():
             print('添加成功')
             return redirect(url_for('group_activity_list'))
         else:
+            possible_time = g.manage.possible_time(activity)
             print('添加失败')
-            error = "时间已经被占用,添加失败!"
+            error = f"时间已经被占用,添加失败!可供选择的时间{possible_time[0]},{possible_time[1]},{possible_time[2]}"
             return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
     else:
         return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
+
+
+@app.route('/test/add', methods=['GET', 'POST'])
+def test_add():
+    error = None
+    if request.method == 'POST':
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        week = request.form.getlist("week[]")
+        offline = request.form.get("method")
+        courses = request.form.getlist("course[]")
+        course_name = courses[0]
+        print("course_name" + course_name)
+        course_old = g.tree.find(course_name)
+        student = course_old.student
+        # 建立course对象
+        test = Test(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
+                    student=student)
+        if g.manage.time_conflicts(test):
+
+            # 将post请求中的course对象插入到B+树中
+            g.tree.find(course_old.name).test = test
+            g.course_hash.find(course_old.id).test = test
+            g.manage.add_student_test(test)
+            # 将改动后的B+树存入文件
+            write_tree_data(g.tree)
+            write_hash_data(g.course_hash)
+            write_usr_data(g.usr_hash)
+            # 重定向到课程列表
+            print('添加成功')
+            return redirect(url_for('all_course_list'))
+        else:
+            print('添加失败')
+            error = "时间已经被占用,添加失败!"
+            return render_template('test_add.html', student=g.manage.all_student(), error=error,
+                                   courses=g.tree.get_all_data())
+    else:
+        return render_template('test_add.html', student=g.manage.all_student(), error=error,
+                               courses=g.tree.get_all_data())
 
 
 @app.route('/person_activity/add', methods=['GET', 'POST'])
@@ -386,12 +533,10 @@ def course_revise(course_id):
                         student=student)
         if g.manage.revise_time_conflicts(course_old, course):
             # 将post请求中的course对象插入到B+树中
+            course.test = course_old.test
             g.tree.revise(course_old, course)
             g.course_hash.revise(course_old, course)
             g.manage.revise_student_course(course_old, course)
-            # 将改动后的B+树存入文件
-            write_tree_data(g.tree)
-            write_hash_data(g.course_hash)
             # 将改动后的B+树存入文件
             write_tree_data(g.tree)
             write_hash_data(g.course_hash)

@@ -1,23 +1,11 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <div>
-        <a href="/teacher/index">老师主页</a>
-        <a href="/all/course/list">所有课程</a>
-        <a href="/course_list/add">添加课程</a>
-        <a href="/group_activity/add">添加团体活动</a>
-        <a href="/group_activity/list">所有团体活动</a>
-    </div>
-<h1>老师,欢迎你!</h1>
+
+
+{% extends "teacher_base.html" %}
+
+{% block content %}
+    <h1>老师,欢迎你!</h1>
     <div>你的姓名是: XXX</div>
     <div>你的编号是: 000</div>
     <div>你的邮箱是: teacher@bupt.edu.cn</div>
     <div>你的学院是: 计算机学院</div>
-
-
-</body>
-</html>
+{% endblock %}
