@@ -233,6 +233,8 @@ class BPlusNode:
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
            因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
+        if self.is_leaf and len(self.keys)<=index:
+            return None
         if self.is_leaf and self.keys[index] == key:
             value: list = []
             print("leaf")
@@ -604,6 +606,7 @@ class Student(Usr):
     student_class: int
     majors: string
     personal_activities: BPlusTree
+    clock: dict
 
     def __init__(self, username, email, userNumber):
         super().__init__(username, email, userNumber)
@@ -619,6 +622,7 @@ class Student(Usr):
         self.personal_activities = BPlusTree()
         self.group_activities = []
         self.thing = BPlusTree()
+        self.clock = {}
 
     def find_all_by_time(self, week, day, begin_time, end_time):
         personal_activities_list = []
@@ -650,6 +654,9 @@ class Student(Usr):
                     temp = self.time[week][day][i].split(" ")
                     group_activities_list.append(temp[1])
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
+
+    def find_clock(self, week, day, hour):
+        return self.clock.get(f"{week}+{day}+{hour}", None)
 
     def get_all_course(self, course_hash):
         course_list = []
@@ -721,6 +728,21 @@ class Student(Usr):
                         self.time[week][x][i] = None
                     else:
                         self.time[week][x][i].replace("/temp_thing " + activity.name, "")
+
+    def add_clock(self, week, day, hour, thing):
+        self.clock[f"{week}+{day}+{hour}"] = thing.name
+
+    def find_course(self, name, tree):
+        course_list = tree.prefix_search(name)
+        pop_list = []
+        if course_list is None:
+            return []
+        for i in range(0, len(course_list)):
+            if self.name in course_list[i].student:
+                pop_list.append(i)
+        for i in pop_list:
+            course_list.pop(i)
+        return course_list
 
     def sort_by_time(self, course_hash):
         course_list = []
@@ -1046,3 +1068,4 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
+

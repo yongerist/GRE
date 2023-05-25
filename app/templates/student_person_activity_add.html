@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <body>
-    <div>
         <form method="post">
             <div><label>个人活动名: <input type="text" placeholder="个人活动名" name="name"></label></div>
             <div>
@@ -55,6 +53,6 @@
             <div style="color: red;"><strong>Error</strong>: {{ error }}</div>
         {% endif %}
     </div>
-    </body>
+
 {% endblock %}
 

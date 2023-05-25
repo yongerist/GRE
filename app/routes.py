@@ -91,14 +91,6 @@ def before_request():
 
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
-# def course_list():
-#     g.usr_id = current_user.id - 1
-#     print(g.usr_id)
-#     user = g.manage.login(g.usr_id)
-#
-#     # 打开网页时展示课程列表
-#     if request.method == 'GET':
-#         return render_template('student_course_list.html', queryset=user.sort_by_name(g.course_hash))
 def course_list():
     g.usr_id = current_user.id - 1
     print(g.usr_id)
@@ -109,7 +101,14 @@ def course_list():
     # 打开网页时展示课程列表
     if request.method == 'GET':
         return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
-
+    else:
+        target = request.form.get("target")
+        print("我要查:" + target)
+        if target == "":
+            return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
+        my_list = user.find_course(target, g.tree)
+        # print("我查到:" + my_list[0].name)
+        return render_template('student_course_list.html', queryset=my_list)
 
 @app.route('/del/all', methods=['GET', 'POST'])
 def del_all():
@@ -126,10 +125,20 @@ def all_course_list():
 
 @app.route('/Student/person_activity/list', methods=['GET', 'POST'])
 def person_activity_list():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
     if request.method == 'GET':
-        g.usr_id = current_user.id - 1
-        user = g.manage.login(g.usr_id)
         return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
+    else:
+        target = request.form.get('target')
+        if target == "":
+            return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
+        my_list = user.personal_activities.prefix_search(target)
+        print('找到了:')
+        print(target)
+        return render_template('student_person_activity_list.html', queryset=my_list)
+
+
 
 
 @app.route('/temp/list', methods=['GET', 'POST'])
