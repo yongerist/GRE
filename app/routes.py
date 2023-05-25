@@ -3,13 +3,15 @@ from flask import render_template, request
 from flask_login import current_user, login_user, login_required
 from flask_login import logout_user
 from werkzeug.urls import url_parse
-from app.reminder import gweek, gday, my_time, ghour
+
 from app import db, app
 from app.course import Course, UserManagement, Activity, Test, quicksort_by_name
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
+from app.reminder import gweek, gday, my_time, ghour
+
 my_time()
 
 
@@ -110,6 +112,7 @@ def course_list():
         # print("我查到:" + my_list[0].name)
         return render_template('student_course_list.html', queryset=my_list)
 
+
 @app.route('/del/all', methods=['GET', 'POST'])
 def del_all():
     db.session.query(User).delete()
@@ -132,22 +135,34 @@ def person_activity_list():
     else:
         target = request.form.get('target')
         if target == "":
-            return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
+            return render_template('student_person_activity_list.html',
+                                   queryset=user.personal_activities.get_all_data())
         my_list = user.personal_activities.prefix_search(target)
+        if my_list == None:
+            my_list = []
         print('找到了:')
         print(target)
         return render_template('student_person_activity_list.html', queryset=my_list)
 
 
-
-
 @app.route('/temp/list', methods=['GET', 'POST'])
 def temp_list():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    print(user.thing.get_all_data())
     if request.method == 'GET':
-        g.usr_id = current_user.id - 1
-        user = g.manage.login(g.usr_id)
-        print(user.thing.get_all_data())
         return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
+    else:
+        target = request.form.get('target')
+        if target == "":
+            return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
+        my_list = user.thing.prefix_search(target)
+        print(my_list)
+        if my_list == None:
+            my_list = []
+        print('找到了:')
+        print(my_list)
+        return render_template('student_temp_list.html', queryset=my_list)
 
 
 @app.route('/course/<int:id_>/info/', methods=['GET', 'POST'])
@@ -193,6 +208,22 @@ def group_activity_info(name):
     return render_template('teacher_group_activity_info.html', activity=activity, time=time, students=students)
 
 
+@app.route('/my/group_activity/<string:name>/info/', methods=['GET', 'POST'])
+def my_group_activity_info(name):
+    print(name)
+    print(type(name))
+    activity = g.gro_act_tree.find(name)
+    time = []
+    for week in activity.week:
+        for day in activity.day:
+            time.append(
+                f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+    students = []
+    for obj in activity.student:
+        obj = int(obj)
+        user = User.query.filter_by(id=obj + 1).first()
+        students.append(str(user.username))
+    return render_template('student_group_activity_info.html', activity=activity, time=time, students=students)
 @app.route('/person_activity/<string:name>/info/', methods=['GET', 'POST'])
 def person_activity_info(name):
     print(name)
@@ -223,6 +254,31 @@ def temp_info(name):
 def group_activity_list():
     if request.method == 'GET':
         return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+
+
+@app.route('/Student/group/list', methods=['GET', 'POST'])
+# def group_activity_list():
+#     if request.method == 'GET':
+#         return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+def my_group_list():
+    g.usr_id = current_user.id - 1
+    print(g.usr_id)
+    user = g.manage.login(g.usr_id)
+    # group_activities = []
+    # for x in user.group_activities:
+    #     group_activities.append(g.course_hash.find(x))
+    # 打开网页时展示课程列表
+    if request.method == 'GET':
+        return render_template('student_group_list.html', queryset=g.gro_act_tree.get_all_data())
+    else:
+        target = request.form.get("target")
+        print("我要查:" + target)
+        if target == "":
+            return render_template('student_group_list.html', queryset=g.gro_act_tree.get_all_data())
+        my_list = user.find_course(target, g.gro_act_tree)
+        # print("我查到:" + my_list[0].name)
+        return render_template('student_group_list.html', queryset=my_list)
+
 
 
 @app.route('/course_list/add', methods=['GET', 'POST'])

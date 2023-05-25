@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <form method="post" action="/Student/group/list">
+            <div>
+                <label>查询团体活动: <input type="text" placeholder="团体活动名" name="target"></label>
+                <input type="submit" value="查询">
+            </div>
+        </form>
+    </div>
+    <hr>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>课程名</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in queryset %}
+            <tr>
+                <th scope="row">{{ obj.id }}</th>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.begin_time }}</td>
+                <td>{{ obj.end_time }}</td>
+                <td>
+                    <a href="/my/group_activity/{{ obj.name }}/info/"> 更多 </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

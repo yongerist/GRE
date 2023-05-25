@@ -248,6 +248,10 @@ class BPlusNode:
             node = self
             while True:
                 index = 0
+                # 如果已经是最后一个节点就返回
+                if not node.next:
+                    return value
+                # 否则继续深入
                 node = node.next[0]
                 while index < len(node.keys):
                     if key in node.keys[index]:
@@ -618,7 +622,7 @@ class Student(Usr):
         time = []
         for _ in range(17):
             time.append([w.copy() for w in week])
-            self.time = time;
+            self.time = time
         self.personal_activities = BPlusTree()
         self.group_activities = []
         self.thing = BPlusTree()
