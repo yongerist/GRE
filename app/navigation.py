@@ -1,48 +1,61 @@
-from collections import deque
+import heapq
 
 
 class Graph:
     def __init__(self):
-        self.nodes = {}
-        self.edges = {}
+        self.nodes = {}  # 存储节点的字典，键为节点名称，值为节点属性
+        self.edges = {}  # 存储边的字典，键为节点名称，值为该节点的相邻节点列表和对应的边权重
 
-    def add_node(self, node_id, **kwargs):
-        self.nodes[node_id] = kwargs
+    def add_node(self, node, **kwargs):
+        self.nodes[node] = kwargs  # 将节点及其属性添加到节点字典中
 
-    def add_edge(self, node1, node2, **kwargs):
-        edge_id = (node1, node2)
-        self.edges[edge_id] = kwargs
+    def add_edge(self, src, dest, weight):
+        if src not in self.edges:
+            self.edges[src] = []  # 若起点不在边字典中，则将其添加为键，并对应一个空列表
+        self.edges[src].append((dest, weight))  # 将目标节点和边权重添加到起点节点的相邻节点列表中
 
-    def shortest_path(self, start_node, end_node):
-        if start_node not in self.nodes or end_node not in self.nodes:
-            return None
+        if dest not in self.edges:
+            self.edges[dest] = []  # 若终点不在边字典中，则将其添加为键，并对应一个空列表
+        self.edges[dest].append((src, weight))  # 将起点节点和边权重添加到终点节点的相邻节点列表中
 
-        queue = deque()
-        queue.append((start_node, [start_node]))
+    def shortest_path(self, start, end):
+        distances = {node: float('inf') for node in self.nodes}  # 存储起点到每个节点的最短距离，默认为正无穷
+        distances[start] = 0  # 起点到起点的距离为0
 
-        while queue:
-            current_node, path = queue.popleft()
+        # 使用优先队列（最小堆）选择具有最小距离的节点
+        pq = [(0, start)]
+        while pq:
+            curr_dist, curr_node = heapq.heappop(pq)  # 弹出具有最小距离的节点
 
-            if current_node == end_node:
-                return path
+            # 如果当前节点已经被访问过且距离更短，则跳过该节点
+            if curr_dist > distances[curr_node]:
+                continue
 
-            for neighbor in self.get_neighbors(current_node):
-                if neighbor not in path:
-                    queue.append((neighbor, path + [neighbor]))
+            # 检查邻居节点并更新距离
+            for neighbor, edge_weight in self.edges[curr_node]:
+                new_dist = curr_dist + edge_weight
+                if new_dist < distances[neighbor]:  # 如果通过当前节点到达邻居节点的距离更短
+                    distances[neighbor] = new_dist  # 更新邻居节点的最短距离
+                    heapq.heappush(pq, (new_dist, neighbor))  # 将邻居节点和新距离加入优先队列
 
-        return None
+        # 重构最短路径
+        path = [end]
+        curr_node = end
+        while curr_node != start:
+            neighbors = self.edges[curr_node]
+            prev_node = None
+            min_dist = float('inf')
+            for neighbor, _ in neighbors:
+                if distances[neighbor] < min_dist:
+                    min_dist = distances[neighbor]
+                    prev_node = neighbor
+            if prev_node is None:
+                return None  # 不存在路径
+            path.append(prev_node)
+            curr_node = prev_node
 
-    def get_neighbors(self, node):
-        neighbors = []
-        for edge, _ in self.edges.items():
-            if edge[0] == node:
-                neighbors.append(edge[1])
-            elif edge[1] == node:
-                neighbors.append(edge[0])
-        return neighbors
-
-    def __str__(self):
-        return f"Nodes: {self.nodes}\nEdges: {self.edges}"
+        path.reverse()
+        return path
 
 
 G = Graph()
