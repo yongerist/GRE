@@ -235,7 +235,7 @@ class BPlusNode:
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
         if self.is_leaf and len(self.keys)<=index:
             return None
-        if self.is_leaf and self.keys[index] == key:
+        if self.is_leaf and key in self.keys[index]:
             value: list = []
             print("leaf")
             print(f"self.keys:{self.keys}")
