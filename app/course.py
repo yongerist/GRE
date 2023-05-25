@@ -651,136 +651,122 @@ class Student(Usr):
                     group_activities_list.append(temp[1])
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
 
+    def get_all_course(self, course_hash):
+        course_list = []
+        for x in self.course:
+            course_list.append(course_hash.find(x))
+        return course_list
 
-def get_all_course(self, course_hash):
-    course_list = []
-    for x in self.course:
-        course_list.append(course_hash.find(x))
-    return course_list
+    def get_all_group_activities(self, group_activities_tree):
+        course_list = []
+        for x in self.course:
+            course_list.append(group_activities_tree.find(x))
+        return course_list
 
-
-def get_all_group_activities(self, group_activities_tree):
-    course_list = []
-    for x in self.course:
-        course_list.append(group_activities_tree.find(x))
-    return course_list
-
-
-def time_conflicts(self, activity):
-    for week in activity.week:
-        for x in activity.day:
-            for i in range(activity.begin_time[0], activity.end_time[0]):
-                if self.time[week][x][i] is not None:
-                    print(f"{week},{x},{i}{self.time[week][x][i]}")
-                    print("False")
-                    return False
-    print("true")
-    return True
-
-
-def add_personal_activities(self, activity):
-    self.personal_activities.insert(activity)
-    for week in activity.week:
-        for x in activity.day:
-            for i in range(activity.begin_time[0], activity.end_time[0]):
-                self.time[week][x][i] = "personal_activity " + activity.name
-
-
-def del_personal_activities(self, activity):
-    self.personal_activities.remove(activity.name)
-    for week in activity.week:
-        for x in activity.day:
-            for i in range(activity.begin_time[0], activity.end_time[0]):
-                self.time[week][x][i] = None
-
-
-# 临时事务的时间检验
-def temp_time_conflicts(self, activity):
-    for week in activity.week:
-        for x in activity.day:
-            for i in range(activity.begin_time[0], activity.end_time[0]):
-                if self.time[week][x][i] is not None:
-                    if self.time[week][x][i][0] != 't':
+    def time_conflicts(self, activity):
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    if self.time[week][x][i] is not None:
+                        print(f"{week},{x},{i}{self.time[week][x][i]}")
+                        print("False")
                         return False
-    print("true")
-    return True
+        print("true")
+        return True
 
+    def add_personal_activities(self, activity):
+        self.personal_activities.insert(activity)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    self.time[week][x][i] = "personal_activity " + activity.name
 
-def add_temp_thing(self, activity):
-    self.thing.insert(activity)
-    for week in activity.week:
-        for x in activity.day:
-            for i in range(activity.begin_time[0], activity.end_time[0]):
-                if self.time[week][x][i] is not None:
-                    self.time[week][x][i] = self.time[week][x][i] + "/temp_thing " + activity.name
-                else:
-                    self.time[week][x][i] = "temp_thing " + activity.name
-
-
-def find_temp_thing(self, activity_name):
-    return self.personal_activities.find(activity_name)
-
-
-def del_temp_thing(self, activity):
-    self.thing.remove(activity.name)
-    for week in activity.week:
-        for x in activity.day:
-            for i in range(activity.begin_time[0], activity.end_time[0]):
-                if self.time[week][x][i] == "/temp_thing " + activity.name:
+    def del_personal_activities(self, activity):
+        self.personal_activities.remove(activity.name)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
                     self.time[week][x][i] = None
-                else:
-                    self.time[week][x][i].replace("/temp_thing " + activity.name, "")
 
+    # 临时事务的时间检验
+    def temp_time_conflicts(self, activity):
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    if self.time[week][x][i] is not None:
+                        if self.time[week][x][i][0] != 't':
+                            return False
+        print("true")
+        return True
 
-def sort_by_time(self, course_hash):
-    course_list = []
-    dic = {}
-    for x in self.course:
-        dic[course_hash.find(x).begintime + course_hash.find(x).day * 100] = course_hash.find(x)
-    for key in sorted(dic):
-        course_list.append(dic[key])
-    return course_list
+    def add_temp_thing(self, activity):
+        self.thing.insert(activity)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    if self.time[week][x][i] is not None:
+                        self.time[week][x][i] = self.time[week][x][i] + "/temp_thing " + activity.name
+                    else:
+                        self.time[week][x][i] = "temp_thing " + activity.name
 
+    def find_temp_thing(self, activity_name):
+        return self.personal_activities.find(activity_name)
 
-# 可以排用哈希存储的课程也可以排用b+树存储的课外活动
-def sort_by_name(self, course_hash):
-    course_list = []
-    dic = {}
-    for x in self.course:
-        dic[course_hash.find(x).name] = course_hash.find(x)
-    for key in sorted(dic):
-        course_list.append(dic[key])
-    return course_list
+    def del_temp_thing(self, activity):
+        self.thing.remove(activity.name)
+        for week in activity.week:
+            for x in activity.day:
+                for i in range(activity.begin_time[0], activity.end_time[0]):
+                    if self.time[week][x][i] == "/temp_thing " + activity.name:
+                        self.time[week][x][i] = None
+                    else:
+                        self.time[week][x][i].replace("/temp_thing " + activity.name, "")
 
+    def sort_by_time(self, course_hash):
+        course_list = []
+        dic = {}
+        for x in self.course:
+            dic[course_hash.find(x).begintime + course_hash.find(x).day * 100] = course_hash.find(x)
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
 
-def sort_by_id(self, course_hash):
-    course_list = []
-    dic = {}
-    for x in self.course:
-        dic[course_hash.find(x).id] = course_hash.find(x)
-    for key in sorted(dic):
-        course_list.append(dic[key])
-    return course_list
+    # 可以排用哈希存储的课程也可以排用b+树存储的课外活动
+    def sort_by_name(self, course_hash):
+        course_list = []
+        dic = {}
+        for x in self.course:
+            dic[course_hash.find(x).name] = course_hash.find(x)
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
 
+    def sort_by_id(self, course_hash):
+        course_list = []
+        dic = {}
+        for x in self.course:
+            dic[course_hash.find(x).id] = course_hash.find(x)
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
 
-def sort_by_time_p(self):
-    activities_list = []
-    dic = {}
-    for x in self.personal_activities.get_all_data():
-        dic[x.begintime + x.day * 100] = x
-    for key in sorted(dic):
-        activities_list.append(dic[key])
-    return activities_list
+    def sort_by_time_p(self):
+        activities_list = []
+        dic = {}
+        for x in self.personal_activities.get_all_data():
+            dic[x.begintime + x.day * 100] = x
+        for key in sorted(dic):
+            activities_list.append(dic[key])
+        return activities_list
 
-
-def sort_by_name_p(self):
-    course_list = []
-    dic = {}
-    for x in self.personal_activities.get_all_data():
-        dic[x.name] = x.find(x)
-    for key in sorted(dic):
-        course_list.append(dic[key])
-    return course_list
+    def sort_by_name_p(self):
+        course_list = []
+        dic = {}
+        for x in self.personal_activities.get_all_data():
+            dic[x.name] = x.find(x)
+        for key in sorted(dic):
+            course_list.append(dic[key])
+        return course_list
 
 
 class UserManagement:

@@ -7,5 +7,69 @@
     <div>你的学院是 计算机学院</div>
     <div>你的专业是 网络工程</div>
     <!--    <div><a href="/pwd/edit">修改密码</a></div>-->
+<hr>
+<div>
+明天的课程:
+{% for obj in tomorrow[0] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+明天的考试:
+{% for obj in tomorrow[1] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+明天的团体活动:
+{% for obj in tomorrow[2] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+明天的个人活动:
+{% for obj in tomorrow[3] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+明天的临时活动:
+{% for obj in tomorrow[4] %}
+    {{ obj }}
+{% endfor %}
+</div>
 
+
+
+<hr>
+<div>
+一小时后的课程:
+{% for obj in after_hour[0] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+一小时后的考试:
+{% for obj in after_hour[1] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+一小时后的团体活动:
+{% for obj in after_hour[2] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+一小时后的个人活动:
+{% for obj in after_hour[3] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<div>
+一小时后的临时活动:
+{% for obj in after_hour[4] %}
+    {{ obj }}
+{% endfor %}
+</div>
 {% endblock %}

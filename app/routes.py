@@ -3,7 +3,7 @@ from flask import render_template, request
 from flask_login import current_user, login_user, login_required
 from flask_login import logout_user
 from werkzeug.urls import url_parse
-from app.reminder import gweek, gday, my_time
+from app.reminder import gweek, gday, my_time, ghour
 from app import db, app
 from app.course import Course, UserManagement, Activity, Test, quicksort_by_name
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
@@ -23,8 +23,10 @@ def index():
     tomorrow = user.find_all_by_time(gweek, (gday + 1) % 7, 0, 24)
     for obj in tomorrow:
         for i in obj:
-            print(i)
-    return render_template('index.html', title='Home Page')
+            print("明天要上的课是:" + i)
+    print("结束")
+    after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour)
 
 
 @app.route('/login', methods=['GET', 'POST'])
