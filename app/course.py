@@ -636,12 +636,12 @@ class Student(Usr):
         course_list = []
         for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
-                if self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'e':
+                if "temp_thing" in self.time[week][day][i]:
                     temp = self.time[week][day][i].split("/")
                     for z in temp:
                         temp1 = z.split(" ")
                         thing_list.append(temp1[1])
-                elif self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'e':
+                elif "test" in self.time[week][day][i]:
                     temp = self.time[week][day][i].split(" ")
                     test_list.append(temp[1])
                 elif self.time[week][day][i][0] == 'p':
