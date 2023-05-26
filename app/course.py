@@ -636,7 +636,7 @@ class Student(Usr):
         course_list = []
         for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
-                if self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'h':
+                if self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'e':
                     temp = self.time[week][day][i].split("/")
                     for z in temp:
                         temp1 = z.split(" ")
