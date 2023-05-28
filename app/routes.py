@@ -149,10 +149,11 @@ def person_activity_list():
         print(target)
         if sort_method == 0:
             return render_template('student_person_activity_list.html',
-                                   queryset=quicksort_by_name(my_list, 0,len(my_list) - 1))
+                                   queryset=quicksort_by_name(my_list, 0, len(my_list) - 1))
         else:
             return render_template('student_person_activity_list.html',
                                    queryset=quicksort_by_time(my_list, 0, len(my_list) - 1))
+
 
 @app.route('/temp/list', methods=['GET', 'POST'])
 def temp_list():
@@ -339,25 +340,29 @@ def course_add():
         # 建立course对象
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
                         student=student)
-        if g.manage.time_conflicts(course):
-            # 将post请求中的course对象插入到B+树中
-            g.tree.insert(course)
-            g.course_hash.insert(course)
-            g.manage.add_student_course(course)
-            # 将改动后的B+树存入文件
-            write_tree_data(g.tree)
-            write_hash_data(g.course_hash)
-            write_usr_data(g.usr_hash)
-            # 重定向到课程列表
-            print('添加成功')
-            return redirect(url_for('all_course_list'))
-        else:
-            print('添加失败')
-            error = "时间已经被占用,添加失败!"
+        if course.begin_time[0] < 8 or course.end_time[0] > 20:
+            error = "时间不在有效范围,添加失败!"
             return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
-        # 返回失败响应
-        # except:
-        #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
+        else:
+            if g.manage.time_conflicts(course):
+                # 将post请求中的course对象插入到B+树中
+                g.tree.insert(course)
+                g.course_hash.insert(course)
+                g.manage.add_student_course(course)
+                # 将改动后的B+树存入文件
+                write_tree_data(g.tree)
+                write_hash_data(g.course_hash)
+                write_usr_data(g.usr_hash)
+                # 重定向到课程列表
+                print('添加成功')
+                return redirect(url_for('all_course_list'))
+            else:
+                print('添加失败')
+                error = "时间已经被占用,添加失败!"
+                return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
+            # 返回失败响应
+            # except:
+            #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
         return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
 
@@ -399,21 +404,25 @@ def group_activity_add():
         # 建立course对象
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
                             student=student)
-        if g.manage.time_conflicts(activity):
-            # 将post请求中的course对象插入到B+树中
-            g.gro_act_tree.insert(activity)
-            g.manage.add_student_activities(activity)
-            # 将改动后的B+树存入文件
-            write_gro_act_tree_data(g.gro_act_tree)
-            write_usr_data(g.usr_hash)
-            # 重定向到课程列表
-            print('添加成功')
-            return redirect(url_for('group_activity_list'))
-        else:
-            possible_time = g.manage.possible_time(activity)
-            print('添加失败')
-            error = f"时间已经被占用,添加失败!可供选择的时间{possible_time[0]},{possible_time[1]},{possible_time[2]}"
+        if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
+            error = "时间不在有效范围,添加失败!"
             return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
+        else:
+            if g.manage.time_conflicts(activity):
+                # 将post请求中的course对象插入到B+树中
+                g.gro_act_tree.insert(activity)
+                g.manage.add_student_activities(activity)
+                # 将改动后的B+树存入文件
+                write_gro_act_tree_data(g.gro_act_tree)
+                write_usr_data(g.usr_hash)
+                # 重定向到课程列表
+                print('添加成功')
+                return redirect(url_for('group_activity_list'))
+            else:
+                possible_time = g.manage.possible_time(activity)
+                print('添加失败')
+                error = f"时间已经被占用,添加失败!可供选择的时间{possible_time[0]},{possible_time[1]},{possible_time[2]}"
+                return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
     else:
         return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
 
@@ -435,24 +444,28 @@ def test_add():
         # 建立course对象
         test = Test(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
                     student=student)
-        if g.manage.time_conflicts(test):
-
-            # 将post请求中的course对象插入到B+树中
-            g.tree.find(course_old.name).test = test
-            g.course_hash.find(course_old.id).test = test
-            g.manage.add_student_test(test)
-            # 将改动后的B+树存入文件
-            write_tree_data(g.tree)
-            write_hash_data(g.course_hash)
-            write_usr_data(g.usr_hash)
-            # 重定向到课程列表
-            print('添加成功')
-            return redirect(url_for('all_course_list'))
-        else:
-            print('添加失败')
-            error = "时间已经被占用,添加失败!"
+        if test.begin_time[0] < 8 or test.end_time[0] > 20:
+            error = "时间不在有效范围,添加失败!"
             return render_template('test_add.html', student=g.manage.all_student(), error=error,
                                    courses=g.tree.get_all_data())
+        else:
+            if g.manage.time_conflicts(test):
+                # 将post请求中的course对象插入到B+树中
+                g.tree.find(course_old.name).test = test
+                g.course_hash.find(course_old.id).test = test
+                g.manage.add_student_test(test)
+                # 将改动后的B+树存入文件
+                write_tree_data(g.tree)
+                write_hash_data(g.course_hash)
+                write_usr_data(g.usr_hash)
+                # 重定向到课程列表
+                print('添加成功')
+                return redirect(url_for('all_course_list'))
+            else:
+                print('添加失败')
+                error = "时间已经被占用,添加失败!"
+                return render_template('test_add.html', student=g.manage.all_student(), error=error,
+                                       courses=g.tree.get_all_data())
     else:
         return render_template('test_add.html', student=g.manage.all_student(), error=error,
                                courses=g.tree.get_all_data())
@@ -470,17 +483,21 @@ def person_activity_add():
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
-        if user.time_conflicts(activity):
-            user.add_personal_activities(activity)
-            # 将改动后的B+树存入文件
-            write_usr_data(g.usr_hash)
-            # 重定向到课程列表
-            print('添加成功')
-            return redirect(url_for('person_activity_list'))
-        else:
-            print('添加失败')
-            error = "时间已经被占用,添加失败!"
+        if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
+            error = "时间不在有效范围,添加失败!"
             return render_template('student_person_activity_add.html', error=error)
+        else:
+            if user.time_conflicts(activity):
+                user.add_personal_activities(activity)
+                # 将改动后的B+树存入文件
+                write_usr_data(g.usr_hash)
+                # 重定向到课程列表
+                print('添加成功')
+                return redirect(url_for('person_activity_list'))
+            else:
+                print('添加失败')
+                error = "时间已经被占用,添加失败!"
+                return render_template('student_person_activity_add.html', error=error)
     else:
         return render_template('student_person_activity_add.html', error=error)
 
@@ -497,17 +514,21 @@ def temp_add():
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
-        if user.temp_time_conflicts(activity):
-            user.add_temp_thing(activity)
-            # 将改动后的B+树存入文件
-            write_usr_data(g.usr_hash)
-            # 重定向到课程列表
-            print('添加成功')
-            return redirect(url_for('temp_list'))
-        else:
-            print('添加失败')
-            error = "时间已经被占用,添加失败!"
+        if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
+            error = "时间不在有效范围,添加失败!"
             return render_template('student_temp_add.html', error=error)
+        else:
+            if user.temp_time_conflicts(activity):
+                user.add_temp_thing(activity)
+                # 将改动后的B+树存入文件
+                write_usr_data(g.usr_hash)
+                # 重定向到课程列表
+                print('添加成功')
+                return redirect(url_for('temp_list'))
+            else:
+                print('添加失败')
+                error = "时间已经被占用,添加失败!"
+                return render_template('student_temp_add.html', error=error)
     else:
         return render_template('student_temp_add.html', error=error)
 
@@ -569,26 +590,30 @@ def course_revise(course_id):
         # 建立course对象
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
                         student=student)
-        if g.manage.revise_time_conflicts(course_old, course):
-            # 将post请求中的course对象插入到B+树中
-            course.test = course_old.test
-            g.tree.revise(course_old, course)
-            g.course_hash.revise(course_old, course)
-            g.manage.revise_student_course(course_old, course)
-            # 将改动后的B+树存入文件
-            write_tree_data(g.tree)
-            write_hash_data(g.course_hash)
-            write_usr_data(g.usr_hash)
-            # 重定向到课程列表
-            print('修改成功')
-            flash('修改成功!')
-            return redirect(url_for('all_course_list'))
-        else:
-            print('修改失败')
-            error = "时间已经被占用,添加失败!"
+        if course.begin_time[0] < 6 or course.end_time[0] > 22:
+            error = "时间不在有效范围,修改失败!"
             return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
-        # 返回失败响应
-        # except:
-        #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
+        else:
+            if g.manage.revise_time_conflicts(course_old, course):
+                # 将post请求中的course对象插入到B+树中
+                course.test = course_old.test
+                g.tree.revise(course_old, course)
+                g.course_hash.revise(course_old, course)
+                g.manage.revise_student_course(course_old, course)
+                # 将改动后的B+树存入文件
+                write_tree_data(g.tree)
+                write_hash_data(g.course_hash)
+                write_usr_data(g.usr_hash)
+                # 重定向到课程列表
+                print('修改成功')
+                flash('修改成功!')
+                return redirect(url_for('all_course_list'))
+            else:
+                print('修改失败')
+                error = "时间已经被占用,修改失败!"
+                return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
+            # 返回失败响应
+            # except:
+            #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
         return render_template('teacher_course_edit.html', course=course_old, student=g.manage.all_student())

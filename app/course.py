@@ -842,8 +842,8 @@ class UserManagement:
                         print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                         if len(p_time) >= 3:
                             return p_time
-                        if self.user_table.find(st).time[week][x][i] is not None:
-                            p_time.append(str(week) + "," + str(x) + "," + str(i))
+                        if self.user_table.find(st).time[week][x][i] is None:
+                            p_time.append(str(week) + "周" + str(x) + "日" + str(i)+"时")
 
     def revise_student_activity(self, old_activity, new_activity):
         self.del_student_activities(old_activity)
