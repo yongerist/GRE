@@ -104,14 +104,21 @@ def course_list():
     if request.method == 'GET':
         return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
     else:
+        sort_method = request.form.get("sort_method")
         target = request.form.get("target")
         print("我要查:" + target)
-        if target == "":
+        if target == "" and sort_method == '0':
             return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
+        if target == "" and sort_method == '1':
+            return render_template('student_course_list.html', queryset=quicksort_by_time(course, 0, len(course) - 1))
         my_list = user.find_course(target, g.tree)
         # print("我查到:" + my_list[0].name)
-        return render_template('student_course_list.html', queryset=my_list)
-
+        if my_list == None:
+            my_list = []
+        if sort_method == 0:
+            return render_template('student_course_list.html', queryset=quicksort_by_name(my_list, 0, len(my_list) - 1))
+        else:
+            return render_template('student_course_list.html', queryset=quicksort_by_time(my_list, 0, len(my_list) - 1))
 
 @app.route('/del/all', methods=['GET', 'POST'])
 def del_all():
@@ -135,10 +142,10 @@ def person_activity_list():
     else:
         sort_method = request.form.get("sort_method")
         target = request.form.get('target')
-        if target == "" and sort_method == 0:
+        if target == "" and sort_method == '0':
             return render_template('student_person_activity_list.html',
                                    queryset=user.personal_activities.get_all_data())
-        if target == "" and sort_method == 1:
+        if target == "" and sort_method == '1':
             return render_template('student_person_activity_list.html',
                                    queryset=quicksort_by_time(user.personal_activities.get_all_data(), 0,
                                                               len(user.personal_activities.get_all_data()) - 1))
@@ -280,7 +287,7 @@ def group_activity_list():
                                                           len(g.gro_act_tree.get_all_data()) - 1))
     else:
         sort_method = request.form.get("sort_method")
-        if sort_method == 0:
+        if sort_method == '0':
             return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
         else:
             return render_template('teacher_group_activity_list.html',
@@ -306,10 +313,10 @@ def my_group_list():
         sort_method = request.form.get("sort_method")
         target = request.form.get("target")
         print("我要查:" + target)
-        if target == "" and sort_method == 0:
+        if target == "" and sort_method == '0':
             return render_template('student_group_list.html',
                                    queryset=quicksort_by_name(group_activities, 0, len(group_activities) - 1))
-        elif target == "" and sort_method == 1:
+        elif target == "" and sort_method == '1':
             return render_template('student_group_list.html',
                                    queryset=quicksort_by_time(group_activities, 0, len(group_activities) - 1))
         my_list = user.find_course(target, g.gro_act_tree)
