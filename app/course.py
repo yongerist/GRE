@@ -636,12 +636,12 @@ class Student(Usr):
         course_list = []
         for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
-                if self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'h':
+                if "temp_thing" in self.time[week][day][i]:
                     temp = self.time[week][day][i].split("/")
                     for z in temp:
                         temp1 = z.split(" ")
                         thing_list.append(temp1[1])
-                elif self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'e':
+                elif "test" in self.time[week][day][i]:
                     temp = self.time[week][day][i].split(" ")
                     test_list.append(temp[1])
                 elif self.time[week][day][i][0] == 'p':
@@ -842,8 +842,8 @@ class UserManagement:
                         print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                         if len(p_time) >= 3:
                             return p_time
-                        if self.user_table.find(st).time[week][x][i] is not None:
-                            p_time.append(str(week) + "," + str(x) + "," + str(i))
+                        if self.user_table.find(st).time[week][x][i] is None:
+                            p_time.append(str(week) + "周" + str(x) + "日" + str(i)+"时")
 
     def revise_student_activity(self, old_activity, new_activity):
         self.del_student_activities(old_activity)
@@ -936,23 +936,23 @@ class UserManagement:
         self.add_student_course(new_course)
 
 
-def quick_sort_by_time(mylist, start, end):  # start,end 是指指针
+def quicksort_by_time(mylist, start, end):  # start,end 是指指针
     i, j = start, end
     if start < end:
         base = mylist[i]  # 设置基准数为i,即为start
         while i < j:
-            while (i < j) and mylist[j].begintime + mylist[
-                j].day * 100 >= base.begintime + base.day * 100:  # 找到比基准数小的数字
+            while (i < j) and mylist[j].begin_time + mylist[
+                j].day * 100 <= base.begin_time + base.day * 100:  # 找到比基准数小的数字
                 j -= 1  # 将炮兵j向左移动
             mylist[i] = mylist[j]  # 将找到的j复制给i
             # 同样的方法执行前半区域
-            while (i < j) and mylist[j].begintime + mylist[j].day * 100 <= base.begintime + base.day * 100:
+            while (i < j) and mylist[j].begin_time + mylist[j].day * 100 >= base.begin_time + base.day * 100:
                 i += 1
             mylist[j] = mylist[i]
         mylist[i] = base  # i=j,即将这个数设置为base
 
-        quick_sort_by_time(mylist, start, i - 1)
-        quick_sort_by_time(mylist, j + 1, end)
+        quicksort_by_time(mylist, start, i - 1)
+        quicksort_by_time(mylist, j + 1, end)
     return mylist
 
 
