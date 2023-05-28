@@ -936,23 +936,23 @@ class UserManagement:
         self.add_student_course(new_course)
 
 
-def quick_sort_by_time(mylist, start, end):  # start,end 是指指针
+def quicksort_by_time(mylist, start, end):  # start,end 是指指针
     i, j = start, end
     if start < end:
         base = mylist[i]  # 设置基准数为i,即为start
         while i < j:
-            while (i < j) and mylist[j].begintime + mylist[
-                j].day * 100 >= base.begintime + base.day * 100:  # 找到比基准数小的数字
+            while (i < j) and mylist[j].begin_time + mylist[
+                j].day * 100 <= base.begin_time + base.day * 100:  # 找到比基准数小的数字
                 j -= 1  # 将炮兵j向左移动
             mylist[i] = mylist[j]  # 将找到的j复制给i
             # 同样的方法执行前半区域
-            while (i < j) and mylist[j].begintime + mylist[j].day * 100 <= base.begintime + base.day * 100:
+            while (i < j) and mylist[j].begin_time + mylist[j].day * 100 >= base.begin_time + base.day * 100:
                 i += 1
             mylist[j] = mylist[i]
         mylist[i] = base  # i=j,即将这个数设置为base
 
-        quick_sort_by_time(mylist, start, i - 1)
-        quick_sort_by_time(mylist, j + 1, end)
+        quicksort_by_time(mylist, start, i - 1)
+        quicksort_by_time(mylist, j + 1, end)
     return mylist
 
 

@@ -5,7 +5,7 @@ from flask_login import logout_user
 from werkzeug.urls import url_parse
 
 from app import db, app
-from app.course import Course, UserManagement, Activity, Test, quicksort_by_name
+from app.course import Course, UserManagement, Activity, Test, quicksort_by_name, quicksort_by_time
 from app.course_doc import load_tree_data, write_tree_data, load_hash_data, write_hash_data, load_usr_data, \
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 from app.forms import LoginForm, RegistrationForm
@@ -133,17 +133,26 @@ def person_activity_list():
     if request.method == 'GET':
         return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
     else:
+        sort_method = request.form.get("sort_method")
         target = request.form.get('target')
-        if target == "":
+        if target == "" and sort_method == 0:
             return render_template('student_person_activity_list.html',
                                    queryset=user.personal_activities.get_all_data())
+        if target == "" and sort_method == 1:
+            return render_template('student_person_activity_list.html',
+                                   queryset=quicksort_by_time(user.personal_activities.get_all_data(), 0,
+                                                              len(user.personal_activities.get_all_data()) - 1))
         my_list = user.personal_activities.prefix_search(target)
         if my_list == None:
             my_list = []
         print('找到了:')
         print(target)
-        return render_template('student_person_activity_list.html', queryset=my_list)
-
+        if sort_method == 0:
+            return render_template('student_person_activity_list.html',
+                                   queryset=quicksort_by_name(my_list, 0,len(my_list) - 1))
+        else:
+            return render_template('student_person_activity_list.html',
+                                   queryset=quicksort_by_time(my_list, 0, len(my_list) - 1))
 
 @app.route('/temp/list', methods=['GET', 'POST'])
 def temp_list():
@@ -153,16 +162,26 @@ def temp_list():
     if request.method == 'GET':
         return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
     else:
+        sort_method = request.form.get("sort_method")
         target = request.form.get('target')
-        if target == "":
-            return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
+        if target == "" and sort_method == 0:
+            return render_template('student_temp_list.html', queryset=quicksort_by_name(user.thing.get_all_data(), 0,
+                                                                                        len(user.thing.get_all_data()) - 1))
+        if target == "" and sort_method == 1:
+            return render_template('student_temp_list.html', queryset=quicksort_by_time(user.thing.get_all_data(), 0,
+                                                                                        len(user.thing.get_all_data()) - 1))
         my_list = user.thing.prefix_search(target)
         print(my_list)
         if my_list == None:
             my_list = []
         print('找到了:')
         print(my_list)
-        return render_template('student_temp_list.html', queryset=my_list)
+        if sort_method == 0:
+            return render_template('student_temp_list.html', queryset=quicksort_by_name(my_list.get_all_data(), 0,
+                                                                                        len(my_list.get_all_data()) - 1))
+        else:
+            return render_template('student_temp_list.html', queryset=quicksort_by_time(my_list.get_all_data(), 0,
+                                                                                        len(my_list.get_all_data()) - 1))
 
 
 @app.route('/course/<int:id_>/info/', methods=['GET', 'POST'])
@@ -224,6 +243,8 @@ def my_group_activity_info(name):
         user = User.query.filter_by(id=obj + 1).first()
         students.append(str(user.username))
     return render_template('student_group_activity_info.html', activity=activity, time=time, students=students)
+
+
 @app.route('/person_activity/<string:name>/info/', methods=['GET', 'POST'])
 def person_activity_info(name):
     print(name)
@@ -253,7 +274,17 @@ def temp_info(name):
 @app.route('/group_activity/list', methods=['GET', 'POST'])
 def group_activity_list():
     if request.method == 'GET':
-        return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+        return render_template('teacher_group_activity_list.html',
+                               queryset=quicksort_by_name(g.gro_act_tree.get_all_data(), 0,
+                                                          len(g.gro_act_tree.get_all_data()) - 1))
+    else:
+        sort_method = request.form.get("sort_method")
+        if sort_method == 0:
+            return render_template('teacher_group_activity_list.html', queryset=g.gro_act_tree.get_all_data())
+        else:
+            return render_template('teacher_group_activity_list.html',
+                                   queryset=quicksort_by_time(g.gro_act_tree.get_all_data(), 0,
+                                                              len(g.gro_act_tree.get_all_data()) - 1))
 
 
 @app.route('/Student/group/list', methods=['GET', 'POST'])
@@ -264,21 +295,28 @@ def my_group_list():
     g.usr_id = current_user.id - 1
     print(g.usr_id)
     user = g.manage.login(g.usr_id)
-    # group_activities = []
-    # for x in user.group_activities:
-    #     group_activities.append(g.course_hash.find(x))
+    group_activities = []
+    for x in user.group_activities:
+        group_activities.append(g.gro_act_tree.find(x))
     # 打开网页时展示课程列表
     if request.method == 'GET':
-        return render_template('student_group_list.html', queryset=g.gro_act_tree.get_all_data())
+        return render_template('student_group_list.html', queryset=group_activities)
     else:
+        sort_method = request.form.get("sort_method")
         target = request.form.get("target")
         print("我要查:" + target)
-        if target == "":
-            return render_template('student_group_list.html', queryset=g.gro_act_tree.get_all_data())
+        if target == "" and sort_method == 0:
+            return render_template('student_group_list.html',
+                                   queryset=quicksort_by_name(group_activities, 0, len(group_activities) - 1))
+        elif target == "" and sort_method == 1:
+            return render_template('student_group_list.html',
+                                   queryset=quicksort_by_time(group_activities, 0, len(group_activities) - 1))
         my_list = user.find_course(target, g.gro_act_tree)
-        # print("我查到:" + my_list[0].name)
-        return render_template('student_group_list.html', queryset=my_list)
-
+        if sort_method == 0:
+            # print("我查到:" + my_list[0].name)
+            return render_template('student_group_list.html', queryset=quicksort_by_name(my_list, 0, len(my_list) - 1))
+        else:
+            return render_template('student_group_list.html', queryset=quicksort_by_time(my_list, 0, len(my_list) - 1))
 
 
 @app.route('/course_list/add', methods=['GET', 'POST'])
