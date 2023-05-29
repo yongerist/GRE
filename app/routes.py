@@ -120,6 +120,7 @@ def course_list():
         else:
             return render_template('student_course_list.html', queryset=quicksort_by_time(my_list, 0, len(my_list) - 1))
 
+
 @app.route('/del/all', methods=['GET', 'POST'])
 def del_all():
     db.session.query(User).delete()
@@ -150,7 +151,7 @@ def person_activity_list():
                                    queryset=quicksort_by_time(user.personal_activities.get_all_data(), 0,
                                                               len(user.personal_activities.get_all_data()) - 1))
         my_list = user.personal_activities.prefix_search(target)
-        if my_list == None:
+        if my_list is None:
             my_list = []
         print('找到了:')
         print(target)
@@ -340,13 +341,14 @@ def course_add():
         end_time = request.form.get("end_time")
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
+        road = request.form.getlist("road")
         student = request.form.getlist("student[]")
         for obj in student:
             print(obj)
         # student = [1]
         # 建立course对象
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
-                        student=student)
+                        student=student, road = road)
         if course.begin_time[0] < 8 or course.end_time[0] > 20:
             error = "时间不在有效范围,添加失败!"
             return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
@@ -405,12 +407,14 @@ def group_activity_add():
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
+        road = request.form.getlist("road")
+
         for obj in student:
             print(obj)
         # student = [1]
         # 建立course对象
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
-                            student=student)
+                            student=student, road = road)
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
             error = "时间不在有效范围,添加失败!"
             return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
@@ -444,13 +448,15 @@ def test_add():
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         courses = request.form.getlist("course[]")
+        road = request.form.getlist("road")
+
         course_name = courses[0]
         print("course_name" + course_name)
         course_old = g.tree.find(course_name)
         student = course_old.student
         # 建立course对象
         test = Test(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
-                    student=student)
+                    student=student, road=road)
         if test.begin_time[0] < 8 or test.end_time[0] > 20:
             error = "时间不在有效范围,添加失败!"
             return render_template('test_add.html', student=g.manage.all_student(), error=error,
@@ -489,7 +495,8 @@ def person_activity_add():
         begin_time = request.form.get("begin_time")
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
-        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
+        road = request.form.getlist("road")
+        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None, road=road)
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
             error = "时间不在有效范围,添加失败!"
             return render_template('student_person_activity_add.html', error=error)
@@ -520,7 +527,9 @@ def temp_add():
         begin_time = request.form.get("begin_time")
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
-        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None)
+        road = request.form.getlist("road")
+
+        activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None, road=road)
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
             error = "时间不在有效范围,添加失败!"
             return render_template('student_temp_add.html', error=error)
@@ -594,9 +603,10 @@ def course_revise(course_id):
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
+        road = request.form.getlist("road")
         # 建立course对象
         course = Course(name=name, day=day, begin_time=begin_time, end_time=end_time, week=week, offline=offline,
-                        student=student)
+                        student=student, road = road)
         if course.begin_time[0] < 6 or course.end_time[0] > 22:
             error = "时间不在有效范围,修改失败!"
             return render_template('teacher_course_add.html', student=g.manage.all_student(), error=error)
