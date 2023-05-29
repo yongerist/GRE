@@ -233,7 +233,7 @@ class BPlusNode:
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
            因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
-        if self.is_leaf and len(self.keys)<=index:
+        if self.is_leaf and len(self.keys) <= index:
             return None
         if self.is_leaf and key in self.keys[index]:
             value: list = []
@@ -843,7 +843,7 @@ class UserManagement:
                         if len(p_time) >= 3:
                             return p_time
                         if self.user_table.find(st).time[week][x][i] is None:
-                            p_time.append(str(week) + "周" + str(x) + "日" + str(i)+"时")
+                            p_time.append(str(week) + "周" + str(x) + "日" + str(i) + "时")
 
     def revise_student_activity(self, old_activity, new_activity):
         self.del_student_activities(old_activity)
@@ -941,12 +941,11 @@ def quicksort_by_time(mylist, start, end):  # start,end 是指指针
     if start < end:
         base = mylist[i]  # 设置基准数为i,即为start
         while i < j:
-            while (i < j) and mylist[j].begin_time + mylist[
-                j].day * 100 <= base.begin_time + base.day * 100:  # 找到比基准数小的数字
+            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 >= base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:  # 找到比基准数小的数字
                 j -= 1  # 将炮兵j向左移动
             mylist[i] = mylist[j]  # 将找到的j复制给i
             # 同样的方法执行前半区域
-            while (i < j) and mylist[j].begin_time + mylist[j].day * 100 >= base.begin_time + base.day * 100:
+            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 <= base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:
                 i += 1
             mylist[j] = mylist[i]
         mylist[i] = base  # i=j,即将这个数设置为base
@@ -1072,4 +1071,3 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
-

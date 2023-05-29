@@ -185,11 +185,9 @@ def temp_list():
         print('找到了:')
         print(my_list)
         if sort_method == 0:
-            return render_template('student_temp_list.html', queryset=quicksort_by_name(my_list.get_all_data(), 0,
-                                                                                        len(my_list.get_all_data()) - 1))
+            return render_template('student_temp_list.html', queryset=quicksort_by_name(my_list, 0,len(my_list) - 1))
         else:
-            return render_template('student_temp_list.html', queryset=quicksort_by_time(my_list.get_all_data(), 0,
-                                                                                        len(my_list.get_all_data()) - 1))
+            return render_template('student_temp_list.html', queryset=quicksort_by_time(my_list, 0,len(my_list) - 1))
 
 
 @app.route('/course/<int:id_>/info/', methods=['GET', 'POST'])
