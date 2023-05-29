@@ -8,7 +8,7 @@ class Course:
     begin_time: list
     end_time: list
     week: list
-    offline: bool
+    offline: string
     student: list
 
     # id:,name:
@@ -22,10 +22,7 @@ class Course:
         end_minute = int(end_time[3:])
         self.end_time: list = [end_hour, end_minute]
         self.week: list = [int(x) for x in week]
-        if offline == 1:
-            self.offline: bool = True
-        else:
-            self.offline: bool = False
+        self.offline: string = offline
         self.student = [int(x) for x in student]
         self.test = None
 
