@@ -8,11 +8,11 @@ class Course:
     begin_time: list
     end_time: list
     week: list
-    offline: string
+    offline: bool
     student: list
 
     # id:,name:
-    def __init__(self, name, day, begin_time, end_time, week, offline, student):
+    def __init__(self, name, day, begin_time, end_time, week, offline, student, road):
         self.name: string = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -22,13 +22,17 @@ class Course:
         end_minute = int(end_time[3:])
         self.end_time: list = [end_hour, end_minute]
         self.week: list = [int(x) for x in week]
-        self.offline: string = offline
+        if offline == 1:
+            self.offline: bool = True
+        else:
+            self.offline: bool = False
         self.student = [int(x) for x in student]
         self.test = None
+        self.road = road
 
 
 class Test:
-    def __init__(self, name, day, begin_time, week, offline, student):
+    def __init__(self, name, day, begin_time, week, offline, student, road):
         self.name = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -38,7 +42,11 @@ class Test:
         self.week: list = [int(x) for x in week]
         if student is not None:
             self.student = [int(x) for x in student]
-        self.offline = offline
+        if offline == 1:
+            self.offline: bool = True
+        else:
+            self.offline: bool = False
+        self.road = road
 
 
 class Activity:
@@ -48,7 +56,7 @@ class Activity:
     end_time: list
     week: list
 
-    def __init__(self, name, day, begin_time, week, offline, student):
+    def __init__(self, name, day, begin_time, week, offline, student, road):
         self.name = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -58,7 +66,11 @@ class Activity:
         self.week: list = [int(x) for x in week]
         if student is not None:
             self.student = [int(x) for x in student]
-        self.offline = offline
+        if offline == 1:
+            self.offline: bool = True
+        else:
+            self.offline: bool = False
+        self.road = road
 
 
 # 简单的哈希表，使用平方取中法散列
@@ -659,6 +671,9 @@ class Student(Usr):
     def find_clock(self, week, day, hour):
         return self.clock.get(f"{week}+{day}+{hour}", None)
 
+    def add_clock(self, week, day, hour, name):
+        self.clock[f"{week}+{day}+{hour}"] = name
+
     def get_all_course(self, course_hash):
         course_list = []
         for x in self.course:
@@ -695,6 +710,17 @@ class Student(Usr):
             for x in activity.day:
                 for i in range(activity.begin_time[0], activity.end_time[0]):
                     self.time[week][x][i] = None
+
+    def auto_schedule(self, activity):
+        for week in range(1, 17):
+            for day in range(1, 8):
+                for i in range(1, 25):
+                    if self.time[week][day][i] is None:
+                        activity.week = [week]
+                        activity.day = [day]
+                        activity.begin_time = [i]
+                        activity.end_time = [i + 1]
+                        return activity
 
     # 临时事务的时间检验
     def temp_time_conflicts(self, activity):
@@ -835,16 +861,39 @@ class UserManagement:
         for st in activity.student:
             for week in activity.week:
                 for x in activity.day:
-                    for i in range(0, 25):
-                        print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
+                    for i in range(6, 22):
+                        # print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                         if len(p_time) >= 3:
                             return p_time
                         if self.user_table.find(st).time[week][x][i] is None:
                             p_time.append(str(week) + "周" + str(x) + "日" + str(i) + "时")
+        if not p_time:
+            dic = {}
+            for st in activity.student:
+                for week in activity.week:
+                    for x in activity.day:
+                        for i in range(6, 22):
+                            if self.user_table.find(st).time[week][x][i] is None:
+                                dic[str(week) + "周" + str(x) + "日" + str(i) + "时"] = dic.get(
+                                    str(week) + "周" + str(x) + "日" + str(i) + "时", 0) + 1
 
     def revise_student_activity(self, old_activity, new_activity):
         self.del_student_activities(old_activity)
         self.add_student_activities(new_activity)
+
+    def auto_schedule(self, activity):
+        for week in range(1, 17):
+            for day in range(1, 8):
+                for i in range(1, 25):
+                    for st in activity.student:
+                        if st == activity.student[-1] and self.user_table.find(st).time[week][day][i] is None:
+                            activity.week = [week]
+                            activity.day = [day]
+                            activity.begin_time = [i]
+                            activity.end_time = [i + 1]
+                            return activity
+                        if self.user_table.find(st).time[week][day][i] is not None:
+                            break
 
     def add_student_test(self, test):
         for st in test.student:
@@ -938,11 +987,13 @@ def quicksort_by_time(mylist, start, end):  # start,end 是指指针
     if start < end:
         base = mylist[i]  # 设置基准数为i,即为start
         while i < j:
-            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 >= base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:  # 找到比基准数小的数字
+            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 >= \
+                    base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:  # 找到比基准数小的数字
                 j -= 1  # 将炮兵j向左移动
             mylist[i] = mylist[j]  # 将找到的j复制给i
             # 同样的方法执行前半区域
-            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 <= base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:
+            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 <= \
+                    base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:
                 i += 1
             mylist[j] = mylist[i]
         mylist[i] = base  # i=j,即将这个数设置为base
