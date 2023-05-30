@@ -669,10 +669,18 @@ class Student(Usr):
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
 
     def find_clock(self, week, day, hour):
-        return self.clock.get(f"{week}+{day}+{hour}", None)
+        return self.clock.get(f"{week}+{day}+{hour}", " ")
 
     def add_clock(self, week, day, hour, name):
-        self.clock[f"{week}+{day}+{hour}"] = name
+        for w in week:
+            for d in day:
+                for h in hour:
+                    if not self.clock.get(f"{week}+{day}+{hour}", " "):
+                        str = self.clock.get(f"{week}+{day}+{hour}", " ")
+                        str += name + " "
+                        self.clock[f"{w}+{d}+{h}"] = name + " "
+                    else:
+                        self.clock[f"{w}+{d}+{h}"] = name + " "
 
     def get_all_course(self, course_hash):
         course_list = []
@@ -714,7 +722,7 @@ class Student(Usr):
     def auto_schedule(self, activity):
         for week in range(1, 17):
             for day in range(1, 8):
-                for i in range(1, 25):
+                for i in range(6, 23):
                     if self.time[week][day][i] is None:
                         activity.week = [week]
                         activity.day = [day]
@@ -755,9 +763,6 @@ class Student(Usr):
                         self.time[week][x][i] = None
                     else:
                         self.time[week][x][i].replace("/temp_thing " + activity.name, "")
-
-    def add_clock(self, week, day, hour, thing):
-        self.clock[f"{week}+{day}+{hour}"] = thing.name
 
     def find_course(self, name, tree):
         course_list = tree.prefix_search(name)
@@ -884,7 +889,7 @@ class UserManagement:
     def auto_schedule(self, activity):
         for week in range(1, 17):
             for day in range(1, 8):
-                for i in range(1, 25):
+                for i in range(6, 23):
                     for st in activity.student:
                         if st == activity.student[-1] and self.user_table.find(st).time[week][day][i] is None:
                             activity.week = [week]

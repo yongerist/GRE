@@ -28,7 +28,8 @@ def index():
             print("明天要上的课是:" + i)
     print("结束")
     after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
-    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour)
+    clock = user.find_clock(gweek, gday, ghour)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour,clock = clock)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -225,7 +226,7 @@ def group_activity_info(name):
     for week in activity.week:
         for day in activity.day:
             time.append(
-                f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+                f'第{week}周   周{day}   {activity.begin_time[0]}时--{activity.end_time[0]}时')
     students = []
     for obj in activity.student:
         obj = int(obj)
@@ -263,7 +264,7 @@ def person_activity_info(name):
     for week in activity.week:
         for day in activity.day:
             time.append(
-                f'第{week}周   周{day}   {activity.begin_time[0]}时{activity.begin_time[1]}分--{activity.end_time[0]}时')
+                f'第{week}周   周{day}   {activity.begin_time[0]}时--{activity.end_time[0]}时')
     return render_template('student_person_activity_info.html', activity=activity, time=time)
 
 
@@ -406,6 +407,7 @@ def group_activity_add():
         offline = request.form.get("method")
         student = request.form.getlist("student[]")
         road = request.form.getlist("road")
+        auto = request.form.get("auto")
 
         for obj in student:
             print(obj)
@@ -413,6 +415,9 @@ def group_activity_add():
         # 建立course对象
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
                             student=student, road=road)
+        if auto is '1':
+            activity = g.manage.auto_schedule(activity)
+
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
             error = "时间不在有效范围,添加失败!"
             return render_template('teacher_group_activity_add.html', student=g.manage.all_student(), error=error)
@@ -494,8 +499,12 @@ def person_activity_add():
         week = request.form.getlist("week[]")
         offline = request.form.get("method")
         road = request.form.getlist("road")
+        auto = request.form.get("auto")
+
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None,
                             road=road)
+        if auto is '1':
+            activity = user.auto_schedule(activity)
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
             error = "时间不在有效范围,添加失败!"
             return render_template('student_person_activity_add.html', error=error)
@@ -634,3 +643,23 @@ def course_revise(course_id):
             #     return jsonify({"error": "An error occurred while saving course1 data."}), 500  # 500为http状态码，表示无法完成请求
     else:
         return render_template('teacher_course_edit.html', course=course_old, student=g.manage.all_student())
+
+
+@app.route('/clock/add', methods=['GET', 'POST'])
+def clock_add():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    if request.method == 'POST':
+        name = request.form.get("name")
+        day = request.form.getlist("day[]")
+        begin_time = request.form.get("begin_time")
+        week = request.form.getlist("week[]")
+
+        user.add_clock(week, day, begin_time[:2], name)
+        # 将改动后的B+树存入文件
+        write_usr_data(g.usr_hash)
+        print('添加成功')
+        return redirect(url_for('index'))
+    else:
+        return render_template('clock_add.html')
+

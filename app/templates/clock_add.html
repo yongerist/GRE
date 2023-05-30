@@ -1,12 +1,8 @@
-
-
-
-{% extends "teacher_base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-    <div>
         <form method="post">
-            <div><label>团体活动名: <input type="text" placeholder="团体活动名" name="name"></label></div>
+            <div><label>闹钟名: <input type="text" placeholder="闹钟名" name="name"></label></div>
             <div>
                 <label>
                     周:
@@ -44,32 +40,9 @@
                     </select>
                 </label>
             </div>
-            <div>
-                <label>
-                    学生:
-                    <select name="student[]" multiple="multiple">
-                        <option value="">--请选择--</option>
-                        {% for obj in student %}
-                            <option value={{ obj.id }}>{{ obj.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-            <div><label>开始时间: <input type="time" name="begin_time"></label></div>
-            <div><label>方式:
-                线上 <input type="radio" name="method" value="0">
-                线下 <input type="radio" name="method" value="1" checked="checked">
-            </label></div>
-            <div><label>活动: <input type="text" placeholder="网课链接/路线" name="road"></label></div>
-                    <div><label>排期:
-                手动 <input type="radio" name="auto" value="0" checked="checked">
-                自动 <input type="radio" name="auto" value="1">
-            </label></div>
+            <div><label>时间: <input type="time" name="begin_time"></label></div>
             <input type="submit" value="确认添加">
             <input type="reset" value="重新填写">
         </form>
-        {% if error %}
-            <div style="color: red;"><strong>Error</strong>: {{ error }}</div>
-        {% endif %}
-    </div>
 {% endblock %}
+

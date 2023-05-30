@@ -58,9 +58,11 @@
                 线上 <input type="radio" name="method" value="0">
                 线下 <input type="radio" name="method" value="1" checked="checked">
             </label></div>
+
             <div><label>上课: <input type="text" placeholder="网课链接/路线" name="road"></label></div>
             <input type="submit" value="确认添加">
             <input type="reset" value="重新填写">
+
         </form>
         {% if error %}
             <div style="color: red;"><strong>Error</strong>: {{ error }}</div>
