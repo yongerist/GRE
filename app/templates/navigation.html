@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <body>
+    <div>
+        <form method="post">
+            <div>
+                <label>
+                    起点:
+                    <select name="source" >
+                        <option value="">--请选择--</option>
+                        {% for obj in place %}
+                        <option value="{{ obj }}">{{ obj }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>
+                    终点:
+                    <select name="destination">
+                        <option value="">--请选择--</option>
+                        {% for obj in place %}
+                        <option value="{{ obj }}">{{ obj }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <input type="submit" value="查找路径">
+            </div>
+        </form>
+        <div>路径: {{ road }}</div>
+    </div>
+    </body>
+{% endblock %}
+

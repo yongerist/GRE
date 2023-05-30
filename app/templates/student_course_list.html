@@ -5,11 +5,21 @@
         <form method="post" action="/Student/course/list">
             <div>
                 <label>查询课程: <input type="text" placeholder="课程名" name="target"></label>
+                <label>
+                    <select name="sort_method">
+                        <option value="0">--排序方式--</option>
+                        <option value="0">名称</option>
+                        <option value="1">时间</option>
+                    </select>
+                </label>
                 <input type="submit" value="查询">
             </div>
         </form>
     </div>
     <hr>
+
+
+
     <table>
         <thead>
         <tr>

@@ -38,9 +38,6 @@
     {{ obj }}
 {% endfor %}
 </div>
-
-
-
 <hr>
 <div>
 一小时后的课程:
@@ -69,6 +66,13 @@
 <div>
 一小时后的临时活动:
 {% for obj in after_hour[4] %}
+    {{ obj }}
+{% endfor %}
+</div>
+<hr>
+<div>
+闹钟提醒:
+{% for obj in clock %}
     {{ obj }}
 {% endfor %}
 </div>

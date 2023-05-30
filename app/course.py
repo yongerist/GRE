@@ -12,7 +12,7 @@ class Course:
     student: list
 
     # id:,name:
-    def __init__(self, name, day, begin_time, end_time, week, offline, student):
+    def __init__(self, name, day, begin_time, end_time, week, offline, student, road):
         self.name: string = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -28,10 +28,11 @@ class Course:
             self.offline: bool = False
         self.student = [int(x) for x in student]
         self.test = None
+        self.road = road
 
 
 class Test:
-    def __init__(self, name, day, begin_time, week, offline, student):
+    def __init__(self, name, day, begin_time, week, offline, student, road):
         self.name = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -41,7 +42,11 @@ class Test:
         self.week: list = [int(x) for x in week]
         if student is not None:
             self.student = [int(x) for x in student]
-        self.offline = offline
+        if offline == 1:
+            self.offline: bool = True
+        else:
+            self.offline: bool = False
+        self.road = road
 
 
 class Activity:
@@ -51,7 +56,7 @@ class Activity:
     end_time: list
     week: list
 
-    def __init__(self, name, day, begin_time, week, offline, student):
+    def __init__(self, name, day, begin_time, week, offline, student, road):
         self.name = name
         self.day = [int(x) for x in day]
         begin_hour = int(begin_time[:2])
@@ -61,7 +66,11 @@ class Activity:
         self.week: list = [int(x) for x in week]
         if student is not None:
             self.student = [int(x) for x in student]
-        self.offline = offline
+        if offline == 1:
+            self.offline: bool = True
+        else:
+            self.offline: bool = False
+        self.road = road
 
 
 # 简单的哈希表，使用平方取中法散列
@@ -233,7 +242,7 @@ class BPlusNode:
         """如果self.keys的长度不为0则说明，那么self是叶子节点，
            因为find_next_index中如果没有查询到对应的值，返回的是下一层的节点，这样在叶子节点中会返回错误的下标
            所以要检查查询到的值与key是否一样，如果一样返回对应的值，不一样则返回None"""
-        if self.is_leaf and len(self.keys)<=index:
+        if self.is_leaf and len(self.keys) <= index:
             return None
         if self.is_leaf and key in self.keys[index]:
             value: list = []
@@ -636,12 +645,12 @@ class Student(Usr):
         course_list = []
         for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
-                if self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'h':
+                if "temp_thing" in self.time[week][day][i]:
                     temp = self.time[week][day][i].split("/")
                     for z in temp:
                         temp1 = z.split(" ")
                         thing_list.append(temp1[1])
-                elif self.time[week][day][i][0] == 't' and self.time[week][day][i][1] == 'e':
+                elif "test" in self.time[week][day][i]:
                     temp = self.time[week][day][i].split(" ")
                     test_list.append(temp[1])
                 elif self.time[week][day][i][0] == 'p':
@@ -660,7 +669,18 @@ class Student(Usr):
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
 
     def find_clock(self, week, day, hour):
-        return self.clock.get(f"{week}+{day}+{hour}", None)
+        return self.clock.get(f"{week}+{day}+{hour}", " ")
+
+    def add_clock(self, week, day, hour, name):
+        for w in week:
+            for d in day:
+                for h in hour:
+                    if not self.clock.get(f"{week}+{day}+{hour}", " "):
+                        str = self.clock.get(f"{week}+{day}+{hour}", " ")
+                        str += name + " "
+                        self.clock[f"{w}+{d}+{h}"] = name + " "
+                    else:
+                        self.clock[f"{w}+{d}+{h}"] = name + " "
 
     def get_all_course(self, course_hash):
         course_list = []
@@ -699,6 +719,17 @@ class Student(Usr):
                 for i in range(activity.begin_time[0], activity.end_time[0]):
                     self.time[week][x][i] = None
 
+    def auto_schedule(self, activity):
+        for week in range(1, 17):
+            for day in range(1, 8):
+                for i in range(6, 23):
+                    if self.time[week][day][i] is None:
+                        activity.week = [week]
+                        activity.day = [day]
+                        activity.begin_time = [i]
+                        activity.end_time = [i + 1]
+                        return activity
+
     # 临时事务的时间检验
     def temp_time_conflicts(self, activity):
         for week in activity.week:
@@ -732,9 +763,6 @@ class Student(Usr):
                         self.time[week][x][i] = None
                     else:
                         self.time[week][x][i].replace("/temp_thing " + activity.name, "")
-
-    def add_clock(self, week, day, hour, thing):
-        self.clock[f"{week}+{day}+{hour}"] = thing.name
 
     def find_course(self, name, tree):
         course_list = tree.prefix_search(name)
@@ -838,16 +866,39 @@ class UserManagement:
         for st in activity.student:
             for week in activity.week:
                 for x in activity.day:
-                    for i in range(0, 25):
-                        print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
+                    for i in range(6, 22):
+                        # print(f"{week},{x},{i} {self.user_table.find(st).time[week][x][i]}")
                         if len(p_time) >= 3:
                             return p_time
-                        if self.user_table.find(st).time[week][x][i] is not None:
-                            p_time.append(str(week) + "," + str(x) + "," + str(i))
+                        if self.user_table.find(st).time[week][x][i] is None:
+                            p_time.append(str(week) + "周" + str(x) + "日" + str(i) + "时")
+        if not p_time:
+            dic = {}
+            for st in activity.student:
+                for week in activity.week:
+                    for x in activity.day:
+                        for i in range(6, 22):
+                            if self.user_table.find(st).time[week][x][i] is None:
+                                dic[str(week) + "周" + str(x) + "日" + str(i) + "时"] = dic.get(
+                                    str(week) + "周" + str(x) + "日" + str(i) + "时", 0) + 1
 
     def revise_student_activity(self, old_activity, new_activity):
         self.del_student_activities(old_activity)
         self.add_student_activities(new_activity)
+
+    def auto_schedule(self, activity):
+        for week in range(1, 17):
+            for day in range(1, 8):
+                for i in range(6, 23):
+                    for st in activity.student:
+                        if st == activity.student[-1] and self.user_table.find(st).time[week][day][i] is None:
+                            activity.week = [week]
+                            activity.day = [day]
+                            activity.begin_time = [i]
+                            activity.end_time = [i + 1]
+                            return activity
+                        if self.user_table.find(st).time[week][day][i] is not None:
+                            break
 
     def add_student_test(self, test):
         for st in test.student:
@@ -936,23 +987,24 @@ class UserManagement:
         self.add_student_course(new_course)
 
 
-def quick_sort_by_time(mylist, start, end):  # start,end 是指指针
+def quicksort_by_time(mylist, start, end):  # start,end 是指指针
     i, j = start, end
     if start < end:
         base = mylist[i]  # 设置基准数为i,即为start
         while i < j:
-            while (i < j) and mylist[j].begintime + mylist[
-                j].day * 100 >= base.begintime + base.day * 100:  # 找到比基准数小的数字
+            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 >= \
+                    base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:  # 找到比基准数小的数字
                 j -= 1  # 将炮兵j向左移动
             mylist[i] = mylist[j]  # 将找到的j复制给i
             # 同样的方法执行前半区域
-            while (i < j) and mylist[j].begintime + mylist[j].day * 100 <= base.begintime + base.day * 100:
+            while (i < j) and mylist[j].begin_time[0] + mylist[j].day[0] * 100 + mylist[j].week[0] * 1000 <= \
+                    base.begin_time[0] + base.day[0] * 100 + base.week[0] * 1000:
                 i += 1
             mylist[j] = mylist[i]
         mylist[i] = base  # i=j,即将这个数设置为base
 
-        quick_sort_by_time(mylist, start, i - 1)
-        quick_sort_by_time(mylist, j + 1, end)
+        quicksort_by_time(mylist, start, i - 1)
+        quicksort_by_time(mylist, j + 1, end)
     return mylist
 
 
@@ -1072,4 +1124,3 @@ print(course_tree.find(name="str:" + str(1)).name)
 for i in course_tree.prefix_search(name="str:" + str(10)):
     print(i.name)  # 打印查找结果，如果查找成功则打印id,未作非法检验
 course_tree.get_all_data()"""
-
