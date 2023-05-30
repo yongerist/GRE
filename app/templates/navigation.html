@@ -23,6 +23,15 @@
                         {% endfor %}
                     </select>
                 </label>
+                 <label>
+                    必经点:
+                    <select name="must_point[]" multiple>
+                        <option value="">--请选择--</option>
+                        {% for obj in place %}
+                        <option value="{{ obj }}">{{ obj }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
                 <input type="submit" value="查找路径">
             </div>
         </form>

@@ -55,7 +55,8 @@ class Graph:
             curr_node = prev_node
 
         path.reverse()
-        return path
+        path_length = distances[end]
+        return path, path_length
 
 
 G = Graph()
@@ -102,8 +103,8 @@ G.add_node('档案馆', color='b')
 G.add_node('篮球场西北路口', color='r')
 G.add_node('篮球场东北路口', color='r')
 G.add_node('学二十九东北路口', color='r')
-G.add_node('学十三西南路口', color='r')
-G.add_node('学十三东南路口', color='r')
+G.add_node('学三西南路口', color='r')
+G.add_node('学三东南路口', color='r')
 G.add_node('学四东南路口', color='r')
 G.add_node('学一西北路口', color='r')
 G.add_node('学一东北路口', color='r')
@@ -207,14 +208,14 @@ G.add_edge('麦当劳和学生发展中心', '学生活动中心南侧', weight=
 G.add_edge('小松林北侧', '学生发展中心南侧', weight=6)
 G.add_edge('学生发展中心南侧', '档案馆', weight=6)
 G.add_edge('档案馆', '篮球场西北路口', weight=6)
-G.add_edge('学十三公寓', '学十三西南路口', weight=4)
-G.add_edge('学十三西南路口', '学十三东南路口', weight=10)
-G.add_edge('学十三东南路口', '学三东北路口', weight=4)
-G.add_edge('学十三东南路口', '学四东南路口', weight=12)
+G.add_edge('学十三公寓', '学三西南路口', weight=4)
+G.add_edge('学三西南路口', '学三东南路口', weight=10)
+G.add_edge('学三东南路口', '学三东北路口', weight=4)
+G.add_edge('学三东南路口', '学四东南路口', weight=12)
 G.add_edge('学四东南路口', '大电视南路口', weight=4)
-G.add_edge('学十三西南路口', '学一西北路口', weight=4)
+G.add_edge('学三西南路口', '学一西北路口', weight=4)
 G.add_edge('学一西北路口', '学一东北路口', weight=10)
-G.add_edge('学一东北路口', '学十三东南路口', weight=4)
+G.add_edge('学一东北路口', '学三东南路口', weight=4)
 G.add_edge('学一东北路口', '学二东北路口', weight=12)
 G.add_edge('学二东北路口', '学四东南路口', weight=4)
 G.add_edge('学一西北路口', '教四西北路口', weight=4)
@@ -270,7 +271,8 @@ G.add_edge('中门内', '中门外', weight=5)
 G.add_edge('中门外', '校医院', weight=10)
 
 # path = nx.shortest_path(G, "教三", "学五公寓", weight="weight")
-path = G.shortest_path("图书馆", "学五公寓")
-print(path)
+path = G.shortest_path("学五公寓", "学三公寓")[0]
+distance = G.shortest_path("学五公寓", "学三公寓")[1]
+print(distance)
 # for node in path:
 #     print(G.nodes[node]['color'])

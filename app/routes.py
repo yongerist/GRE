@@ -11,6 +11,7 @@ from app.course_doc import load_tree_data, write_tree_data, load_hash_data, writ
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
 from app.reminder import gweek, gday, my_time, ghour
+from app.navigation import Graph, G
 
 my_time()
 
@@ -29,7 +30,7 @@ def index():
     print("结束")
     after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
     clock = user.find_clock(gweek, gday, ghour)
-    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour,clock = clock)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,6 +92,7 @@ def before_request():
     g.course_hash = load_hash_data()
     g.usr_hash = load_usr_data()
     g.manage = UserManagement(g.usr_hash)
+    g.graph = G
 
 
 @app.route('/Student/course/list', methods=['GET', 'POST'])
@@ -668,11 +670,33 @@ def clock_add():
 def navigate():
     g.usr_id = current_user.id - 1
     user = g.manage.login(g.usr_id)
-    place = ["学五", "体育馆", "教三"]
+    place = G.nodes
+    distance = 10000
     if request.method == 'POST':
         source = request.form.get("source")
         destination = request.form.get("destination")
-        road="成华大道->二仙桥"
+        must_point = request.form.getlist("must_point[]")
+        closest = source
+        end = source
+        temp_path = []
+        if source != destination:
+            path = G.shortest_path(source, destination)[0]
+        else:
+            while len(must_point) > 0:
+                for point in must_point:
+                    if G.shortest_path(source, point)[1] < distance:
+                        distance = G.shortest_path(source, point)[1]
+                        closest = point
+                must_point.remove(closest)
+                del_source = G.shortest_path(source, closest)[0]
+                del del_source[0]
+                temp_path = temp_path + del_source
+                source = closest
+                distance = 10000
+            del_end = G.shortest_path(closest, end)[0]
+            del del_end[0]
+            path = [end] + temp_path + del_end
+        road = '->'.join(point for point in path)
         return render_template('navigation.html', place=place, road=road)
     else:
         return render_template('navigation.html', place=place)
