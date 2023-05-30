@@ -415,7 +415,7 @@ def group_activity_add():
         # 建立course对象
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline,
                             student=student, road=road)
-        if auto is '1':
+        if auto == '1':
             activity = g.manage.auto_schedule(activity)
 
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
@@ -503,7 +503,7 @@ def person_activity_add():
 
         activity = Activity(name=name, day=day, begin_time=begin_time, week=week, offline=offline, student=None,
                             road=road)
-        if auto is '1':
+        if auto == '1':
             activity = user.auto_schedule(activity)
         if activity.begin_time[0] < 6 or activity.end_time[0] > 22:
             error = "时间不在有效范围,添加失败!"
@@ -663,3 +663,16 @@ def clock_add():
     else:
         return render_template('clock_add.html')
 
+
+@app.route('/navigation', methods=['GET', 'POST'])
+def navigate():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    place = ["学五", "体育馆", "教三"]
+    if request.method == 'POST':
+        source = request.form.get("source")
+        destination = request.form.get("destination")
+        road="成华大道->二仙桥"
+        return render_template('navigation.html', place=place, road=road)
+    else:
+        return render_template('navigation.html', place=place)
