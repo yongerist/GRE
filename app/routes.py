@@ -79,7 +79,7 @@ def register():
         # print(user.email, user.userNumber, user.username)
         flash('恭喜, 注册成功!')
         file = open("log.txt", "a")
-        file.write(f"注册了学生{user.name}")
+        file.write(f"注册了学生{user.name}\n")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -104,11 +104,15 @@ def course_list():
         course.append(g.course_hash.find(x))
     # 打开网页时展示课程列表
     if request.method == 'GET':
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查看课程列表\n")
         return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
     else:
         sort_method = request.form.get("sort_method")
         target = request.form.get("target")
         print("我要查:" + target)
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查找{target}\n")
         if target == "" and sort_method == '0':
             return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
         if target == "" and sort_method == '1':
@@ -141,10 +145,14 @@ def person_activity_list():
     g.usr_id = current_user.id - 1
     user = g.manage.login(g.usr_id)
     if request.method == 'GET':
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查看个人活动列表\n")
         return render_template('student_person_activity_list.html', queryset=user.personal_activities.get_all_data())
     else:
         sort_method = request.form.get("sort_method")
         target = request.form.get('target')
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查找{target}\n")
         if target == "" and sort_method == '0':
             return render_template('student_person_activity_list.html',
                                    queryset=user.personal_activities.get_all_data())
@@ -171,10 +179,14 @@ def temp_list():
     user = g.manage.login(g.usr_id)
     print(user.thing.get_all_data())
     if request.method == 'GET':
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查看临时事务列表\n")
         return render_template('student_temp_list.html', queryset=user.thing.get_all_data())
     else:
         sort_method = request.form.get("sort_method")
         target = request.form.get('target')
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查找{target}")
         if target == "" and sort_method == 0:
             return render_template('student_temp_list.html', queryset=quicksort_by_name(user.thing.get_all_data(), 0,
                                                                                         len(user.thing.get_all_data()) - 1))
@@ -277,6 +289,7 @@ def temp_info(name):
     user = g.manage.login(g.usr_id)
     activity = user.thing.find(name)
     time = f'第{activity.week[0]}周   周{activity.day[0]}   {activity.begin_time[0]}时'
+
     return render_template('student_temp_info.html', activity=activity, time=time)
 
 
@@ -309,11 +322,15 @@ def my_group_list():
         group_activities.append(g.gro_act_tree.find(x))
     # 打开网页时展示课程列表
     if request.method == 'GET':
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查看个人活动列表\n")
         return render_template('student_group_list.html', queryset=group_activities)
     else:
         sort_method = request.form.get("sort_method")
         target = request.form.get("target")
         print("我要查:" + target)
+        file = open("log.txt", "a")
+        file.write(f"{user.name}查找{target}\n")
         if target == "" and sort_method == '0':
             return render_template('student_group_list.html',
                                    queryset=quicksort_by_name(group_activities, 0, len(group_activities) - 1))
@@ -365,7 +382,7 @@ def course_add():
                 # 重定向到课程列表
                 print('添加成功')
                 file = open("log.txt", "a")
-                file.write(f"添加了课程{name}")
+                file.write(f"添加了课程{name},包含学生{student}\n")
                 return redirect(url_for('all_course_list'))
             else:
                 print('添加失败')
@@ -430,7 +447,7 @@ def group_activity_add():
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
                 file = open("log.txt", "a")
-                file.write(f"添加了集体活动{name}")
+                file.write(f"添加了集体活动{name}\n")
                 print('添加成功')
                 return redirect(url_for('group_activity_list'))
             else:
@@ -478,7 +495,7 @@ def test_add():
                 # 重定向到课程列表
                 print('添加成功')
                 file = open("log.txt", "a")
-                file.write(f"添加了考试{name}")
+                file.write(f"添加了考试{name}\n")
                 return redirect(url_for('all_course_list'))
             else:
                 print('添加失败')
@@ -515,7 +532,7 @@ def person_activity_add():
                 # 重定向到课程列表
                 print('添加成功')
                 file = open("log.txt", "a")
-                file.write(f"添加了个人活动{name}")
+                file.write(f"{user.name}添加了个人活动{name}\n")
                 return redirect(url_for('person_activity_list'))
             else:
                 print('添加失败')
@@ -551,7 +568,7 @@ def temp_add():
                 # 重定向到课程列表
                 print('添加成功')
                 file = open("log.txt", "a")
-                file.write(f"添加了临时事务{name}")
+                file.write(f"{user.name}添加了临时事务{name}\n")
                 return redirect(url_for('temp_list'))
             else:
                 print('添加失败')
@@ -572,7 +589,7 @@ def group_activity_del(name):
     write_gro_act_tree_data(g.gro_act_tree)
     write_usr_data(g.usr_hash)
     file = open("log.txt", "a")
-    file.write(f"删除了团体活动{name}")
+    file.write(f"删除了团体活动{name}\n")
     # 重定向到课程列表
     return redirect('/group_activity/list')
 
@@ -587,7 +604,7 @@ def person_activity_del(name):
     # 将改动后的树重新存入文件
     write_usr_data(g.usr_hash)
     file = open("log.txt", "a")
-    file.write(f"删除了个人活动{name}")
+    file.write(f"{user.name}删除了个人活动{name}\n")
     # 重定向到课程列表
     return redirect('/Student/person_activity/list')
 
@@ -602,7 +619,7 @@ def temp_del(name):
     # 将改动后的树重新存入文件
     write_usr_data(g.usr_hash)
     file = open("log.txt", "a")
-    file.write(f"删除了临时事务{name}")
+    file.write(f"{user.name}删除了临时事务{name}\n")
     # 重定向到课程列表
     return redirect('/temp/list')
 
@@ -642,7 +659,7 @@ def course_revise(course_id):
                 # 重定向到课程列表
                 print('修改成功')
                 file = open("log.txt", "a")
-                file.write(f"修改了课程{name}")
+                file.write(f"修改了课程{name}\n")
                 flash('修改成功!')
                 return redirect(url_for('all_course_list'))
             else:
