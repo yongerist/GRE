@@ -668,6 +668,19 @@ class Student(Usr):
                     group_activities_list.append(temp[1])
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
 
+    def find_all_course_in_week(self, week):
+        course_list = []
+        for day in range(1,8):
+            for hour in range(6,21):
+                if self.time[week][day][hour][0]=='c':
+                    temp = self.time[week][day][hour].split(" ")
+                    if len(course_list) != 0:
+                        if course_list[-1] != temp[1]:
+                            course_list.append(temp[1])
+                    else:
+                        course_list.append(temp[1])
+        return course_list
+
     def find_clock(self, week, day, hour):
         return self.clock.get(f"{week}+{day}+{hour}", " ")
 

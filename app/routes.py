@@ -29,7 +29,7 @@ def index():
     print("结束")
     after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
     clock = user.find_clock(gweek, gday, ghour)
-    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour,clock = clock)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -672,7 +672,34 @@ def navigate():
     if request.method == 'POST':
         source = request.form.get("source")
         destination = request.form.get("destination")
-        road="成华大道->二仙桥"
+        road = "成华大道->二仙桥"
         return render_template('navigation.html', place=place, road=road)
     else:
         return render_template('navigation.html', place=place)
+
+
+@app.route('/schedule', methods=['GET', 'POST'])
+def schedule():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    if request.method == 'POST':
+        week = request.form.get("week")
+        course_name = user.find_all_course_in_week(int(week))
+        old_courseList = user.time[week]
+        courseList = [row[1:] for row in old_courseList[1:]]
+        print(old_courseList)
+        print(courseList)
+        # sourses = []
+        # for x in course_name:
+        #     sourses.append(g.tree.find(x))
+        return render_template('schedule.html', week=week, courseList=courseList)
+    else:
+        course_name = user.find_all_course_in_week(gweek)
+        old_courseList = user.time[gweek]
+        courseList = [row[1:] for row in old_courseList[1:]]
+        print(old_courseList)
+        print(courseList)
+        # sourses = []
+        # for x in course_name:
+        #     sourses.append(g.tree.find(x))
+        return render_template('schedule.html', week=gweek, courseList=courseList)
