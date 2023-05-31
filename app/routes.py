@@ -78,6 +78,8 @@ def register():
         db.session.commit()
         # print(user.email, user.userNumber, user.username)
         flash('恭喜, 注册成功!')
+        file = open("log.txt", "a")
+        file.write(f"注册了学生{user.name}")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -362,6 +364,8 @@ def course_add():
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
                 print('添加成功')
+                file = open("log.txt", "a")
+                file.write(f"添加了课程{name}")
                 return redirect(url_for('all_course_list'))
             else:
                 print('添加失败')
@@ -425,6 +429,8 @@ def group_activity_add():
                 write_gro_act_tree_data(g.gro_act_tree)
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
+                file = open("log.txt", "a")
+                file.write(f"添加了集体活动{name}")
                 print('添加成功')
                 return redirect(url_for('group_activity_list'))
             else:
@@ -471,6 +477,8 @@ def test_add():
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
                 print('添加成功')
+                file = open("log.txt", "a")
+                file.write(f"添加了考试{name}")
                 return redirect(url_for('all_course_list'))
             else:
                 print('添加失败')
@@ -506,6 +514,8 @@ def person_activity_add():
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
                 print('添加成功')
+                file = open("log.txt", "a")
+                file.write(f"添加了个人活动{name}")
                 return redirect(url_for('person_activity_list'))
             else:
                 print('添加失败')
@@ -540,6 +550,8 @@ def temp_add():
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
                 print('添加成功')
+                file = open("log.txt", "a")
+                file.write(f"添加了临时事务{name}")
                 return redirect(url_for('temp_list'))
             else:
                 print('添加失败')
@@ -559,6 +571,8 @@ def group_activity_del(name):
     # 将改动后的树重新存入文件
     write_gro_act_tree_data(g.gro_act_tree)
     write_usr_data(g.usr_hash)
+    file = open("log.txt", "a")
+    file.write(f"删除了团体活动{name}")
     # 重定向到课程列表
     return redirect('/group_activity/list')
 
@@ -572,6 +586,8 @@ def person_activity_del(name):
     user.del_personal_activities(activity)
     # 将改动后的树重新存入文件
     write_usr_data(g.usr_hash)
+    file = open("log.txt", "a")
+    file.write(f"删除了个人活动{name}")
     # 重定向到课程列表
     return redirect('/Student/person_activity/list')
 
@@ -585,6 +601,8 @@ def temp_del(name):
     user.del_temp_thing(activity)
     # 将改动后的树重新存入文件
     write_usr_data(g.usr_hash)
+    file = open("log.txt", "a")
+    file.write(f"删除了临时事务{name}")
     # 重定向到课程列表
     return redirect('/temp/list')
 
@@ -623,6 +641,8 @@ def course_revise(course_id):
                 write_usr_data(g.usr_hash)
                 # 重定向到课程列表
                 print('修改成功')
+                file = open("log.txt", "a")
+                file.write(f"修改了课程{name}")
                 flash('修改成功!')
                 return redirect(url_for('all_course_list'))
             else:
