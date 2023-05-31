@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <script src="../static/js/Timetables.min.js"></script>
+    <title>大学课表</title>
+    <style>
+        #coursesTable {
+            padding: 15px 10px;
+        }
+
+        .Courses-head {
+            background-color: #edffff;
+        }
+
+        .Courses-head > div {
+            text-align: center;
+            font-size: 14px;
+            line-height: 28px;
+        }
+
+        .left-hand-TextDom, .Courses-head {
+            background-color: #f2f6f7;
+        }
+
+        .Courses-leftHand {
+            background-color: #f2f6f7;
+            font-size: 12px;
+        }
+
+        .Courses-leftHand .left-hand-index {
+            color: #9c9c9c;
+            margin-bottom: 4px !important;
+        }
+
+        .Courses-leftHand .left-hand-name {
+            color: #666;
+        }
+
+        .Courses-leftHand p {
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .Courses-head > div {
+            border-left: none !important;
+        }
+
+        .Courses-leftHand > div {
+            padding-top: 5px;
+            border-bottom: 1px dashed rgb(219, 219, 219);
+        }
+
+        .Courses-leftHand > div:last-child {
+            border-bottom: none !important;
+        }
+
+        .left-hand-TextDom, .Courses-head {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .Courses-content > ul {
+            border-bottom: 1px dashed rgb(219, 219, 219);
+            box-sizing: border-box;
+        }
+
+        .Courses-content > ul:last-child {
+            border-bottom: none !important;
+        }
+
+        .highlight-week {
+            color: #02a9f5 !important;
+        }
+
+        .Courses-content li {
+            text-align: center;
+            color: #666666;
+            font-size: 14px;
+            line-height: 50px;
+        }
+
+        .Courses-content li span {
+            padding: 6px 2px;
+            box-sizing: border-box;
+            line-height: 18px;
+            border-radius: 4px;
+            white-space: normal;
+            word-break: break-all;
+            cursor: pointer;
+        }
+
+        .grid-active {
+            z-index: 9999;
+        }
+
+        .grid-active span {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div>
+    GRE:
+    <a href="{{ url_for('index') }}">主页</a>
+    {% if current_user.is_anonymous %}
+        <a href="{{ url_for('login') }}">登录</a>
+    {% else %}
+        <a href="{{ url_for('logout') }}">登出</a>
+        <a href="/Student/course/list">我的课程</a>
+        <a href="/Student/group/list">我的团体活动</a>
+        <a href="/Student/person_activity/list">我的个人活动</a>
+        <a href="/person_activity/add">添加个人活动</a>
+        <a href="/temp/list">我的临时活动</a>
+        <a href="/temp/add">添加临时活动</a>
+        <a href="/clock/add">添加闹钟</a>
+        <a href="/navigation">导航</a>
+        <a href="/schedule">课程表</a>
+
+    {% endif %}
+</div>
+<div>课程表</div>
+<form method="post">
+    <label>
+        周{{ week }}:
+        <select name="week">
+            <option value="">--请选择--</option>
+            <option value="01">第一周</option>
+            <option value="02">第二周</option>
+            <option value="03">第三周</option>
+            <option value="04">第四周</option>
+            <option value="05">第五周</option>
+            <option value="06">第六周</option>
+            <option value="07">第七周</option>
+            <option value="08">第八周</option>
+            <option value="09">第九周</option>
+            <option value="10">第十周</option>
+            <option value="11">第十一周</option>
+            <option value="12">第十二周</option>
+            <option value="13">第十三周</option>
+            <option value="14">第十四周</option>
+            <option value="15">第十五周</option>
+            <option value="16">第十六周</option>
+        </select>
+        <input type="submit" value="查询">
+    </label>
+
+</form>
+<div id="dataField" data-value='{{ courseList|tojson|safe }}'></div>
+<!-- 其他表单字段 -->
+<div id="coursesTable"></div>
+{#<h1 id="heading">JavaScript与HTML</h1>#}
+{#<button id="button">点击我</button>#}
+<!--<button onclick="onChange()"-->
+<!--        style="background-color: #00a2ae; color: #fff; padding: 5px 10px; border-radius: 4px;border: none">-->
+<!--    切换课表-->
+<!--</button>-->
+
+<script>
+    var dataElement = document.getElementById('dataField');
+    if (dataElement) {
+        console.log('gooooooooooooooooooooooooood');
+    }
+    console.log(dataElement);
+    if (dataElement) {
+        console.log('gooooooooooooooooooooooooood');
+    }
+    var value = dataElement.getAttribute('data-value');
+    console.log(value);
+    if (dataElement) {
+        console.log('gooooooooooooooooooooooooood');
+    }
+    var courseList = JSON.parse(value);
+    console.log(courseList);  // 示例：将列表数据打印到控制台
+    var week = window.innerWidth > 360 ? ['周一', '周二', '周三', '周四', '周五', '周六', '周日'] :
+        ['一', '二', '三', '四', '五', '六', '日'];
+    var day = new Date().getDay();
+    var courseType = [
+        [{index: '1', name: '8'}, 1],
+        [{index: '2', name: '9'}, 1],
+        [{index: '3', name: '10'}, 1],
+        [{index: '4', name: '11'}, 1],
+        [{index: '5', name: '12'}, 1],
+        [{index: '6', name: '14'}, 1],
+        [{index: '7', name: '15'}, 1],
+        [{index: '8', name: '16'}, 1],
+        [{index: '9', name: '17'}, 1],
+        [{index: '10', name: '18'}, 1],
+        [{index: '11', name: '19'}, 1],
+        [{index: '12', name: '20'}, 1]
+    ];
+    // 实例化(初始化课表)
+    var Timetable = new Timetables({
+        el: '#coursesTable',
+        timetables: courseList,
+        week: week,
+        timetableType: courseType,
+        highlightWeek: day,
+        gridOnClick: function (e) {
+            alert(e.name + '  ' + e.week + ', 第' + e.index + '节课, 课长' + e.length + '节');
+            console.log(e);
+        },
+        styles: {
+            Gheight: 50
+        }
+    });
+</script>
+
+
+<script src="../static/js/Timetables.min.js"></script>
+</body>
+</html>

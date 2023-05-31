@@ -1,4 +1,6 @@
-from flask import flash, redirect, url_for, g
+import json
+
+from flask import flash, redirect, url_for, g, jsonify
 from flask import render_template, request
 from flask_login import current_user, login_user, login_required
 from flask_login import logout_user
@@ -10,8 +12,8 @@ from app.course_doc import load_tree_data, write_tree_data, load_hash_data, writ
     write_usr_data, load_gro_act_tree_data, write_gro_act_tree_data
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
+from app.navigation import G
 from app.reminder import gweek, gday, my_time, ghour
-from app.navigation import Graph, G
 
 my_time()
 
@@ -737,3 +739,25 @@ def navigate():
         return render_template('navigation.html', place=place, road=road)
     else:
         return render_template('navigation.html', place=place)
+
+
+@app.route('/schedule', methods=['GET', 'POST'])
+def schedule():
+    g.usr_id = current_user.id - 1
+    user = g.manage.login(g.usr_id)
+    if request.method == 'POST':
+        week = request.form.get("week")
+        old_courseList = user.time[int(week)]
+        courseList = [row[8:20] for row in old_courseList[1:5]]
+        print(old_courseList)
+        print(courseList)
+        return render_template('schedule.html', week=week, courseList=courseList)
+    else:
+        old_courseList = user.time[gweek]
+        courseList = [row[8:20] for row in old_courseList[1:5]]
+        print(old_courseList)
+        print(courseList)
+        return render_template('schedule.html', week=gweek, courseList=courseList)
+
+
+
