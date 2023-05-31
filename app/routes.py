@@ -81,7 +81,7 @@ def register():
         # print(user.email, user.userNumber, user.username)
         flash('恭喜, 注册成功!')
         file = open("log.txt", "a")
-        file.write(f"注册了学生{user.name}\n")
+        file.write(f"注册了学生{user.id}\n")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
