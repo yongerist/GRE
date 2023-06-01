@@ -680,6 +680,7 @@ class Student(Usr):
                     else:
                         course_list.append(tree.find(temp[1]))
 
+
     def find_group_activity_by_time(self, week, day, begin_time, end_time, tree):
         group_activity = []
         for i in range(begin_time, end_time + 1):

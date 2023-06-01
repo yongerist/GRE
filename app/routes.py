@@ -1,6 +1,4 @@
-import json
-
-from flask import flash, redirect, url_for, g, jsonify
+from flask import flash, redirect, url_for, g
 from flask import render_template, request
 from flask_login import current_user, login_user, login_required
 from flask_login import logout_user
@@ -169,6 +167,10 @@ def course_list():
             return render_template('student_course_list.html', queryset=quicksort_by_name(course, 0, len(course) - 1))
         if target == "" and sort_method == '1':
             return render_template('student_course_list.html', queryset=quicksort_by_time(course, 0, len(course) - 1))
+        if target[0].isdigit():
+            temp = target.split(" ")
+            queryset = user.find_course_by_time(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]), g.tree)
+            return render_template('student_course_list.html', queryset=queryset)
         my_list = user.find_course(target, g.tree)
         # print("我查到:" + my_list[0].name)
         if my_list == None:
@@ -212,6 +214,10 @@ def person_activity_list():
             return render_template('student_person_activity_list.html',
                                    queryset=quicksort_by_time(user.personal_activities.get_all_data(), 0,
                                                               len(user.personal_activities.get_all_data()) - 1))
+        if target[0].isdigit():
+            temp = target.split(" ")
+            queryset = user.find_personal_activity_by_time(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]))
+            return render_template('student_person_activity_list.html', queryset=queryset)
         my_list = user.personal_activities.prefix_search(target)
         if my_list is None:
             my_list = []
@@ -245,6 +251,11 @@ def temp_list():
         if target == "" and sort_method == 1:
             return render_template('student_temp_list.html', queryset=quicksort_by_time(user.thing.get_all_data(), 0,
                                                                                         len(user.thing.get_all_data()) - 1))
+        if target[0].isdigit():
+            temp = target.split(" ")
+            queryset = user.find_thing_by_time(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]))
+            return render_template('student_temp_list.html', queryset=queryset)
+
         my_list = user.thing.prefix_search(target)
         print(my_list)
         if my_list == None:
@@ -389,6 +400,11 @@ def my_group_list():
         elif target == "" and sort_method == '1':
             return render_template('student_group_list.html',
                                    queryset=quicksort_by_time(group_activities, 0, len(group_activities) - 1))
+        if target[0].isdigit():
+            temp = target.split(" ")
+            queryset = user.find_group_activity_by_time(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]), g.gro_act_tree)
+            return render_template('student_group_list.html', queryset=queryset)
+
         my_list = user.find_course(target, g.gro_act_tree)
         if sort_method == 0:
             # print("我查到:" + my_list[0].name)
