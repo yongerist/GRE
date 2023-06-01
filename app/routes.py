@@ -51,8 +51,32 @@ def index():
             for z in temp1:
                 temp2 = z.split(" ")
                 destination.append(user.thing.find(temp2[1]).road)
+    distance = 10000
+    source = "学五公寓"
+    closest = source
+    end = source
+    temp_path = []
+    if len(destination) == 1:
+        path = G.shortest_path(source, destination[0])[0]
+    else:
+        must_point = destination
+        while len(must_point) > 0:
+            for point in must_point:
+                if G.shortest_path(source, point)[1] < distance:
+                    distance = G.shortest_path(source, point)[1]
+                    closest = point
+            must_point.remove(closest)
+            del_source = G.shortest_path(source, closest)[0]
+            del del_source[0]
+            temp_path = temp_path + del_source
+            source = closest
+            distance = 10000
+        del_end = G.shortest_path(closest, end)[0]
+        del del_end[0]
+        path = [end] + temp_path + del_end
+    road = '->'.join(point for point in path)
     clock = user.find_clock(gweek, gday, ghour)
-    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock, road = road)
 
 
 @app.route('/login', methods=['GET', 'POST'])
