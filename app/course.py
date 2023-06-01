@@ -759,10 +759,13 @@ class Student(Usr):
         for week in activity.week:
             for x in activity.day:
                 for i in range(activity.begin_time[0], activity.end_time[0]):
-                    if self.time[week][x][i] == "/temp_thing " + activity.name:
+                    if self.time[week][x][i] == "temp_thing " + activity.name:
                         self.time[week][x][i] = None
                     else:
-                        self.time[week][x][i].replace("/temp_thing " + activity.name, "")
+                        temp = "/temp_thing " + activity.name
+                        self.time[week][x][i] = self.time[week][x][i].replace(temp, "")
+                        temp = "temp_thing " + activity.name+"/"
+                        self.time[week][x][i] = self.time[week][x][i].replace(temp, "")
 
     def find_course(self, name, tree):
         course_list = tree.prefix_search(name)
@@ -774,52 +777,6 @@ class Student(Usr):
                 pop_list.append(i)
         for i in pop_list:
             course_list.pop(i)
-        return course_list
-
-    def sort_by_time(self, course_hash):
-        course_list = []
-        dic = {}
-        for x in self.course:
-            dic[course_hash.find(x).begintime + course_hash.find(x).day * 100] = course_hash.find(x)
-        for key in sorted(dic):
-            course_list.append(dic[key])
-        return course_list
-
-    # 可以排用哈希存储的课程也可以排用b+树存储的课外活动
-    def sort_by_name(self, course_hash):
-        course_list = []
-        dic = {}
-        for x in self.course:
-            dic[course_hash.find(x).name] = course_hash.find(x)
-        for key in sorted(dic):
-            course_list.append(dic[key])
-        return course_list
-
-    def sort_by_id(self, course_hash):
-        course_list = []
-        dic = {}
-        for x in self.course:
-            dic[course_hash.find(x).id] = course_hash.find(x)
-        for key in sorted(dic):
-            course_list.append(dic[key])
-        return course_list
-
-    def sort_by_time_p(self):
-        activities_list = []
-        dic = {}
-        for x in self.personal_activities.get_all_data():
-            dic[x.begintime + x.day * 100] = x
-        for key in sorted(dic):
-            activities_list.append(dic[key])
-        return activities_list
-
-    def sort_by_name_p(self):
-        course_list = []
-        dic = {}
-        for x in self.personal_activities.get_all_data():
-            dic[x.name] = x.find(x)
-        for key in sorted(dic):
-            course_list.append(dic[key])
         return course_list
 
 

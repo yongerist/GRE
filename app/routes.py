@@ -31,6 +31,26 @@ def index():
             print("明天要上的课是:" + i)
     print("结束")
     after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
+    destination = []
+    temp = user.time[gweek][gday][(ghour + 1) % 24]
+    if temp is not None:
+        if "test" in temp:
+            temp1 = temp.split(" ")
+            destination.append(g.tree.find(temp1[1]).test.road)
+        if "course" in temp:
+            temp1 = temp.split(" ")
+            destination.append( g.tree.find(temp1[1]).road)
+        if "group" in temp:
+            temp1 = temp.split(" ")
+            destination.append( g.gro_act_tree.find(temp1[1]).road)
+        if "personal_activity" in temp:
+            temp1 = temp.split(" ")
+            destination.append( user.personal_activity.find(temp1[1]).road)
+        if "temp_thing" in temp:
+            temp1 = temp.split("/")
+            for z in temp1:
+                temp2 = z.split(" ")
+                destination.append(user.thing.find(temp2[1]).road)
     clock = user.find_clock(gweek, gday, ghour)
     return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock)
 
@@ -758,6 +778,3 @@ def schedule():
         print(old_courseList)
         print(courseList)
         return render_template('schedule.html', week=gweek, courseList=courseList)
-
-
-
