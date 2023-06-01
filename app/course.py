@@ -668,6 +668,54 @@ class Student(Usr):
                     group_activities_list.append(temp[1])
         return [course_list, test_list, group_activities_list, personal_activities_list, thing_list]
 
+    def find_course_by_time(self, week, day, begin_time, end_time, tree):
+        course_list = []
+        for i in range(begin_time, end_time + 1):
+            if self.time[week][day][i] is not None:
+                if self.time[week][day][i][0] == 'c':
+                    temp = self.time[week][day][i].split(" ")
+                    if len(course_list) != 0:
+                        if course_list[-1].name != temp[1]:
+                            course_list.append(tree.find(temp[1]))
+                    else:
+                        course_list.append(tree.find(temp[1]))
+
+    def find_group_activity_by_time(self, week, day, begin_time, end_time, tree):
+        group_activity = []
+        for i in range(begin_time, end_time + 1):
+            if self.time[week][day][i] is not None:
+                if self.time[week][day][i][0] == 'g':
+                    temp = self.time[week][day][i].split(" ")
+                    if len(group_activity) != 0:
+                        if group_activity[-1].name != temp[1]:
+                            group_activity.append(tree.find(temp[1]))
+                    else:
+                        group_activity.append(tree.find(temp[1]))
+
+    def find_personal_activity_by_time(self, week, day, begin_time, end_time):
+        course_list = []
+        for i in range(begin_time, end_time + 1):
+            if self.time[week][day][i] is not None:
+                if self.time[week][day][i][0] == 'c':
+                    temp = self.time[week][day][i].split(" ")
+                    if len(course_list) != 0:
+                        if course_list[-1].name != temp[1]:
+                            course_list.append(self.personal_activities.find(temp[1]))
+                    else:
+                        course_list.append(self.personal_activities.find(temp[1]))
+
+    def find_thing_by_time(self, week, day, begin_time, end_time):
+        thing_list = []
+        for i in range(begin_time, end_time + 1):
+            if self.time[week][day][i] is not None:
+                if "temp_thing" in self.time[week][day][i]:
+                    temp = self.time[week][day][i].split(" ")
+                    if len(thing_list) != 0:
+                        if thing_list[-1].name != temp[1]:
+                            thing_list.append(self.thing.find(temp[1]))
+                    else:
+                        thing_list.append(self.thing.find(temp[1]))
+
     def find_clock(self, week, day, hour):
         return self.clock.get(f"{week}+{day}+{hour}", " ")
 
@@ -764,7 +812,7 @@ class Student(Usr):
                     else:
                         temp = "/temp_thing " + activity.name
                         self.time[week][x][i] = self.time[week][x][i].replace(temp, "")
-                        temp = "temp_thing " + activity.name+"/"
+                        temp = "temp_thing " + activity.name + "/"
                         self.time[week][x][i] = self.time[week][x][i].replace(temp, "")
 
     def find_course(self, name, tree):
