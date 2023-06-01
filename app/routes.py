@@ -32,25 +32,25 @@ def index():
     print("结束")
     after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
     destination = []
-    temp = user.time[gweek][gday][(ghour + 1) % 24]
+    temp = user.time[gweek][gday][ghour]
     if temp is not None:
         if "test" in temp:
             temp1 = temp.split(" ")
-            destination.append(g.tree.find(temp1[1]).test.road)
+            destination.append(g.tree.find(temp1[1]).test.road[0])
         if "course" in temp:
             temp1 = temp.split(" ")
-            destination.append( g.tree.find(temp1[1]).road)
+            destination.append(g.tree.find(temp1[1]).road[0])
         if "group" in temp:
             temp1 = temp.split(" ")
-            destination.append( g.gro_act_tree.find(temp1[1]).road)
+            destination.append(g.gro_act_tree.find(temp1[1]).road[0])
         if "personal_activity" in temp:
             temp1 = temp.split(" ")
-            destination.append( user.personal_activity.find(temp1[1]).road)
+            destination.append(user.personal_activities.find(temp1[1]).road[0])
         if "temp_thing" in temp:
             temp1 = temp.split("/")
             for z in temp1:
                 temp2 = z.split(" ")
-                destination.append(user.thing.find(temp2[1]).road)
+                destination.append(user.thing.find(temp2[1]).road[0])
     distance = 10000
     source = "学五公寓"
     closest = source
@@ -75,8 +75,11 @@ def index():
         del del_end[0]
         path = [end] + temp_path + del_end
     road = '->'.join(point for point in path)
+    for x in after_hour:
+        if x:
+            x += "  " + road
     clock = user.find_clock(gweek, gday, ghour)
-    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock, road = road)
+    return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock)
 
 
 @app.route('/login', methods=['GET', 'POST'])
