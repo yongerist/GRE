@@ -360,8 +360,7 @@ def temp_info(name):
 def group_activity_list():
     if request.method == 'GET':
         return render_template('teacher_group_activity_list.html',
-                               queryset=quicksort_by_name(g.gro_act_tree.get_all_data(), 0,
-                                                          len(g.gro_act_tree.get_all_data()) - 1))
+                               queryset=g.gro_act_tree.get_all_data())
     else:
         sort_method = request.form.get("sort_method")
         if sort_method == '0':
@@ -817,7 +816,7 @@ def schedule():
         return render_template('schedule.html', week=week, courseList=courseList)
     else:
         old_courseList = user.time[gweek]
-        courseList = [row[8:20] for row in old_courseList[1:5]]
+        courseList = [row[8:20] for row in old_courseList[1:8]]
         print(old_courseList)
         print(courseList)
         return render_template('schedule.html', week=gweek, courseList=courseList)

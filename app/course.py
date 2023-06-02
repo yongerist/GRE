@@ -155,10 +155,14 @@ class MyHash:
         # 如果列表中有空值,则插入该节点，如果没有，则插入末尾
         if self.empty:
             hash_id = self.empty[-1]
+            self.empty.pop(-1)
+            value.id = hash_id
+            self.my_hash_table[hash_id] = value
         else:
             hash_id = len(self.my_hash_table)
-        self.my_hash_table.insert(hash_id, value)
-        value.id = hash_id
+            value.id = hash_id
+            self.my_hash_table.insert(hash_id, value)
+
 
     def find(self, hash_id):
         if hash_id < len(self.my_hash_table):
@@ -169,6 +173,7 @@ class MyHash:
     def remove(self, hash_id):
         if hash_id < len(self.my_hash_table):
             self.my_hash_table[hash_id] = None
+            self.empty.append(hash_id)
         else:
             print("hash 删除错误")
 
@@ -176,12 +181,6 @@ class MyHash:
         if self.find(old_course.id) is not None:
             self.remove(old_course.id)
             self.insert(new_course)
-
-    def empty(self):
-        if len(self.my_hash_table) == 0:
-            return True
-        else:
-            return False
 
 
 class BPlusNode:
@@ -196,7 +195,7 @@ class BPlusNode:
         self.values = []
         self.next = []  # 如果不是叶子节点next保存下一层节点，否则保存后续节点
 
-    # 寻找key的索引，如果不是叶子节点，则返回下一层的节点，如果是叶子节点，则返回key的下标
+    # 寻找key的索引，返回key的下标
     def find_index(self, key):
         left = 0
         right = len(self.keys) - 1
@@ -552,7 +551,7 @@ class BPlusTree:
         while node.is_leaf is False:
             node = node.next[0]
         # print(node.keys)
-        all_data = node.values
+        all_data = node.values[0:len(node.keys)]
         # 依次获取全部节点的数据
         while len(node.next) != 0:
             # print(node.next[0].keys)
@@ -679,7 +678,7 @@ class Student(Usr):
                             course_list.append(tree.find(temp[1]))
                     else:
                         course_list.append(tree.find(temp[1]))
-
+        return course_list
 
     def find_group_activity_by_time(self, week, day, begin_time, end_time, tree):
         group_activity = []
@@ -692,6 +691,7 @@ class Student(Usr):
                             group_activity.append(tree.find(temp[1]))
                     else:
                         group_activity.append(tree.find(temp[1]))
+        return group_activity
 
     def find_personal_activity_by_time(self, week, day, begin_time, end_time):
         course_list = []
@@ -704,6 +704,7 @@ class Student(Usr):
                             course_list.append(self.personal_activities.find(temp[1]))
                     else:
                         course_list.append(self.personal_activities.find(temp[1]))
+        return course_list
 
     def find_thing_by_time(self, week, day, begin_time, end_time):
         thing_list = []
@@ -716,6 +717,7 @@ class Student(Usr):
                             thing_list.append(self.thing.find(temp[1]))
                     else:
                         thing_list.append(self.thing.find(temp[1]))
+        return thing_list
 
     def find_clock(self, week, day, hour):
         return self.clock.get(f"{week}+{day}+{hour}", " ")
