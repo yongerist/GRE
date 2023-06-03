@@ -36,11 +36,15 @@ def thread_function():
                 gday = 0
                 ghour = 0
                 gmini = 0
+            elif ghour == 23 and gmini == 59:
+                gday = gday + 1
+                ghour = 0
+                gmini = 0
             elif gmini == 59:
                 gmini = 0
-                ghour=ghour+1
+                ghour = ghour + 1
             else:
-                gmini=gmini+1
+                gmini = gmini + 1
             print(gweek, gday, ghour, gmini)
     finally:
         # 在修改完成后释放锁
@@ -63,7 +67,7 @@ def index():
     user = g.manage.login(g.usr_id)
     is_interrupted = True
     thread.join()
-    print(gweek,gday,ghour,gmini)
+    print(gweek, gday, ghour, gmini)
     tomorrow = user.find_all_by_time(gweek, (gday + 1) % 7, 0, 24)
     for obj in tomorrow:
         for i in obj:
