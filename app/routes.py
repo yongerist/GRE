@@ -19,7 +19,7 @@ from app.navigation import G
 
 gweek = 1
 gday = 1
-ghour = 1
+ghour = 7
 gmini = 1
 
 
@@ -36,9 +36,10 @@ def thread_function():
                 gday = 0
                 ghour = 0
                 gmini = 0
-            elif ghour == 23:
+            elif ghour == 23 and gmini == 59:
+                gday = gday + 1
                 ghour = 0
-
+                gmini = 0
             elif gmini == 59:
                 gmini = 0
                 ghour = ghour + 1
