@@ -1,3 +1,6 @@
+import threading
+import time
+
 from flask import flash, redirect, url_for, g
 from flask import render_template, request
 from flask_login import current_user, login_user, login_required
@@ -11,26 +14,65 @@ from app.course_doc import load_tree_data, write_tree_data, load_hash_data, writ
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
 from app.navigation import G
-from app.reminder import gweek, gday, my_time, ghour
 
-my_time()
+# from app.reminder import gweek, gday, my_time, ghour
+
+gweek = 1
+gday = 1
+ghour = 7
+gmini = 1
+
+
+def thread_function():
+    global gmini, gweek, gday, ghour
+    # 在访问共享变量之前获取锁
+    lock.acquire()
+    try:
+        # 修改共享变量的值
+        while not is_interrupted:
+            time.sleep(0.01)
+            if gday == 6 and ghour == 23:
+                gweek = gweek + 1
+                gday = 0
+                ghour = 0
+                gmini = 0
+            elif gmini == 59:
+                gmini = 0
+                ghour=ghour+1
+            else:
+                gmini=gmini+1
+            print(gweek, gday, ghour, gmini)
+    finally:
+        # 在修改完成后释放锁
+        lock.release()
+
+
+thread = threading.Thread(target=thread_function)
+lock = threading.Lock()
+is_interrupted = False
+thread.start()
 
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
+    global is_interrupted
     g.usr_id = current_user.id - 1
     print(g.usr_id)
     user = g.manage.login(g.usr_id)
+    is_interrupted = True
+    thread.join()
+    print(gweek,gday,ghour,gmini)
     tomorrow = user.find_all_by_time(gweek, (gday + 1) % 7, 0, 24)
     for obj in tomorrow:
         for i in obj:
             print("明天要上的课是:" + i)
     print("结束")
-    after_hour = user.find_all_by_time(gweek, gday, ghour, (ghour + 1) % 24)
+    after_hour = user.find_all_by_time(gweek, gday, (ghour + 1) % 24, (ghour + 1) % 24)
+    now = user.find_all_by_time(gweek, gday, ghour, ghour)
     destination = []
-    temp = user.time[gweek][gday][ghour]
+    temp = user.time[gweek][gday][ghour + 1]
     if temp is not None:
         if "test" in temp:
             temp1 = temp.split(" ")
@@ -49,8 +91,27 @@ def index():
             for z in temp1:
                 temp2 = z.split(" ")
                 destination.append(user.thing.find(temp2[1]).road[0])
-    distance = 10000
+    temp = user.time[gweek][gday][ghour]
     source = "学五公寓"
+    if temp is not None:
+        if "test" in temp:
+            temp1 = temp.split(" ")
+            source = g.tree.find(temp1[1]).test.road[0]
+        if "course" in temp:
+            temp1 = temp.split(" ")
+            source = g.tree.find(temp1[1]).road[0]
+        if "group" in temp:
+            temp1 = temp.split(" ")
+            source = g.gro_act_tree.find(temp1[1]).road[0]
+        if "personal_activity" in temp:
+            temp1 = temp.split(" ")
+            source = user.personal_activities.find(temp1[1]).road[0]
+        if "temp_thing" in temp:
+            temp1 = temp.split("/")
+            for z in temp1:
+                temp2 = z.split(" ")
+                source = user.thing.find(temp2[1]).road[0]
+    distance = 10000
     closest = source
     end = source
     temp_path = []
@@ -77,6 +138,10 @@ def index():
         if x:
             x += "  " + road
     clock = user.find_clock(gweek, gday, ghour)
+    is_interrupted = False
+    thread1 = threading.Thread(target=thread_function)
+    # 启动新的线程
+    thread1.start()
     return render_template('index.html', title='Home Page', tomorrow=tomorrow, after_hour=after_hour, clock=clock)
 
 
@@ -401,7 +466,8 @@ def my_group_list():
                                    queryset=quicksort_by_time(group_activities, 0, len(group_activities) - 1))
         if target[0].isdigit():
             temp = target.split(" ")
-            queryset = user.find_group_activity_by_time(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]), g.gro_act_tree)
+            queryset = user.find_group_activity_by_time(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]),
+                                                        g.gro_act_tree)
             return render_template('student_group_list.html', queryset=queryset)
 
         my_list = user.find_course(target, g.gro_act_tree)

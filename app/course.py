@@ -74,7 +74,7 @@ class Activity:
 
 
 # 简单的哈希表，使用平方取中法散列
-"""class MyHash:
+class SMHash:
     my_hash_table: list = []
     fail_rate: int
 
@@ -140,7 +140,7 @@ class Activity:
         self.my_hash_table = [None] * 10 * len(self.my_hash_table)
         for value in temp:
             self.insert(value)
-        self.fail_rate = 0"""
+        self.fail_rate = 0
 
 
 class MyHash:

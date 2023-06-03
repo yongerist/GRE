@@ -3,7 +3,7 @@ import threading
 
 gweek = 1
 gday = 1
-ghour = 1
+ghour = 7
 gmini = 1
 gsecond = 0
 
@@ -34,5 +34,5 @@ def my_time():
         gweek += 1
         print(gweek, gday, ghour, gmini, gsecond)
     print(gweek, gday, ghour, gmini, gsecond)
-    threading.Timer(1, my_time).start()
+    threading.Timer(0.0000000000001, my_time).start()
 
