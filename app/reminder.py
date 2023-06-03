@@ -11,28 +11,23 @@ gsecond = 0
 def my_time():
     global gsecond, gmini, gweek, gday, ghour
     gsecond += 1
-    if gsecond == 60 and gmini != 60:
+    if gsecond == 60 and gmini != 59:
         gsecond = 0
         gmini += 1
-        print(gweek, gday, ghour, gmini, gsecond)
-    elif gsecond == 60 and gmini == 60 and ghour != 24:
+    elif gsecond == 60 and gmini == 59 and ghour != 23:
         gsecond = 0
         gmini = 0
         ghour += 1
-        print(gweek, gday, ghour, gmini, gsecond)
-    elif gsecond == 60 and gmini == 60 and ghour == 24 and gday != 8:
+    elif gsecond == 60 and gmini == 59 and ghour == 23 and gday != 7:
         gsecond = 0
         gmini = 0
         ghour = 0
         gday += 1
-        print(gweek, gday, ghour, gmini, gsecond)
-    elif gsecond == 60 and gmini == 60 and ghour == 24 and gday == 8:
+    elif gsecond == 60 and gmini == 59 and ghour == 23 and gday == 7:
         gsecond = 0
         gmini = 0
         ghour = 0
         gday = 1
         gweek += 1
-        print(gweek, gday, ghour, gmini, gsecond)
     print(gweek, gday, ghour, gmini, gsecond)
-    threading.Timer(1, my_time).start()
-
+    threading.Timer(0.00000001, my_time).start()
