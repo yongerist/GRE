@@ -45,7 +45,7 @@ def thread_function():
                 ghour = ghour + 1
             else:
                 gmini = gmini + 1
-            print(gweek, gday, ghour, gmini)
+            # print(gweek, gday, ghour, gmini)
     finally:
         # 在修改完成后释放锁
         lock.release()
@@ -154,8 +154,25 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
+    re_form = RegistrationForm()
     if (form.userNumber.data == '0') and (form.password.data == '0'):
         return redirect(url_for('teacher_index'))
+
+    if re_form.validate_on_submit():
+        user = User(username=re_form.username.data, email=re_form.email.data, userNumber=re_form.userNumber.data)
+        user.set_password(re_form.password.data)
+        g.manage.user_init(username=re_form.username.data, email=re_form.email.data, userNumber=re_form.userNumber.data)
+        print(g.manage.user_table.my_hash_table)
+        write_usr_data(g.usr_hash)
+        db.session.add(user)
+        # print(user.email, user.userNumber, user.username)
+        db.session.commit()
+        # print(user.email, user.userNumber, user.username)
+        flash('恭喜, 注册成功!')
+        file = open("log.txt", "a")
+        file.write(f"注册了学生{user.id}\n")
+        return redirect(url_for('login'))
+
     if form.validate_on_submit():
         user = User.query.filter_by(userNumber=form.userNumber.data).first()
         if user is None or not user.check_password(form.password.data):
@@ -166,7 +183,29 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('new_logio.html', form=form, re_form=re_form)
+
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('index'))
+#     form = RegistrationForm()
+#     re_form = LoginForm()
+#     if form.validate_on_submit():
+#         user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
+#         user.set_password(form.password.data)
+#         g.manage.user_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
+#         print(g.manage.user_table.my_hash_table)
+#         write_usr_data(g.usr_hash)
+#         db.session.add(user)
+#         # print(user.email, user.userNumber, user.username)
+#         db.session.commit()
+#         # print(user.email, user.userNumber, user.username)
+#         flash('恭喜, 注册成功!')
+#         file = open("log.txt", "a")
+#         file.write(f"注册了学生{user.id}\n")
+#         return redirect(url_for('new_logio'))
+#     return render_template('new_logio.html', re_form=form, form=re_form)
 
 
 @app.route('/teacher/index')
@@ -180,26 +219,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
-        user.set_password(form.password.data)
-        g.manage.user_init(username=form.username.data, email=form.email.data, userNumber=form.userNumber.data)
-        print(g.manage.user_table.my_hash_table)
-        write_usr_data(g.usr_hash)
-        db.session.add(user)
-        # print(user.email, user.userNumber, user.username)
-        db.session.commit()
-        # print(user.email, user.userNumber, user.username)
-        flash('恭喜, 注册成功!')
-        file = open("log.txt", "a")
-        file.write(f"注册了学生{user.id}\n")
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+
 
 
 @app.before_request
@@ -420,8 +440,11 @@ def temp_info(name):
     g.usr_id = current_user.id - 1
     user = g.manage.login(g.usr_id)
     activity = user.thing.find(name)
-    time = f'第{activity.week[0]}周   周{activity.day[0]}   {activity.begin_time[0]}时'
-
+    time = []
+    for week in activity.week:
+        for day in activity.day:
+            time.append(
+                f'第{week}周   周{day}   {activity.begin_time[0]}时--{activity.end_time[0]}时')
     return render_template('student_temp_info.html', activity=activity, time=time)
 
 
@@ -879,8 +902,10 @@ def schedule():
     user = g.manage.login(g.usr_id)
     if request.method == 'POST':
         week = request.form.get("week")
+        if week == "":
+            week = gweek
         old_courseList = user.time[int(week)]
-        courseList = [row[8:20] for row in old_courseList[1:5]]
+        courseList = [row[8:20] for row in old_courseList[1:8]]
         print(old_courseList)
         print(courseList)
         return render_template('schedule.html', week=week, courseList=courseList)

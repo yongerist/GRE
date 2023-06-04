@@ -697,7 +697,7 @@ class Student(Usr):
         course_list = []
         for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
-                if self.time[week][day][i][0] == 'c':
+                if self.time[week][day][i][0] == 'p':
                     temp = self.time[week][day][i].split(" ")
                     if len(course_list) != 0:
                         if course_list[-1].name != temp[1]:

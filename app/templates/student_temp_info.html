@@ -2,14 +2,20 @@
 
 {% block content %}
     <body>
-    <table width="600" border="1">
+    <table width="600" border="1" class="table">
         <tr>
             <td>临时活动名:</td>
             <td>{{ activity.name }}</td>
         </tr>
         <tr>
             <td>活动时间:</td>
-            <td>{{ time }}</td>
+            <td>
+                <select>
+                    {% for obj in time %}
+                        <option>{{ obj }}</option>
+                    {% endfor %}
+                </select>
+            </td>
         </tr>
     </table>
     </body>

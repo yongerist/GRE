@@ -1,8 +1,35 @@
-{% extends "base.html" %}
+<html lang="en">
 
-{% block content %}
-    <h1>登录</h1>
-    <form action="" method="post" novalidate>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../static/css/bootstrap-3.4.1/css/bootstrap.css">
+    {% if title %}
+        <title>{{ title }} - GRE</title>
+    {% else %}
+        <title>GRE</title>
+    {% endif %}
+</head>
+
+<body>
+<div>
+    GRE:
+    <a href="{{ url_for('index') }}">主页</a>
+    <a href="{{ url_for('login') }}">登录</a>
+</div>
+<hr>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<h1>登录</h1>
+<form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
 
         <p>
@@ -19,12 +46,19 @@
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <!--        {% if form.errors %}-->
+        <!--{% if form.errors %}-->
             <!--        {{ form.errors }}-->
             <!--        {% endif %}-->
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form.submit(class="btn solid", value="登 录") }}</p>
     </form>
-    <p>新用户? <a href="{{ url_for('register') }}">点击此处注册!</a></p>
+<p>新用户? <a href="{{ url_for('register') }}">点击此处注册!</a></p>
+
+<script src="../static/js/jquery-3.6.0.min.js"></script>
+<script src="../static/css/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+{% block js %}
+    {{ moment.include_moment() }}
 {% endblock %}
 
+</body>
+</html>

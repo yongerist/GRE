@@ -17,10 +17,9 @@
         </form>
     </div>
     <hr>
-    <table>
+    <table class="table">
         <thead>
         <tr>
-            <th>ID</th>
             <th>课程名</th>
             <th>开始时间</th>
             <th>结束时间</th>
@@ -30,7 +29,6 @@
         <tbody>
         {% for obj in queryset %}
             <tr>
-                <th scope="row">{{ obj.id }}</th>
                 <td>{{ obj.name }}</td>
                 <td>{{ obj.begin_time }}</td>
                 <td>{{ obj.end_time }}</td>

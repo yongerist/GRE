@@ -1,79 +1,108 @@
 {% extends "base.html" %}
-
+{% block head %}{% endblock %}
 {% block content %}
+<div class="page-header">
     <h1>你好, {{ current_user.username }}!</h1>
-    <div>你的学号是 {{ current_user.userNumber }}</div>
-    <div>你的邮箱是 {{ current_user.email }}</div>
-    <div>你的学院是 计算机学院</div>
-    <div>你的专业是 网络工程</div>
-    <!--    <div><a href="/pwd/edit">修改密码</a></div>-->
-<hr>
+</div>
 <div>
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">个人信息</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">明天的日程</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">一小时后的日程</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">闹钟提醒</a></li>
+  </ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active in .fade" id="home">
+        <div>你的学号是 {{ current_user.userNumber }}</div>
+      <div>你的邮箱是 {{ current_user.email }}</div>
+        <div>你的学院是 计算机学院</div>
+        <div>你的专业是 网络工程</div></div>
+    <div role="tabpanel" class="tab-pane .fade" id="profile">
+        <div>
 明天的课程:
 {% for obj in tomorrow[0] %}
     {{ obj }}
 {% endfor %}
 </div>
-<div>
-明天的考试:
-{% for obj in tomorrow[1] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-明天的团体活动:
-{% for obj in tomorrow[2] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-明天的个人活动:
-{% for obj in tomorrow[3] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-明天的临时活动:
-{% for obj in tomorrow[4] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<hr>
-<div>
-一小时后的课程:
-{% for obj in after_hour[0] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-一小时后的考试:
-{% for obj in after_hour[1] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-一小时后的团体活动:
-{% for obj in after_hour[2] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-一小时后的个人活动:
-{% for obj in after_hour[3] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<div>
-一小时后的临时活动:
-{% for obj in after_hour[4] %}
-    {{ obj }}
-{% endfor %}
-</div>
-<hr>
-<div>
+        <div>
+        明天的考试:
+        {% for obj in tomorrow[1] %}
+        {{ obj }}
+        {% endfor %}
+        </div>
+        <div>
+        明天的团体活动:
+        {% for obj in tomorrow[2] %}
+        {{ obj }}
+        {% endfor %}
+        </div>
+        <div>
+        明天的个人活动:
+        {% for obj in tomorrow[3] %}
+        {{ obj }}
+        {% endfor %}
+        </div>
+        <div>
+        明天的临时活动:
+        {% for obj in tomorrow[4] %}
+        {{ obj }}
+        {% endfor %}
+        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane .fade" id="messages">
+        <div>
+    一小时后的课程:
+    {% for obj in after_hour[0] %}
+        {{ obj }}
+    {% endfor %}
+    </div>
+        <div>
+        一小时后的考试:
+        {% for obj in after_hour[1] %}
+            {{ obj }}
+        {% endfor %}
+        </div>
+        <div>
+        一小时后的团体活动:
+        {% for obj in after_hour[2] %}
+            {{ obj }}
+        {% endfor %}
+        </div>
+        <div>
+        一小时后的个人活动:
+        {% for obj in after_hour[3] %}
+            {{ obj }}
+        {% endfor %}
+        </div>
+        <div>
+        一小时后的临时活动:
+        {% for obj in after_hour[4] %}
+            {{ obj }}
+        {% endfor %}
+        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane .fade" id="settings">
+              <div>
 闹钟提醒:
 {% for obj in clock %}
     {{ obj }}
 {% endfor %}
 </div>
+    </div>
+</div>
+
+</div>
+
+
+{% endblock %}
+{% block js %}
+    $('#myTabs a').click(function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+    })
+    $('#myTabs a[href="#profile"]').tab('show') // Select tab by name
+    $('#myTabs a:first').tab('show') // Select first tab
+    $('#myTabs a:last').tab('show') // Select last tab
+    $('#myTabs li:eq(2) a').tab('show') // Select third tab (0-indexed)
 {% endblock %}

@@ -1,6 +1,46 @@
-{% extends "base.html" %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../static/css/bootstrap-3.4.1/css/bootstrap.css">
+    {% if title %}
+        <title>{{ title }} - GRE</title>
+    {% else %}
+        <title>GRE</title>
+    {% endif %}
+{% block css %}{% endblock %}
+</head>
+<body>
+<div>
+    GRE:
+    <a href="{{ url_for('index') }}">主页</a>
+    {% if current_user.is_anonymous %}
+        <a href="{{ url_for('login') }}">登录</a>
+    {% else %}
+        <a href="{{ url_for('logout') }}">登出</a>
+        <a href="/Student/course/list">我的课程</a>
+        <a href="/Student/group/list">我的团体活动</a>
+        <a href="/Student/person_activity/list">我的个人活动</a>
+        <a href="/person_activity/add">添加个人活动</a>
+        <a href="/temp/list">我的临时活动</a>
+        <a href="/temp/add">添加临时活动</a>
+        <a href="/clock/add">添加闹钟</a>
+        <a href="/navigation">导航</a>
+        <a href="/schedule">课程表</a>
+    {% endif %}
+</div>
+<hr>
 
-{% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+
     <h1>注册</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
@@ -41,4 +81,11 @@
         </p>
         <p>{{ form.submit() }}</p>
     </form>
+<script src="../static/js/jquery-3.6.0.min.js"></script>
+<script src="../static/css/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+{% block js %}
+    {{ moment.include_moment() }}
 {% endblock %}
+
+</body>
+</html>

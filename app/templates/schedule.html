@@ -1,6 +1,5 @@
-<!doctype html>
-<html lang="zh">
-<head>
+{% extends "base.html" %}
+{% block head %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <script src="../static/js/Timetables.min.js"></script>
@@ -98,28 +97,10 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
     </style>
-</head>
+{% endblock %}
 <body>
-<div>
-    GRE:
-    <a href="{{ url_for('index') }}">主页</a>
-    {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">登录</a>
-    {% else %}
-        <a href="{{ url_for('logout') }}">登出</a>
-        <a href="/Student/course/list">我的课程</a>
-        <a href="/Student/group/list">我的团体活动</a>
-        <a href="/Student/person_activity/list">我的个人活动</a>
-        <a href="/person_activity/add">添加个人活动</a>
-        <a href="/temp/list">我的临时活动</a>
-        <a href="/temp/add">添加临时活动</a>
-        <a href="/clock/add">添加闹钟</a>
-        <a href="/navigation">导航</a>
-        <a href="/schedule">课程表</a>
-
-    {% endif %}
-</div>
 <div>课程表</div>
+{% block content %}
 <form method="post">
     <label>
         周{{ week }}:
@@ -147,15 +128,16 @@
 
 </form>
 <div id="dataField" data-value='{{ courseList|tojson|safe }}'></div>
-<!-- 其他表单字段 -->
 <div id="coursesTable"></div>
+{% endblock %}
+
 {#<h1 id="heading">JavaScript与HTML</h1>#}
 {#<button id="button">点击我</button>#}
 <!--<button onclick="onChange()"-->
 <!--        style="background-color: #00a2ae; color: #fff; padding: 5px 10px; border-radius: 4px;border: none">-->
 <!--    切换课表-->
 <!--</button>-->
-
+{% block javascript %}
 <script>
     var dataElement = document.getElementById('dataField');
     if (dataElement) {
@@ -205,8 +187,7 @@
         }
     });
 </script>
-
-
 <script src="../static/js/Timetables.min.js"></script>
-</body>
-</html>
+{% endblock %}
+
+
