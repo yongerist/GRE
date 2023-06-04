@@ -4,7 +4,7 @@
 {% extends "teacher_base.html" %}
 
 {% block content %}
-    <table class="table">
+    <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
             <th>ID</th>
@@ -22,7 +22,7 @@
                 <td>{{ obj.begin_time }}</td>
                 <td>{{ obj.end_time }}</td>
                 <td>
-                    <a href="/course/{{ obj.id }}/info/"> 更多 </a>
+                    <a class="btn btn-info btn-xs" href="/course/{{ obj.id }}/info/"> 更多 </a>
                     <a class="btn btn-primary btn-xs" href="/course/{{ obj.id }}/edit/"> 编辑</a>
                     <a class="btn btn-danger btn-xs" href="/course/{{ obj.id }}/del/"> 删除</a>
                 </td>

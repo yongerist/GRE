@@ -3,7 +3,7 @@
 {% extends "teacher_base.html" %}
 
 {% block content %}
-    <table class="table">
+    <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
             <th>团体活动名</th>
@@ -19,7 +19,7 @@
                 <td>{{ obj.begin_time }}</td>
                 <td>{{ obj.end_time }}</td>
                 <td>
-                    <a href="/group_activity/{{ obj.name }}/info/"> 更多 </a>
+                    <a class="btn btn-info btn-xs" href="/group_activity/{{ obj.name }}/info/"> 更多 </a>
                     <a class="btn btn-primary btn-xs" href="/group_activity/{{ obj.id }}/edit/"> 编辑</a>
                     <a class="btn btn-danger btn-xs" href="/group_activity/{{ obj.name }}/del/"> 删除</a>
                 </td>
