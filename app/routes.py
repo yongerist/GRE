@@ -334,10 +334,10 @@ def temp_list():
         target = request.form.get('target')
         file = open("log.txt", "a")
         file.write(f"{user.name}查找{target}")
-        if target == "" and sort_method == 0:
+        if target == "" and sort_method == '0':
             return render_template('student_temp_list.html', queryset=quicksort_by_name(user.thing.get_all_data(), 0,
                                                                                         len(user.thing.get_all_data()) - 1))
-        if target == "" and sort_method == 1:
+        if target == "" and sort_method == '1':
             return render_template('student_temp_list.html', queryset=quicksort_by_time(user.thing.get_all_data(), 0,
                                                                                         len(user.thing.get_all_data()) - 1))
         if target[0].isdigit():
@@ -751,8 +751,7 @@ def group_activity_del(name):
     activity = g.gro_act_tree.find(name)
     student = activity.student
     g.gro_act_tree.remove(name)
-    for st in student:
-        g.manage.del_student_activities(activity)
+    g.manage.del_student_activities(activity)
     # 将改动后的树重新存入文件
     write_gro_act_tree_data(g.gro_act_tree)
     write_usr_data(g.usr_hash)

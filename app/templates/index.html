@@ -14,81 +14,114 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active in .fade" id="home">
-        <div>你的学号是 {{ current_user.userNumber }}</div>
-      <div>你的邮箱是 {{ current_user.email }}</div>
-        <div>你的学院是 计算机学院</div>
-        <div>你的专业是 网络工程</div></div>
+        <table class="table table-striped table-bordered table-hover">
+            <tbody>
+        <tr>
+            <td>你的学号是</td>
+            <td>{{ current_user.userNumber }}</td>
+        </tr>
+        <tr>
+            <td>你的邮箱是</td>
+            <td>{{ current_user.email }}</td>
+        </tr>
+        <tr>
+            <td>你的学院是</td>
+            <td>计算机学院</td>
+        </tr>
+        <tr>
+            <td>你的专业是</td>
+            <td>网络工程</td>
+        </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div role="tabpanel" class="tab-pane .fade" id="profile">
-        <div>
-明天的课程:
-{% for obj in tomorrow[0] %}
-    {{ obj }}
-{% endfor %}
-</div>
-        <div>
-        明天的考试:
+        <table class="table table-striped  table-bordered table-hover">
+        <tr>
+        <td>课程</td>
+        {% for obj in tomorrow[0] %}
+            <td>{{ obj }}</td>
+        {% endfor %}
+        </tr>
+        <tr>
+        <td>考试</td>
         {% for obj in tomorrow[1] %}
-        {{ obj }}
+        <td>{{ obj }}</td>
         {% endfor %}
-        </div>
-        <div>
-        明天的团体活动:
+        </tr>
+        <tr>
+        <td>团体活动</td>
         {% for obj in tomorrow[2] %}
-        {{ obj }}
+            <td>{{ obj }}</td>
         {% endfor %}
-        </div>
-        <div>
-        明天的个人活动:
+        </tr>
+        <tr>
+            <th>个人活动</th>
         {% for obj in tomorrow[3] %}
-        {{ obj }}
+            <td>{{ obj }}</td>
         {% endfor %}
-        </div>
-        <div>
-        明天的临时活动:
+        </tr>
+        <tr>
+        <th>临时活动</th>
         {% for obj in tomorrow[4] %}
-        {{ obj }}
+            <td>{{ obj }}</td>
         {% endfor %}
-        </div>
-    </div>
+        </tr>
+        </table>
+  </div>
+
+
     <div role="tabpanel" class="tab-pane .fade" id="messages">
-        <div>
-    一小时后的课程:
-    {% for obj in after_hour[0] %}
-        {{ obj }}
-    {% endfor %}
-    </div>
-        <div>
-        一小时后的考试:
-        {% for obj in after_hour[1] %}
+        <table class="table table-striped  table-bordered table-hover">
+        <tr>
+        <td>
+        课程:
+        {% for obj in after_hour[0] %}
             {{ obj }}
         {% endfor %}
-        </div>
-        <div>
-        一小时后的团体活动:
+        </td>
+        </tr>
+        <tr>
+        <td>考试
+        {% for obj in after_hour[1] %}
+        {{ obj }}
+        {% endfor %}
+        </td>
+        </tr>
+        <tr>
+        <td>团体活动:
         {% for obj in after_hour[2] %}
             {{ obj }}
         {% endfor %}
-        </div>
-        <div>
-        一小时后的个人活动:
+        </td>
+        </tr>
+        <tr>
+        <td>个人活动
         {% for obj in after_hour[3] %}
             {{ obj }}
         {% endfor %}
-        </div>
-        <div>
-        一小时后的临时活动:
+        </td>
+        </tr>
+        <tr>
+        <td>临时活动
         {% for obj in after_hour[4] %}
             {{ obj }}
         {% endfor %}
-        </div>
+        </td>
+        </tr>
+        </table>
     </div>
+
     <div role="tabpanel" class="tab-pane .fade" id="settings">
-              <div>
-闹钟提醒:
-{% for obj in clock %}
-    {{ obj }}
-{% endfor %}
-</div>
+        <table class="table table-striped  table-bordered table-hover">
+        <tr>
+        <td>闹钟提醒</td>
+        {% for obj in clock %}
+            <td>{{ obj }}</td>
+        {% endfor %}
+        </tr>
+        </table>
     </div>
 </div>
 

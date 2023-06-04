@@ -1,4 +1,5 @@
 import string
+import re
 
 
 class Course:
@@ -162,7 +163,6 @@ class MyHash:
             hash_id = len(self.my_hash_table)
             value.id = hash_id
             self.my_hash_table.insert(hash_id, value)
-
 
     def find(self, hash_id):
         if hash_id < len(self.my_hash_table):
@@ -711,12 +711,14 @@ class Student(Usr):
         for i in range(begin_time, end_time + 1):
             if self.time[week][day][i] is not None:
                 if "temp_thing" in self.time[week][day][i]:
-                    temp = self.time[week][day][i].split(" ")
+                    temp = re.split(r'[/\s]', self.time[week][day][i])
                     if len(thing_list) != 0:
                         if thing_list[-1].name != temp[1]:
                             thing_list.append(self.thing.find(temp[1]))
                     else:
-                        thing_list.append(self.thing.find(temp[1]))
+                        for str in temp:
+                            if str != "temp_thing":
+                                thing_list.append(self.thing.find(str))
         return thing_list
 
     def find_clock(self, week, day, hour):
@@ -902,8 +904,8 @@ class UserManagement:
                         if st == activity.student[-1] and self.user_table.find(st).time[week][day][i] is None:
                             activity.week = [week]
                             activity.day = [day]
-                            activity.begin_time = [i]
-                            activity.end_time = [i + 1]
+                            activity.begin_time = [i, 0]
+                            activity.end_time = [i + 1, 0]
                             return activity
                         if self.user_table.find(st).time[week][day][i] is not None:
                             break

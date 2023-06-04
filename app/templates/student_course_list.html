@@ -3,21 +3,24 @@
 {% block content %}
     <body>
     <div>
-        <form method="post" action="/Student/course/list">
+        <form method="post" action="/Student/course/list" class="form-inline">
             <div>
-                <label>查询课程: <input type="text" placeholder="" name="target"></label>
+                <div class="form-group">
+                <label for="search">查询课程:</label>
+                <input type="text"  id="search" class="form-control" placeholder="" name="target">
+                </div>
                 <label>
-                    <select name="sort_method">
+                    <select name="sort_method" class="form-control">
                         <option value="0">--排序方式--</option>
                         <option value="0">名称</option>
                         <option value="1">时间</option>
                     </select>
                 </label>
-                <input type="submit" value="查询">
+                <input class="btn btn-success" type="submit" value="查询">
             </div>
         </form>
     </div>
-    <table class="table">
+    <table class="table table-striped  table-hover">
         <thead>
         <tr>
             <th>ID</th>
@@ -35,7 +38,7 @@
                 <td>{{ obj.begin_time }}</td>
                 <td>{{ obj.end_time }}</td>
                 <td>
-                    <a href="/course/{{ obj.id }}/info/"> 更多 </a>
+                    <a class="btn btn-info btn-xs" href="/course/{{ obj.id }}/info/"> 更多 </a>
                 </td>
             </tr>
         {% endfor %}
