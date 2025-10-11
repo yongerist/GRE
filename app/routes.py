@@ -15,8 +15,6 @@ from app.forms import LoginForm, RegistrationForm
 from app.models import User
 from app.navigation import G
 
-# from app.reminder import gweek, gday, my_time, ghour
-
 gweek = 1
 gday = 1
 ghour = 7

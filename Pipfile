@@ -4,7 +4,7 @@ verify_ssl = false
 name = "pip_conf_index_global"
 
 [packages]
-flask = "*"
+flask = "==2.3.2"
 python-dotenv = "*"
 flask-wtf = "*"
 flask-sqlalchemy = "*"
@@ -12,6 +12,10 @@ flask-migrate = "*"
 flask-login = "*"
 email-validator = "*"
 flask-moment = "*"
+wtforms = "==3.0.1"
+werkzeug = "==2.3.4"
+alembic = "==1.10.4"
+sqlalchemy = "==2.0.15"
 
 [dev-packages]
 
